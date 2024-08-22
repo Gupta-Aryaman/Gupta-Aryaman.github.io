@@ -2,28 +2,28 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://aryaman.github.io/blog/</loc>
+    <loc>/blog/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.github.io/</loc>
+    <loc>/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.github.io/tags/markdown/</loc>
+    <loc>/tags/markdown/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.github.io/blog/markdown-syntax/</loc>
+    <loc>/blog/markdown-syntax/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.github.io/tags/syntax/</loc>
+    <loc>/tags/syntax/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.github.io/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2020-01-03T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.github.io/bear/</loc>
+    <loc>/bear/</loc>
   </url><url>
-    <loc>https://aryaman.github.io/categories/</loc>
+    <loc>/categories/</loc>
   </url><url>
-    <loc>https://aryaman.github.io/hugo/</loc>
+    <loc>/hugo/</loc>
   </url>
 </urlset>
