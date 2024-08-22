@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>decorators in python on aryaman&#39;s batcave</title>
+    <link>https://gupta-aryaman.github.io/blog/decorators-in-python/</link>
+    <description>Recent content in decorators in python on aryaman&#39;s batcave</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
+    <lastBuildDate>Wed, 31 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://gupta-aryaman.github.io/blog/decorators-in-python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Decorators in Python</title>
+      <link>https://gupta-aryaman.github.io/decorators-in-python/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://gupta-aryaman.github.io/decorators-in-python/</guid>
+      <description>What on earth are decorators??? Decorators are essentially single reusable functions that take a &amp;ldquo;function&amp;rdquo; as input and return a modified version of it. Decorators are just a bit different from regular functions because they wrap the &amp;ldquo;input function&amp;rdquo; to extend its functionality without modifying it.
+What does wrapping mean?
+import time start_time = time.time() **call your function** #calling your function end_time = time.time() print(&amp;#34;Time Taken = &amp;#34;, end_time-start_time) Here you can see that your function call is being &amp;ldquo;wrapped&amp;rdquo; between lines of code.</description>
+    </item>
+    
+  </channel>
+</rss>
