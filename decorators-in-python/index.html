@@ -240,8 +240,8 @@
 </p>
 
 <content>
-  <p><img src="images/decorators-in-python-banner.avif" alt="alt text"></p>
-<h3 id="what-on-earth-are-decorators">What on earth are decorators???</h3>
+  <p><img src="../images/decorators-in-python-banner.avif" alt="alt text"></p>
+<h2 id="what-on-earth-are-decorators">What on earth are decorators???</h2>
 <p>Decorators are essentially single reusable functions that take a <em>&ldquo;function&rdquo;</em> as input and return a modified version of it. Decorators are just a bit different from regular functions because they <strong>wrap</strong> the &ldquo;<em>input function</em>&rdquo; to extend its functionality without modifying it.</p>
 <p><strong>What does wrapping mean?</strong></p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> time
@@ -251,7 +251,7 @@ start_time <span style="color:#f92672">=</span> time<span style="color:#f92672">
 end_time <span style="color:#f92672">=</span> time<span style="color:#f92672">.</span>time()
 print(<span style="color:#e6db74">&#34;Time Taken = &#34;</span>, end_time<span style="color:#f92672">-</span>start_time)
 </code></pre></div><p>Here you can see that your function call is being &ldquo;wrapped&rdquo; between lines of code.</p>
-<h3 id="how-are-functions-getting-into-another-function---first-class-citizens">How are functions getting into another function - First Class Citizens</h3>
+<h2 id="how-are-functions-getting-into-another-function---first-class-citizens">How are functions getting into another function - First Class Citizens</h2>
 <p>A <strong>first-class citizen</strong> (also <strong>type</strong>, <strong>object</strong>, <strong>entity</strong>, or <strong>value</strong>) in a given <a href="https://en.wikipedia.org/wiki/Programming_language">programming language</a> is an entity that supports all the operations generally available to other entities. These operations typically include being passed as an <a href="https://en.wikipedia.org/wiki/Parameter_(computer_programming)">argument</a>, returned from a <a href="https://en.wikipedia.org/wiki/Function_(computer_programming)">function</a>, and assigned to a <a href="https://en.wikipedia.org/wiki/Variable_(computer_science)">variable</a>.</p>
 <p>Apart from data types like integers, floating type, strings etc., functions and classes are also First Class Citizens in Python.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">compose</span>(f,g,x):
@@ -262,7 +262,7 @@ print(<span style="color:#e6db74">&#34;Time Taken = &#34;</span>, end_time<span 
 </code></pre></div><p>In the above example, we can see that passing functions into another function as an argument is no biggie as functions are First Class Citizens in Python (and so are classes).</p>
 <p><em><strong>You might wonder what does this have to do with decorators?</strong></em></p>
 <p>Only because functions are first-class citizens do decorators work. The existence of decorators is based on the fact that Python allows functions to be supplied as arguments and returned from functions, as you will see in the following sections of this article.</p>
-<h3 id="moving-towards-decorators">Moving towards Decorators</h3>
+<h2 id="moving-towards-decorators">Moving towards Decorators</h2>
 <p>Decorators start with an <em>@</em> symbol.</p>
 <p>There are 3 types of decorators in total -</p>
 <ol>
@@ -335,7 +335,7 @@ end
 start
 <span style="color:#ae81ff">8</span>
 end
-</code></pre></div><h3 id="looking-into-a-more-practical-example">Looking into a more practical example</h3>
+</code></pre></div><h2 id="looking-into-a-more-practical-example">Looking into a more practical example</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> math
 <span style="color:#f92672">import</span> time
 
@@ -363,7 +363,7 @@ end
 <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">37</span> <span style="color:#ae81ff">333667.0</span>
 Time Taken <span style="color:#f92672">=</span>  <span style="color:#ae81ff">0.021126508712768555</span>
 </code></pre></div><p>We get the prime factors of the number and also its running time.</p>
-<h3 id="decorators-with-arguments">Decorators with arguments</h3>
+<h2 id="decorators-with-arguments">Decorators with arguments</h2>
 <p>Decorators with arguments have a bit different syntax. The decorator with arguments should return a function that will take a function and return another function ~ basically, we are to create a function which returns a decorator.</p>
 <p>Let&rsquo;s see it with an example -</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> math
@@ -397,7 +397,7 @@ Time Taken <span style="color:#f92672">=</span>  <span style="color:#ae81ff">0.0
 <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">3</span> <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">5</span> <span style="color:#ae81ff">37</span> <span style="color:#ae81ff">333667.0</span>
 Time Taken <span style="color:#f92672">=</span>  <span style="color:#ae81ff">0.02055978775024414</span>
 <span style="color:#ae81ff">2</span>
-</code></pre></div><h3 id="conclusion">Conclusion</h3>
+</code></pre></div><h2 id="conclusion">Conclusion</h2>
 <p>In conclusion, decorators in Python provide a powerful mechanism to extend the functionality of functions and classes without modifying their code directly. By using decorators, you can encapsulate common behaviours, and add logging, timing, authentication, or any other cross-cutting concerns to your functions or classes.</p>
 <p>Decorators leverage the concept of first-class citizens in Python, treating functions and classes as objects that can be passed as arguments, returned from other functions, and assigned to variables. This flexibility allows decorators to wrap and modify the behaviour of functions or classes seamlessly.</p>
 <p>Overall, decorators are a powerful feature of Python that allows you to easily extend the behaviour of functions and classes, making your code more modular, flexible, and expressive. By mastering decorators, you can unlock a wide range of possibilities and improve the quality of your Python projects.</p>
