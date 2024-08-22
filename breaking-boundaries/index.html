@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="https://gupta-aryaman.github.io/images/favicon.png" />
+<title>Breaking Boundaries | aryaman&#39;s batcave</title>
+<meta name="title" content="Breaking Boundaries" />
+<meta name="description" content="This article talks about GIL in python and issues caused by it. It also looks into efforts made to overcome GIL, and how can you make your python code perform the best inspite of these &#39;issues&#39;." />
+<meta name="keywords" content="breaking-boundaries,gil,no-gil,python,multithreading," />
+
+
+<meta property="og:title" content="Breaking Boundaries" />
+<meta property="og:description" content="This article talks about GIL in python and issues caused by it. It also looks into efforts made to overcome GIL, and how can you make your python code perform the best inspite of these &#39;issues&#39;." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://gupta-aryaman.github.io/breaking-boundaries/" /><meta property="og:image" content="https://gupta-aryaman.github.io/images/share.png"/><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2023-12-17T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-12-17T00:00:00+00:00" /><meta property="og:site_name" content="Hugo ʕ•ᴥ•ʔ Bear" />
+
+
+
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://gupta-aryaman.github.io/images/share.png"/>
+
+<meta name="twitter:title" content="Breaking Boundaries"/>
+<meta name="twitter:description" content="This article talks about GIL in python and issues caused by it. It also looks into efforts made to overcome GIL, and how can you make your python code perform the best inspite of these &#39;issues&#39;."/>
+
+
+
+<meta itemprop="name" content="Breaking Boundaries">
+<meta itemprop="description" content="This article talks about GIL in python and issues caused by it. It also looks into efforts made to overcome GIL, and how can you make your python code perform the best inspite of these &#39;issues&#39;."><meta itemprop="datePublished" content="2023-12-17T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-12-17T00:00:00+00:00" />
+<meta itemprop="wordCount" content="3491"><meta itemprop="image" content="https://gupta-aryaman.github.io/images/share.png"/>
+<meta itemprop="keywords" content="breaking-boundaries,gil,no-gil,python,multithreading," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  body {
+    font-family: Verdana, sans-serif;
+    margin: auto;
+    padding: 20px;
+    max-width: 720px;
+    text-align: left;
+    background-color: #1A1A1A;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: #E0E0E0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  strong,
+  b {
+    color: #222;
+  }
+
+  a {
+    color: #3273dc;
+     
+  }
+
+  .title {
+    text-decoration: none;
+    border: 0;
+  }
+
+  .title span {
+    font-weight: 400;
+  }
+
+  nav a {
+    margin-right: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  input {
+    font-size: 16px;
+  }
+
+  content {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    padding: 2px 5px;
+    background-color: #E0E0E0;
+  }
+
+  pre code {
+    color: #222;
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 14px;
+    overflow-x: auto;
+  }
+
+  div.highlight pre {
+    background-color: initial;
+    color: initial;
+  }
+
+  div.highlight code {
+    background-color: unset;
+    color: unset;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: #222;
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px;
+    text-align: center;
+  }
+
+  .helptext {
+    color: #777;
+    font-size: small;
+  }
+
+  .errorlist {
+    color: #eba613;
+    font-size: small;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: #8b6fcb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #1A1A1A;
+      color: #E0E0E0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    strong,
+    b {
+      color: #eee;
+    }
+
+    a {
+      color: #3A9AD9;
+      text-decoration: none;
+    }
+    a:hover {
+      color: hotpink;
+    }
+    
+    code {
+      background-color: #777;
+    }
+
+    pre code {
+      color: #ddd;
+    }
+
+    blockquote {
+      color: #ccc;
+    }
+
+    textarea,
+    input {
+      background-color: #252525;
+      color: #ddd;
+    }
+
+    .helptext {
+      color: #aaa;
+    }
+  }
+
+</style>
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>aryaman&#39;s batcave</h2>
+</a>
+<nav><a href="/">Home</a>
+
+
+<a href="/blog">Blog</a>
+
+
+<a href="/papershelf">Papershelf</a>
+<a href="/about">About</a>
+</nav>
+</header>
+  <main>
+
+<h1>Breaking Boundaries</h1>
+<p>
+  <i>
+    <time datetime='2023-12-17' pubdate>
+      17 Dec, 2023
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>Python faces challenges in fully exploiting the growing capabilities of modern hardware. As hardware continues to advance with more CPU cores, faster processors, and abundant memory, Python&rsquo;s inherent design and execution model can often fall short in taking full advantage of these resources. Its single-threaded nature and certain architectural choices can result in suboptimal performance in scenarios where parallelism and hardware acceleration are vital. This limitation prompts developers to seek alternative solutions, such as integrating Python with external libraries, languages, or technologies, to overcome these hardware-related constraints.</p>
+<h3 id="need-of-simultaneous-execution-in-python"><strong>NEED OF SIMULTANEOUS EXECUTION IN PYTHON</strong></h3>
+<p>We all know that the main advantage of using python is that it is easy to learn, easy to use, and highly versatile, supporting developer productivity. However, Python is also <strong>notoriously slow</strong>. Programs written in languages such as C++, Node. js, and Go can execute as much as 30-40 times faster than equivalent Python programs.</p>
+<p><img src="/images/breaking-boundaries/image1.png" alt="Table 1.1: Courtesy of github project "></p>
+<!-- raw HTML omitted -->
+<p>Even though Python is constantly being optimized to work faster, we simply can’t rely on the basic single-threaded execution codes as they are too slow. Hence the need for simultaneous execution.</p>
+<h3 id="simultaneous-execution-possibilities-in-python"><strong>SIMULTANEOUS EXECUTION POSSIBILITIES IN PYTHON</strong></h3>
+<p>3 big contenders for dealing with multiple tasks in Python -</p>
+<ol>
+<li>
+<p>Asyncio - <strong>In computer programming,</strong> <a href="https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)"><em><strong>asynchrony</strong></em></a> <strong>encompasses events that occur independently of the primary program flow and methods for managing these events. In essence, asynchronization implies that you can proceed with executing other sections of code without the need to wait for a particular task to finish.</strong></p>
+<p>For example, asynchronous programming is beneficial to use where multiple database interactions are there, database read/write operations generally take a lot of time hence the flow of execution can be changed instead of the database call to get completed.</p>
+<ul>
+<li>
+<p>Cooperative pausing/waiting</p>
+</li>
+<li>
+<p>Good for I/O bound processes</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Threading -</p>
+<ol>
+<li>
+<p>Python runs on single thread on single CPU</p>
+</li>
+<li>
+<p>GIL is a global lock around the entire Python interpreter. In order to advance the interpreter state and run the python code a thread must require the GIL. Hence, it is possible to have multiple python threads in the same process, only one of them can be executing the python code. While this happens, rest of them must wait to receive the GIL.</p>
+</li>
+<li>
+<p>Non-cooperative pausing/interrupting</p>
+</li>
+<li>
+<p>Good for I/O bound</p>
+</li>
+<li>
+<p>Good to do long-running ops w/o blocking (example GUI application)</p>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>Multiprocessing -</strong></p>
+<ol>
+<li>
+<p>Create different processes which have their own GIL</p>
+</li>
+<li>
+<p>Better where all processes are completely independent of each other</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="threading"><strong>Threading</strong></h3>
+<p>Let&rsquo;s take a for loop as an example, this loop is a CPU intensive task.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">### Code 4.1: CPU Intensive task example</span>
+
+DO <span style="color:#f92672">=</span> <span style="color:#ae81ff">100000000</span>
+ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(n):
+   <span style="color:#66d9ef">global</span> ans
+   <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(n):
+       ans <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>
+foo(DO)
+print(ans)
+</code></pre></div><p><img src="/images/breaking-boundaries/image2.png" alt=""></p>
+<p>As this was a simple single threaded task, it took around 5 secs and was 99% CPU intensive.</p>
+<p>Okay, so if I have 2 loops like this running on a single thread, it would take around 10s. This is very bad.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">### Code 4.2: Extension of Code 4.1, 2 CPU Intensive tasks</span>
+
+DO <span style="color:#f92672">=</span> <span style="color:#ae81ff">100000000</span>
+ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(n):
+  <span style="color:#66d9ef">global</span> ans
+  <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(n):
+      ans <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>
+foo(DO)
+foo(DO)
+print(ans)
+</code></pre></div><p><img src="/images/breaking-boundaries/image3.png" alt=""></p>
+<p>No issues, as these are CPU intensive tasks, we can run both the tasks on different threads. Hence, simultaneous execution would help us run 2 threads simultaneously and concurrently and the time would be reduced by half.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">### Code 4.3: CPU Intensive tasks executed in different threads</span>
+
+<span style="color:#f92672">from</span> threading <span style="color:#f92672">import</span> Thread
+
+DO <span style="color:#f92672">=</span> <span style="color:#ae81ff">100000000</span>
+ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(n):
+   <span style="color:#66d9ef">global</span> ans
+   <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(n):
+       ans <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>
+
+t1 <span style="color:#f92672">=</span> Thread(target<span style="color:#f92672">=</span>foo, args<span style="color:#f92672">=</span>(DO<span style="color:#f92672">//</span><span style="color:#ae81ff">2</span>,))
+t2 <span style="color:#f92672">=</span> Thread(target<span style="color:#f92672">=</span>foo, args<span style="color:#f92672">=</span>(DO<span style="color:#f92672">//</span><span style="color:#ae81ff">2</span>,))
+
+t1<span style="color:#f92672">.</span>start()
+t2<span style="color:#f92672">.</span>start()
+t1<span style="color:#f92672">.</span>join()
+t2<span style="color:#f92672">.</span>join()
+
+print(ans)
+</code></pre></div><p>If this was true multithreading, the time taken for a for loop of half the range of the previous example should be half of the previous time taken, i.e. around 2.5 sec.</p>
+<p><img src="/images/breaking-boundaries/image4.png" alt=""></p>
+<p>But we can see it again took roughly the same time. Why is this happening? To understand this we need to look into the core concept of Cpython - GIL.</p>
+<h3 id="gil-what-is-gil"><strong>GIL?! What is GIL?</strong></h3>
+<p>Before discussing GIL, it is important to note that we are discussing this in terms of Cpython.</p>
+<ul>
+<li>
+<p><strong>Python</strong> - definition of programming language we know, PEP - python enhancement proposals</p>
+</li>
+<li>
+<p><strong>Cpython</strong> - physical implementation of the ideas in “Python” in C language</p>
+</li>
+</ul>
+<p>Generally when we talk about python, we refer to the Cpython implementation of the language only.</p>
+<p>Moving forward -</p>
+<p><img src="/images/breaking-boundaries/image5.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>I created a function foo() where I allocated a = 50.</p>
+<p>50 will be stored in memory and the variable a would be pointing to it. So the <em>reference count</em> of the memory where 50 is stored would be 1. But now, when the function is finished, the memory location has to be cleared/dereferenced. Hence, the reference count would be decreased by 1.</p>
+<blockquote>
+<p><em>Reference counting in CPython - At a very basic level,</em> <em><strong>a Python object&rsquo;s reference count is incremented whenever the object is referenced, and it&rsquo;s decremented when an object is dereferenced</strong></em>*.*</p>
+</blockquote>
+<p>The memory deallocation is done in different ways in different languages but in python when the reference count of a memory location becomes 0, python knows that that memory location can be used for storing something else.</p>
+<p>Example - Garbage collectors is used by java</p>
+<p><img src="/images/breaking-boundaries/image6.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>Then, why do we get a <em>reference count</em> of ‘a’ as 3 here?</p>
+<p><img src="/images/breaking-boundaries/image7.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>This is the reason.</p>
+<p><img src="/images/breaking-boundaries/image8.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>The main issue comes, when there is concurrency involved in python threads -</p>
+<p><img src="/images/breaking-boundaries/image9.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>Imagine 2 threads are running simultaneously, in CPython. Reference Count of memory location pointed by variable ‘a’ is 3. Thread 1 and 2 ask what is the reference count of ‘a’ and both get 3. Now I do ‘b=a’ in thread 1 so the reference count increases to 4. At the same time I do ‘c=a’ in thread 2 and it also updates the reference count to 4.</p>
+<p><strong><!-- raw HTML omitted -->But shouldn’t the reference count be 5? Race conditions occur in such cases.<!-- raw HTML omitted --></strong> <strong>Hence, the requirement for concurrency management or GIL (Global Interpreter Lock) is required</strong></p>
+<p><img src="/images/breaking-boundaries/image10.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>In a real scenario if I have 4 threads running concurrently, thread 1 acquires the GIL, does some computation and waits for some I/O. In that time, the GIL is transferred to thread 2 which again does some task and starts waiting for something, for example a mouse click in the GUI. Again the GIL is transferred to a different thread. That’s why multithreading works in cpython.</p>
+<p>But if I have 2 different threads and both want to work with the CPU, then GIL is not a good option.</p>
+<blockquote>
+<p>Python 1.0 (1994): Python was initially designed without the GIL. In its early versions, Python used a simple reference counting mechanism for memory management. However, this approach had limitations, especially when dealing with circular references, which could lead to memory leaks.</p>
+<p>Python 1.5 (1999): With Python 1.5, Guido van Rossum, the creator of Python, introduced the Global Interpreter Lock (GIL) as a solution to the multi-threading problems.</p>
+</blockquote>
+<p>Referring back to the example code 4.3-</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">### Code 4.3: CPU Intensive tasks executed in different threads</span>
+
+<span style="color:#f92672">from</span> threading <span style="color:#f92672">import</span> Thread
+
+DO <span style="color:#f92672">=</span> <span style="color:#ae81ff">100000000</span>
+ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(n):
+   <span style="color:#66d9ef">global</span> ans
+   <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(n):
+       ans <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>
+
+t1 <span style="color:#f92672">=</span> Thread(target<span style="color:#f92672">=</span>foo, args<span style="color:#f92672">=</span>(DO<span style="color:#f92672">//</span><span style="color:#ae81ff">2</span>,))
+t2 <span style="color:#f92672">=</span> Thread(target<span style="color:#f92672">=</span>foo, args<span style="color:#f92672">=</span>(DO<span style="color:#f92672">//</span><span style="color:#ae81ff">2</span>,))
+
+t1<span style="color:#f92672">.</span>start()
+t2<span style="color:#f92672">.</span>start()
+t1<span style="color:#f92672">.</span>join()
+t2<span style="color:#f92672">.</span>join()
+
+print(ans)
+</code></pre></div><p><img src="/images/breaking-boundaries/image11.png" alt=""></p>
+<p>If this was true multithreading, <strong>the time taken for a for loop of half the range of the previous example should be half of the previous time taken, i.e. around 2.5 sec.</strong></p>
+<p>But this didn’t happen. This means that as both are around 99-100% CPU bound, both require <strong>GIL</strong> to execute. Hence, when 1 thread acquires the GIL, the <strong>other thread waits</strong> to receive the GIL back… hence the time required was roughly the same. Practically they never ran truly parallelly.</p>
+<p>So, how do we run threads truly concurrently in Cpython? Many times we don&rsquo;t even realize the bottleneck capacity of Cpython as majority of times we are not working with purely python code, for example working with numpy array, numba etc. we can get away with using multithreading/without acquiring GIL as once GIL is acquired, python calls a C program which runs in the background, and hence in that time the GIL can be given to other thread.</p>
+<h3 id="gil-history-and-removal-efforts"><strong>GIL HISTORY AND REMOVAL EFFORTS</strong></h3>
+<p>GIL was first introduced in 1999, and had several positive and negative ramification-</p>
+<ol>
+<li>
+<p>Positives -</p>
+<ol>
+<li>
+<p>Simple</p>
+</li>
+<li>
+<p>Easy to get right</p>
+</li>
+<li>
+<p>No deadlocks as there is only 1 lock</p>
+</li>
+<li>
+<p>Single threading is fast!</p>
+</li>
+<li>
+<p>Good for i/o bound threads</p>
+</li>
+</ol>
+</li>
+<li>
+<p>Negatives -</p>
+<ol>
+<li>Bad for CPU bound tasks, as execution will always be on a single core. This was fine in 1992 as we would rarely see multi core CPUs back then. But the WORLD HAS CHANGED!</li>
+</ol>
+</li>
+</ol>
+<p>Unfortunately until and unless GIL is present this limitation would always be there, hence GIL removal has been a huge topic of discussion in the Cpython implementation.</p>
+<p><img src="/images/breaking-boundaries/image12.png" alt=""></p>
+<p><img src="/images/breaking-boundaries/image13.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>In PEP - Python Enhancement Proposals - a <a href="https://peps.python.org/pep-0703/">proposal</a> was made, to make the GIL optional, proposing to adding a build configuration and to let it run Python code without the global interpreter lock and with the necessary changes needed to make the interpreter thread-safe.</p>
+<p>Over the years, various efforts have been made to overcome the limitations posed by the GIL:</p>
+<ol>
+<li>
+<p><strong>Free-Threading (1996):</strong> An early attempt to address the GIL was called &ldquo;free-threading,&rdquo; but it didn&rsquo;t fully remove the GIL and had its own set of complexities.</p>
+</li>
+<li>
+<p><strong>Gilectomy (2015):</strong> This initiative aimed to remove the GIL from CPython entirely. However, it turned out to be a challenging task due to the intricacies of Python&rsquo;s memory management and extensive use of C libraries.</p>
+</li>
+<li>
+<p><strong>Recent Developments:</strong> &ldquo;<strong>nogil</strong>&rdquo; have been proposed, which explore ways to make Python more thread-friendly and possibly eliminate the GIL. These proposals aim to allow more parallelism in certain scenarios.</p>
+</li>
+</ol>
+<p>In the following sections, we would compare the performance improvements of these efforts done by other people and see how much improvements they actually give and at what costs.</p>
+<p>There are <strong>three important aspects</strong> of Python to consider if we want fast, free-threading in CPython:</p>
+<ol>
+<li>
+<p><strong>Single-threaded performance</strong></p>
+</li>
+<li>
+<p><strong>Parallelism</strong></p>
+</li>
+<li>
+<p><strong>Mutability</strong> (the ability to change the state or content of objects in a programming language, meaning that mutable objects can be modified after they are created)</p>
+</li>
+</ol>
+<p>The last of these, mutability, is key.</p>
+<p>Almost all of the work done on speeding up dynamic languages stems from original work done on the <em>self programming language,</em> but with many refinements. Most of this work has been on Javascript, which is single-threaded and less mutable than Python, but PyPy has also made some significant contributions. PyPy has a GIL.</p>
+<p><em>Self is an object-oriented programming language based on the concept of prototypes,</em></p>
+<p>There is also work on Ruby. Ruby is even more mutable than Python, but also has a GIL. Work on Ruby mirrors that on Javascript.</p>
+<p>The JVM supports free threading, but Java objects are almost immutable compared to Python objects, and the performance of Python, Javascript and Ruby implementations on the JVM has been disappointing, historically.</p>
+<p>Performing the optimizations necessary to make Python fast in a free-threading environment will <strong>need some original research</strong>. That makes it more costly and a lot more risky.</p>
+<p>There are three options available to the Steering Council (with regard to PEP  703:</p>
+<ol>
+<li>
+<p>Choose single-threading performance: We ultimately expect a 5x speedup over 3.10</p>
+</li>
+<li>
+<p>Choose free-threading: NoGIL appears to scale well, but expect worse single threaded performance.</p>
+</li>
+<li>
+<p>Choose both.</p>
+</li>
+</ol>
+<h4 id="the-pros-and-cons-of-the-three-options"><strong>The pros and cons of the three options</strong></h4>
+<p>Option 1:</p>
+<ul>
+<li>
+<p>Pros: We know how to do this. We have a plan. It will happen. Sub-interpreters allow some limited form of parallelism.</p>
+</li>
+<li>
+<p>Cons: It keeps the GIL, preventing free-threading.</p>
+</li>
+</ul>
+<p>Option 2:</p>
+<ul>
+<li>
+<p>Pros: Free threading; much better performance for those who can use multiple threads effectively.</p>
+</li>
+<li>
+<p>Cons: Some unknowns. Worse performance for most people, as single threaded performance will be worse. We don’t know how much worse.</p>
+</li>
+</ul>
+<p>Option 3:</p>
+<ul>
+<li>
+<p>Pros: Gives us the world class runtime that the world’s number one programming language should have.</p>
+</li>
+<li>
+<p>Cons: More unknowns and a large cost.</p>
+</li>
+</ul>
+<h3 id="free-threading-patch---linkhttpwwwpythonorgftppythoncontrib-09-dec-1999systemthreadingtargz"><strong>FREE-THREADING Patch -</strong> <a href="http://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.tar.gz">link</a></h3>
+<blockquote>
+<p><em>Released in 1996, the Free Threading patch was built for Python 1.4 by Greg Stein. Unfortunately, Python 1.4 is very old and cannot be built on modern systems of today’s times. Hence, we would be looking into</em> <a href="http://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html"><em>benchmarkings done by Dave Beazley</em></a> <em>in 2011.</em></p>
+</blockquote>
+<p>First, he wrote a simple spin-loop and see what happened:</p>
+<p><img src="/images/breaking-boundaries/image14.png" alt=""></p>
+<p>Using the original version of Python-1.4 (with the GIL), this code ran in about 1.9 seconds. Using the patched GIL-less version, it ran in about 12.7 seconds. <strong>That&rsquo;s about 6.7 times slower</strong>. Yow!</p>
+<p>Just to further confirm his findings, he ran the included Tools/scripts/<a href="http://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.tar.gz">pystone.py</a> benchmark (modified to run slightly longer in order to get more accurate timings).</p>
+<p>First, with the GIL:</p>
+<p><img src="/images/breaking-boundaries/image15.png" alt=""></p>
+<p>Now, without the GIL:</p>
+<p><img src="/images/breaking-boundaries/image16.png" alt=""></p>
+<p>Here, the <strong>GIL-less Python is only about 4 times slower.</strong></p>
+<p>To test threads,he wrote a small sample that subdivided the work across two worker threads is an embarrassingly parallel manner (note: this code is a little wonky due to the fact that Python-1.4 doesn&rsquo;t implement thread joining&ndash;meaning that we have to do it ourselves with the included binary-semaphore lock).</p>
+<p><img src="/images/breaking-boundaries/image17.png" alt=""></p>
+<p>If we run this code with the GIL, the execution time is <strong>about 2.5 seconds or approximately 1.3 times slower than the single-threaded version</strong> (1.9 seconds). Using the <strong>GIL-less Python, the execution time is 18.5 seconds or approximately 1.45 times slower than the single-threaded version</strong> (12.7 seconds). <!-- raw HTML omitted -->Just to emphasize, the GIL-less Python running with two-threads is running more than<!-- raw HTML omitted --> <strong><!-- raw HTML omitted -->7 times slower<!-- raw HTML omitted --></strong> <!-- raw HTML omitted -->than the version with a GIL. <!-- raw HTML omitted --> </p>
+<p><em>Ah, but what about preemption you ask? If we return to the example above in the section about reentrancy, we will find that removing the GIL, does indeed, allow free threading and long-running calculations to be preempted. Success! Needless to say, there might be a few reasons why the patch quietly disappeared.</em></p>
+<h3 id="gilectomy-by-larry-hastings---linkhttpsgithubcomlarryhastingsgilectomy"><strong>GILECTOMY <em>by Larry Hastings</em> -</strong> <a href="https://github.com/larryhastings/gilectomy"><strong>link</strong></a></h3>
+<p>The earlier effort of removing GIL was more of a failure, as it worsened single thread performance as well as the multi threaded program ran slower compared running the same on single thread.</p>
+<p>Hence, <strong>3 political considerations</strong> Larry Hastings tried to keep in mind while building Gilectomy were -</p>
+<ul>
+<li>
+<p>Don’t hurt single threaded performance</p>
+</li>
+<li>
+<p>Don’t break c extensions</p>
+</li>
+<li>
+<p>Don’t make it too complicated</p>
+</li>
+</ul>
+<p>So, the things he did were -</p>
+<ol>
+<li>
+<p><strong>Keep reference counting</strong> - It is a core functionality of Cpython and changing it would mean writing all the C APIs.</p>
+<ol>
+<li>Used atomic incr/decr which comes free with Intel Processor. But is 30% slower off the top</li>
+</ol>
+</li>
+<li>
+<p><strong>Global and static variables</strong></p>
+<ol>
+<li><strong>Shared singletons - all variables (in thread implementation) are public everytime</strong></li>
+</ol>
+</li>
+<li>
+<p><strong>Atomicity</strong> - This is where the one big lock (GIL) would be replaced by smaller locks</p>
+<ol>
+<li>Hence, a new lock api was introduce</li>
+</ol>
+</li>
+</ol>
+<p><img src="/images/breaking-boundaries/image18.jpeg" alt=""></p>
+<p>Here is a benchmarking code given by  <em>Larry Hastings</em> himself, as the Gilectomy implementation has a lot of things like “str” etc. which don&rsquo;t work as intended.</p>
+<p>To benchmark, this code was run using both, Cpython (GIL) and Gilectomy (noGIL), on a <strong>8 core, 2.80GHz system</strong>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">### Code 4.4.1: Benchmarking Code of Gilectomy - </span>
+<span style="color:#75715e">### https://github.com/larryhastings/gilectomy/blob/gilectomy/x.py</span>
+
+<span style="color:#f92672">import</span> threading
+<span style="color:#f92672">import</span> sys
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fib</span>(n):
+   <span style="color:#66d9ef">if</span> n <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>: <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+   <span style="color:#66d9ef">return</span> fib(n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">+</span> fib(n<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test</span>():
+   print(fib(<span style="color:#ae81ff">30</span>))
+
+threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#75715e">#changing number of threads here</span>
+
+<span style="color:#66d9ef">if</span> len(sys<span style="color:#f92672">.</span>argv) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+   threads <span style="color:#f92672">=</span> int(sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>])
+
+<span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(threads <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>):
+   threading<span style="color:#f92672">.</span>Thread(target<span style="color:#f92672">=</span>test)<span style="color:#f92672">.</span>start()
+
+<span style="color:#66d9ef">if</span> threads <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+   test()
+</code></pre></div><p>This code performs a CPU intensive task of calculating fibonacci of a large number (30 in this case) and running that CPU heavy task on multiple threads.</p>
+<p><strong>This code was ran on both Cpython-3.11 and Gilectomy-3.6.0a1</strong></p>
+<blockquote>
+<p>The reason for providing a benchmarking code by Larry was that many **features in Cpython did not work as it is in this Gilectomy’**s implementation of python. Something as simple as ‘str’ (string) had a very ambiguous behavior hence, he had to provide a code which could run on both Cpython and Gilectomy.</p>
+</blockquote>
+<p><img src="/images/breaking-boundaries/image19.jpg" alt=""></p>
+<p><img src="/images/breaking-boundaries/image20.jpg" alt=""></p>
+<!-- raw HTML omitted -->
+<p><img src="/images/breaking-boundaries/image21.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>This graph represents the Wall Time difference in time taken by both the versions of Python. We can see the Gilectomy implementation is <strong>2x times slower</strong>, which is not bad.</p>
+<p><img src="/images/breaking-boundaries/image22.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>But here we can see that in terms of CPU time, Gilectomy is nearly 2x slower at 1 thread, but <strong>jumps to 10x slower at 2 threads</strong> and from there it keeps going up and up. At 17 cores, it is <strong>nearly 19-20 times slower</strong>.</p>
+<blockquote>
+<p><em>In the context of this code, more CPU time is typically considered &ldquo;bad&rdquo; or inefficient.</em> If you&rsquo;re running multiple threads and each thread consumes a lot of CPU time, it can lead to high CPU utilization, potentially causing the system to become unresponsive for other tasks.</p>
+</blockquote>
+<p><strong>What happened to Gilectomy later?</strong></p>
+<p>The last update in Pycon 2019 was that after significant work <em>Larry Hastings</em> was still able to get the performance of his non-GIL version to match that of to Python with the GIL, but with a significant caveat; the default Python version ran only on a single core (as expected) - the non-GIL version needed to run on 7 cores to keep up. Larry Hastings later admitted that work has stalled, and he needs a new approach since the general idea of trying to maintain the general reference counting system, but protect the reference counts without a Global lock is not tenable.</p>
+<h3 id="nogil-by-sam-gross---linkhttpsgithubcomcolesburynogil">nogil by <em>Sam Gross</em> - <a href="https://github.com/colesbury/nogil">link</a></h3>
+<p><em>nogil</em> is a <strong>proof-of-concept implementation</strong> of CPython that supports multithreading without the global interpreter lock (GIL). The purpose of this project was to show -</p>
+<ol>
+<li>
+<p>That it is feasible to remove the GIL from Python.</p>
+</li>
+<li>
+<p>That the tradeoffs are manageable and the effort to remove the GIL is worthwhile.</p>
+</li>
+<li>
+<p>That the main technical ideas of this project (reference counting, allocator changes, and thread-safety scheme) should serve as a basis of such an effort.</p>
+</li>
+</ol>
+<p><img src="/images/breaking-boundaries/image23.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>Let’s test on the same code, but calculating fib of 40 now -</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">### Code 4.5.1: Benchmarking code of CPU intensive task of calculating </span>
+<span style="color:#75715e">###             fibonacci of a large number, code ran on both  Cpython-3.11 </span>
+<span style="color:#75715e">###             and nogil-3.9.10-1</span>
+
+<span style="color:#f92672">import</span> threading
+<span style="color:#f92672">import</span> sys
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fib</span>(n):
+   <span style="color:#66d9ef">if</span> n <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>: <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+   <span style="color:#66d9ef">return</span> fib(n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">+</span> fib(n<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test</span>():
+   print(fib(<span style="color:#ae81ff">40</span>))  <span style="color:#75715e"># test function that calculates fibonacci number</span>
+threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span> <span style="color:#75715e"># number of threads</span>
+<span style="color:#66d9ef">if</span> len(sys<span style="color:#f92672">.</span>argv) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+   threads <span style="color:#f92672">=</span> int(sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>])
+<span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(threads <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>):
+   threading<span style="color:#f92672">.</span>Thread(target<span style="color:#f92672">=</span>test)<span style="color:#f92672">.</span>start()
+<span style="color:#66d9ef">if</span> threads <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+   test()
+</code></pre></div><p><img src="/images/breaking-boundaries/image24.jpg" alt=""></p>
+<p><img src="/images/breaking-boundaries/image25.jpg" alt=""></p>
+<!-- raw HTML omitted -->
+<p>As we can see here, running code on <em>nogil</em> python implementation helped us to utilize <strong>more than 1 core at the same time without any restrictions</strong>, and all the 7 threads created are <strong>utilizing 100%</strong> of the respective <strong>CPU</strong>s.</p>
+<p>In the same multithreaded process in a shared-memory multiprocessor environment, <strong>each thread in the process can run concurrently on a separate processor</strong>, resulting in parallel execution, which is true simultaneous execution.</p>
+<p><img src="/images/breaking-boundaries/image26.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>Meanwhile, creating 7 threads on Cpython implementation gives really poor performance, as even though 7 threads exist, only 1 of them is running truly at a particular moment.</p>
+<p><img src="/images/breaking-boundaries/image27.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>The shear performance improvement in nogil implementation over Cpython is mind blowing, making us wonder the highs MultiThreading in Python can touch -</p>
+<p><img src="/images/breaking-boundaries/image28.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>As it is clearly visible, nogil completely outperforms the Cpython, even giving better performance in a single threaded program.</p>
+<p><img src="/images/breaking-boundaries/image29.png" alt=""></p>
+<!-- raw HTML omitted -->
+<p>As clearly shown above, <strong>nogil can achieve upto 5x better performance</strong> in multithreaded programs, and gives slightly better performance in single thread as well.</p>
+<h3 id="multiprocessing"><strong>Multiprocessing</strong></h3>
+<p>The multiprocessing library allows Python programs to start and communicate with Python sub-processes. This allows for parallelism because each sub-process has its own Python interpreter (i.e there’s a GIL per-process).</p>
+<p><strong>Communication between processes is limited and generally more expensive than communication between threads</strong>.</p>
+<p>Objects generally need to be serialized or copied to shared memory. Starting a sub-process is also more expensive than starting a thread, especially with the “spawn” implementation.</p>
+<blockquote>
+<p>Starting a thread takes ~100 µs, while spawning a sub-process takes ~50 ms (50,000 µs) due to Python re-initialization.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">### Code 5.1: Multiprocessing demonstration in python</span>
+
+<span style="color:#f92672">import</span> multiprocessing
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fib</span>(n):
+  <span style="color:#66d9ef">if</span> n <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span>: <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>
+  <span style="color:#66d9ef">return</span> fib(n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#f92672">+</span> fib(n<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test</span>():
+  print(fib(<span style="color:#ae81ff">50</span>))
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+   p1 <span style="color:#f92672">=</span> multiprocessing<span style="color:#f92672">.</span>Process(target<span style="color:#f92672">=</span>test)    <span style="color:#75715e"># creating processes</span>
+   p2 <span style="color:#f92672">=</span> multiprocessing<span style="color:#f92672">.</span>Process(target<span style="color:#f92672">=</span>test)
+   p1<span style="color:#f92672">.</span>start()    <span style="color:#75715e"># starting processes</span>
+   p2<span style="color:#f92672">.</span>start()
+   p1<span style="color:#f92672">.</span>join()      <span style="color:#75715e"># waiting for processes to finish</span>
+   p2<span style="color:#f92672">.</span>join()
+
+   <span style="color:#75715e"># both processes finished</span>
+   print(<span style="color:#e6db74">&#34;Done!&#34;</span>)
+</code></pre></div><p><img src="/images/breaking-boundaries/image30.png" alt=""></p>
+<p>The multiprocessing library has a number of downsides.</p>
+<ol>
+<li>
+<p>The “fork” implementation is prone to deadlocks.</p>
+</li>
+<li>
+<p>Multiple processes are harder to debug than multiple threads. Sharing data between processes can be a performance bottleneck. For example, in PyTorch, which uses multiprocessing to parallelize data loading, copying Tensors to inter-process shared-memory is sometimes the most expensive operation in the data loading pipeline.</p>
+</li>
+<li>
+<p>Additionally, many libraries don’t work well with multiple processes: for example CUDA doesn’t support “fork” and has limited IPC support.</p>
+</li>
+</ol>
+<h3 id="conclusion">Conclusion</h3>
+<p>Seeing the level of improvement nogil is able to achieve, this is a big proof of a plausible world having a GIL-Free python which increases multithreaded performance by many folds, having no negative impact on single threading. Even though there is lot of work is still pending, there is no doubt that the PEP 703 will be accepted in the near future, but only time will tell.</p>
+<h3 id="references--">References -</h3>
+<ul>
+<li>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://discuss.python.org/t/a-fast-free-threading-python/27903</a></p>
+</li>
+<li>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.README</a></p>
+</li>
+<li>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://stackify.com/python-garbage-collection/</a></p>
+</li>
+<li>
+<p><a href="https://www.youtube.com/watch?v=P3AyI_u66Bw">Larry Hastings - Removing Python&rsquo;s GIL: The Gilectomy - PyCon 2016</a></p>
+</li>
+<li>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">http://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html</a></p>
+</li>
+<li>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://pythoncapi.readthedocs.io/gilectomy.html</a></p>
+</li>
+<li>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://github.com/larryhastings/gilectomy</a></p>
+</li>
+<li>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://github.com/colesbury/nogil</a></p>
+</li>
+<li>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://docs.google.com/document/d/18CXhDb1ygxg-YXNBJNzfzZsDFosB5e6BfnXLlejd9l0</a></p>
+</li>
+</ul>
+
+</content>
+<p>
+  
+  <a href="https://gupta-aryaman.github.io/blog/breaking-boundaries/">#breaking-boundaries</a>
+  
+  <a href="https://gupta-aryaman.github.io/blog/gil/">#gil</a>
+  
+  <a href="https://gupta-aryaman.github.io/blog/no-gil/">#no-gil</a>
+  
+  <a href="https://gupta-aryaman.github.io/blog/python/">#python</a>
+  
+  <a href="https://gupta-aryaman.github.io/blog/multithreading/">#multithreading</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+    
+</body>
+
+</html>

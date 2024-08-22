@@ -3,7 +3,49 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://gupta-aryaman.github.io/blog/</loc>
-    <lastmod>2023-05-31T00:00:00+00:00</lastmod>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/</loc>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/breaking-boundaries/</loc>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/breaking-boundaries/</loc>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/gil/</loc>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/multithreading/</loc>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/no-gil/</loc>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/python/</loc>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/async/</loc>
+    <lastmod>2023-09-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/asynchronous/</loc>
+    <lastmod>2023-09-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/asynchronous-programming-in-python/</loc>
+    <lastmod>2023-09-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/corporate/</loc>
+    <lastmod>2023-07-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/finding-success-in-a-dynamic-environment/</loc>
+    <lastmod>2023-07-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/government-job/</loc>
+    <lastmod>2023-07-25T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://gupta-aryaman.github.io/blog/success/</loc>
+    <lastmod>2023-07-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://gupta-aryaman.github.io/blog/decorators/</loc>
     <lastmod>2023-05-31T00:00:00+00:00</lastmod>
@@ -14,14 +56,8 @@
     <loc>https://gupta-aryaman.github.io/blog/decorators-in-python/</loc>
     <lastmod>2023-05-31T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://gupta-aryaman.github.io/</loc>
-    <lastmod>2023-05-31T00:00:00+00:00</lastmod>
+    <loc>https://gupta-aryaman.github.io/about/</loc>
   </url><url>
-    <loc>https://gupta-aryaman.github.io/blog/python/</loc>
-    <lastmod>2023-05-31T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://gupta-aryaman.github.io/bear/</loc>
-  </url><url>
-    <loc>https://gupta-aryaman.github.io/hugo/</loc>
+    <loc>https://gupta-aryaman.github.io/papershelf/</loc>
   </url>
 </urlset>

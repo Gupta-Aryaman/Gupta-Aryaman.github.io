@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="https://gupta-aryaman.github.io/images/favicon.png" />
+<title>Asynchronous Programming in Python | aryaman&#39;s batcave</title>
+<meta name="title" content="Asynchronous Programming in Python" />
+<meta name="description" content="An optional description for SEO. If not provided, an automatically created summary will be used." />
+<meta name="keywords" content="asynchronous,async,python," />
+
+
+<meta property="og:title" content="Asynchronous Programming in Python" />
+<meta property="og:description" content="An optional description for SEO. If not provided, an automatically created summary will be used." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://gupta-aryaman.github.io/asynchronous-programming-in-python/" /><meta property="og:image" content="https://gupta-aryaman.github.io/images/share.png"/><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2023-09-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-09-21T00:00:00+00:00" /><meta property="og:site_name" content="Hugo ʕ•ᴥ•ʔ Bear" />
+
+
+
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://gupta-aryaman.github.io/images/share.png"/>
+
+<meta name="twitter:title" content="Asynchronous Programming in Python"/>
+<meta name="twitter:description" content="An optional description for SEO. If not provided, an automatically created summary will be used."/>
+
+
+
+<meta itemprop="name" content="Asynchronous Programming in Python">
+<meta itemprop="description" content="An optional description for SEO. If not provided, an automatically created summary will be used."><meta itemprop="datePublished" content="2023-09-21T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-09-21T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1473"><meta itemprop="image" content="https://gupta-aryaman.github.io/images/share.png"/>
+<meta itemprop="keywords" content="asynchronous,async,python," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  body {
+    font-family: Verdana, sans-serif;
+    margin: auto;
+    padding: 20px;
+    max-width: 720px;
+    text-align: left;
+    background-color: #1A1A1A;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: #E0E0E0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  strong,
+  b {
+    color: #222;
+  }
+
+  a {
+    color: #3273dc;
+     
+  }
+
+  .title {
+    text-decoration: none;
+    border: 0;
+  }
+
+  .title span {
+    font-weight: 400;
+  }
+
+  nav a {
+    margin-right: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  input {
+    font-size: 16px;
+  }
+
+  content {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    padding: 2px 5px;
+    background-color: #E0E0E0;
+  }
+
+  pre code {
+    color: #222;
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 14px;
+    overflow-x: auto;
+  }
+
+  div.highlight pre {
+    background-color: initial;
+    color: initial;
+  }
+
+  div.highlight code {
+    background-color: unset;
+    color: unset;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: #222;
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px;
+    text-align: center;
+  }
+
+  .helptext {
+    color: #777;
+    font-size: small;
+  }
+
+  .errorlist {
+    color: #eba613;
+    font-size: small;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: #8b6fcb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #1A1A1A;
+      color: #E0E0E0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    strong,
+    b {
+      color: #eee;
+    }
+
+    a {
+      color: #3A9AD9;
+      text-decoration: none;
+    }
+    a:hover {
+      color: hotpink;
+    }
+    
+    code {
+      background-color: #777;
+    }
+
+    pre code {
+      color: #ddd;
+    }
+
+    blockquote {
+      color: #ccc;
+    }
+
+    textarea,
+    input {
+      background-color: #252525;
+      color: #ddd;
+    }
+
+    .helptext {
+      color: #aaa;
+    }
+  }
+
+</style>
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>aryaman&#39;s batcave</h2>
+</a>
+<nav><a href="/">Home</a>
+
+
+<a href="/blog">Blog</a>
+
+
+<a href="/papershelf">Papershelf</a>
+<a href="/about">About</a>
+</nav>
+</header>
+  <main>
+
+<h1>Asynchronous Programming in Python</h1>
+<p>
+  <i>
+    <time datetime='2023-09-21' pubdate>
+      21 Sep, 2023
+    </time>
+  </i>
+</p>
+
+<content>
+  <h3 id="sync-vs-async">Sync vs Async</h3>
+<p><em><strong>What is a synchronous programming?</strong></em></p>
+<p><a href="https://deepsource.com/glossary/synchronous-programming"><em>Synchronous programming</em></a> is a programming paradigm in which operations are executed sequentially, one after the other. In this model, each operation waits for the previous one to complete before moving on to the next step. This sequential execution can lead to &lsquo;blocking&rsquo; operations, where certain tasks may take a significant amount of time to finish. These blocking operations can pause the entire program&rsquo;s execution, forcing it to wait until the time-consuming task is done before it can proceed. Let&rsquo;s understand it with an example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> time <span style="color:#f92672">import</span> sleep
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>():
+    print(<span style="color:#e6db74">&#34;in foo&#34;</span>)
+    sleep(<span style="color:#ae81ff">10</span>) <span style="color:#75715e">#mimicing some blocking operation</span>
+    print(<span style="color:#e6db74">&#34;end foo&#34;</span>)
+
+foo()
+print(<span style="color:#e6db74">&#34;Termination of the program&#34;</span>)
+</code></pre></div><p><img src="/images/asynchronous-programming-in-python/image1.png" alt=""></p>
+<p>Here, you can observe that the program&rsquo;s execution was strictly sequential, and this led to a halt in the entire program due to a blocking operation inside the <code>foo()</code> function, which took 10 seconds to complete. After this 10-second delay, the program continued its execution.</p>
+<p>This situation isn&rsquo;t ideal because these blocking operations could encompass a wide range of tasks, such as database queries or waiting for API responses, and they unnecessarily delay the execution of unrelated parts of the program. This is precisely where the concept of <em>asynchronization</em> becomes valuable.</p>
+<p><img src="/images/asynchronous-programming-in-python/image2.jpg" alt="Distributed Thoughts: Asynchronous APIs Done Right"></p>
+<p><em><strong>So, what is asynchronization?</strong></em></p>
+<p>In computer programming, <a href="https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)"><em>asynchrony</em></a> encompasses events that occur independently of the primary program flow and methods for managing these events. In essence, asynchronization implies that you can proceed with executing other sections of code without the need to wait for a particular task to finish.</p>
+<p>The first thing when creating an asynchronous program creating a <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines"><em>coroutine</em></a>.</p>
+<h3 id="whats-a-coroutine-in-python">What&rsquo;s a coroutine in Python?</h3>
+<p>A <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines"><em>coroutine</em></a> is simply a wrapped version of a function that allows it to run asynchronously. I would recommend using Python 3.7+ to follow the following guide.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio <span style="color:#75715e">#importing async library</span>
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>(): <span style="color:#75715e">#defining a coroutine object</span>
+    print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
+
+print(main()) <span style="color:#75715e">#Output - &lt;coroutine object main at 0x7f013de5fd80&gt;</span>
+</code></pre></div><p>To create a coroutine object you just need to create a function normally and add an <code>async</code> keyword in front of it. What it essentially does is create a wrapper around this function.</p>
+<p>So when we call this function it creates a coroutine object <code>&lt;coroutine object main at 0x7f013de5fd80&gt;</code> This coroutine object works just like a function and can be executed. To execute a coroutine you need to <em>await</em> it.</p>
+<p>Wait, WHAT?! <!-- raw HTML omitted -->What&rsquo;s <!-- raw HTML omitted --> <a href="https://docs.python.org/3/library/asyncio-task.html#awaitables"><!-- raw HTML omitted -->awaiting<!-- raw HTML omitted --></a><!-- raw HTML omitted -->?<!-- raw HTML omitted --> Let me show you the output of the above snippet of code.</p>
+<p><img src="/images/asynchronous-programming-in-python/image3.png" alt=""></p>
+<p>As we have a coroutine object now, it does not work like a regular Python function.</p>
+<h3 id="async-event-loop">Async Event-Loop</h3>
+<p>Ok. No worries. Let me just await the <code>main()</code> function call and then it should work, right?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
+
+<span style="color:#66d9ef">await</span> main()
+</code></pre></div><p><img src="/images/asynchronous-programming-in-python/image4.png" alt=""></p>
+<p>Oh, no! It gave an error. So what&rsquo;s the issue? The reason it&rsquo;s not running our code because we haven&rsquo;t created an <a href="https://docs.python.org/3/library/asyncio-eventloop.html"><em>event-loop.</em></a></p>
+<p>Whenever we create an asynchronous program in Python we need to start/create an <em>event loop</em>. An <em>event loop</em> typically refers to the core mechanism used for managing and handling asynchronous or non-blocking operations. It&rsquo;s a fundamental component of many asynchronous programming frameworks, such as asyncio which we are using in our study. It is responsible for this simple async syntax, we are seeing here, in the backend. We must start an <strong>event loop</strong> in whatever thread we are running this asynchronous program in.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    print(<span style="color:#e6db74">&#34;hello world&#34;</span>)
+
+asyncio<span style="color:#f92672">.</span>run(main())
+</code></pre></div><p>Hence, to start an event loop we use <code>asyncio.run()</code> and pass it a coroutine object which acts as an <em>entry point</em> to the event loop.</p>
+<h3 id="await-keyword">Await keyword</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    print(<span style="color:#e6db74">&#34;awaiting foo...&#34;</span>)
+    <span style="color:#66d9ef">await</span> foo(<span style="color:#e6db74">&#34;inside foo&#34;</span>)
+    print(<span style="color:#e6db74">&#34;finished awaiting foo&#34;</span>)
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(text):
+    print(text)
+    <span style="color:#66d9ef">await</span> asyncio<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">1</span>)
+
+asyncio<span style="color:#f92672">.</span>run(main())
+</code></pre></div><p>If we look inside the <code>foo()</code> function, the <a href="https://docs.python.org/3/library/asyncio-task.html#awaitables"><em>await keyword</em></a> is required to run an object of coroutine, <!-- raw HTML omitted -->because if you just write something like <!-- raw HTML omitted --> <code>asyncio.sleep(1)</code> <!-- raw HTML omitted -->you are just creating a coroutine but not executing it.<!-- raw HTML omitted --></p>
+<p>And we are allowed to use await because we are present inside an asynchronous function. So, if we try to see the output of the entire code, it would be as follows:</p>
+<p><img src="/images/asynchronous-programming-in-python/image5.png" alt=""></p>
+<p>We can see that we awaited the <code>foo()</code> function call, and going inside the <code>foo()</code> function we waited for 1 sec and then the execution was back to the <code>main()</code> function.</p>
+<blockquote>
+<p>But this is not entirely useful, as we can see that this seems to be just another way of writing a synchronous program as we are waiting for <code>foo()</code> to execute and then we go forward with the execution in the <code>main()</code> function.</p>
+<p>The whole point of asynchronization is to run something else while we are waiting for some other part of the execution to finish which is not achieved here. This can be achieved by creating a task.</p>
+</blockquote>
+<h3 id="asyncio-tasks">asyncio Tasks</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    print(<span style="color:#e6db74">&#34;awaiting foo...&#34;</span>)
+    task <span style="color:#f92672">=</span> asyncio<span style="color:#f92672">.</span>create_task(foo(<span style="color:#e6db74">&#34;inside foo&#34;</span>))
+    print(<span style="color:#e6db74">&#34;finished awaiting foo&#34;</span>)
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(text):
+    print(text)
+    <span style="color:#66d9ef">await</span> asyncio<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">1</span>)
+    print(<span style="color:#e6db74">&#34;Ending foo&#34;</span>)
+
+asyncio<span style="color:#f92672">.</span>run(main())
+</code></pre></div><p>If we see the code above, we are creating a task using <code>create_task()</code> function and passing a coroutine object to it. This essentially tells the program to run the task as soon as there is some kind of waiting in the main line of execution.</p>
+<p><img src="/images/asynchronous-programming-in-python/image6.png" alt=""></p>
+<p>Analyzing the output, we can see that the execution of the main() function is completed and then the execution of foo() starts.</p>
+<blockquote>
+<p><strong><!-- raw HTML omitted -->VERY IMPORTANT RESULT<!-- raw HTML omitted --></strong></p>
+<p>You can also see that the &ldquo;Ending foo&rdquo; never printed and the execution time of the program was only 0.132 sec. Weren&rsquo;t we sleeping for 1 sec, so shouldn&rsquo;t the execution time be at least 1 sec and &ldquo;Ending foo&rdquo; should be printed after? What happened here is when the <code>foo()</code> function started sleeping for 1 sec, the execution of the program was given back to the <code>main()</code> function, and as there weren&rsquo;t any tasks left in the <code>main()</code> function, it terminated and as a result terminated the execution of <code>foo()</code> as well which never completed its execution.</p>
+</blockquote>
+<p><img src="/images/asynchronous-programming-in-python/image7.jpeg" alt="Execution flow"></p>
+<p>So if I want to wait for the <code>foo()</code> to finish it&rsquo;s execution before <code>main()</code> terminates I will need to await it, essentially preventing the <code>main()</code> function to terminate prior to the completion of the task <code>foo()</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    print(<span style="color:#e6db74">&#34;awaiting foo...&#34;</span>)
+    task <span style="color:#f92672">=</span> asyncio<span style="color:#f92672">.</span>create_task(foo(<span style="color:#e6db74">&#34;inside foo&#34;</span>))
+    print(<span style="color:#e6db74">&#34;finished awaiting foo&#34;</span>)
+    <span style="color:#66d9ef">await</span> task
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(text):
+    print(text)
+    <span style="color:#66d9ef">await</span> asyncio<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">1</span>)
+    print(<span style="color:#e6db74">&#34;Ending foo&#34;</span>)
+
+asyncio<span style="color:#f92672">.</span>run(main())
+</code></pre></div><p>Hence the output would be as follows (note the time taken for execution).</p>
+<p><img src="/images/asynchronous-programming-in-python/image8.png" alt=""></p>
+<h3 id="more-examples">More Examples</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fetch_data</span>():
+    print(<span style="color:#e6db74">&#39;Start fetching&#39;</span>)
+    <span style="color:#66d9ef">await</span> asyncio<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">2</span>)  <span style="color:#75715e">#mimcing fetching data via some request</span>
+    print(<span style="color:#e6db74">&#39;Done fetching&#39;</span>)
+    <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;data&#39;</span>: <span style="color:#ae81ff">1</span>}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">print_numbers</span>():
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">10</span>):
+        print(i)
+        <span style="color:#66d9ef">await</span> asyncio<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">0.25</span>) <span style="color:#75715e">#mimcing waiting for a response</span>
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    task1 <span style="color:#f92672">=</span> asyncio<span style="color:#f92672">.</span>create_task(fetch_data())
+    task2 <span style="color:#f92672">=</span> asyncio<span style="color:#f92672">.</span>create_task(print_numbers())
+    
+    <span style="color:#75715e"># need to get the {&#39;data&#39;: 1} value from fetch_data</span>
+    print(task1)   
+
+asyncio<span style="color:#f92672">.</span>run(main())
+</code></pre></div><p>Imagine the above scenario where I need to get the return value <code>{'data': 1}</code> from the <code>fetch_data()</code> coroutine executing via task1 in the <code>main()</code> function. Hence, I declare the task1 and <code>print(task1)</code>. It would have worked in a synchronous environment. But, from what we have learned so far this is counterintuitive.</p>
+<p><img src="/images/asynchronous-programming-in-python/image9.png" alt=""></p>
+<p>As we can see in the output of the above code, we never <em>awaited</em> for the task to be completed, hence we would never get the return value from the function (can relate to promises in JavaScript).</p>
+<p>Hence the correct code should be as follows:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">fetch_data</span>():
+    print(<span style="color:#e6db74">&#39;Start fetching&#39;</span>)
+    <span style="color:#66d9ef">await</span> asyncio<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">2</span>)  <span style="color:#75715e">#mimcing fetching data via some request</span>
+    print(<span style="color:#e6db74">&#39;Done fetching&#39;</span>)
+    <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;data&#39;</span>: <span style="color:#ae81ff">1</span>}
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">print_numbers</span>():
+    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">10</span>):
+        print(i)
+        <span style="color:#66d9ef">await</span> asyncio<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">0.25</span>) <span style="color:#75715e">#mimcing waiting for a response</span>
+
+<span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    task1 <span style="color:#f92672">=</span> asyncio<span style="color:#f92672">.</span>create_task(fetch_data())
+    task2 <span style="color:#f92672">=</span> asyncio<span style="color:#f92672">.</span>create_task(print_numbers())
+    
+    <span style="color:#75715e"># awaiting for task1 to be completed and then using </span>
+    <span style="color:#75715e"># the value it returned</span>
+    value <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> task1
+    print(value)
+    <span style="color:#66d9ef">await</span> task2
+
+asyncio<span style="color:#f92672">.</span>run(main())
+</code></pre></div><p><img src="/images/asynchronous-programming-in-python/image10.png" alt=""></p>
+<p>As we can see in the output, because we awaited for task1 to finish, we can get the value returned by it and print it later. We can further see that as <code>fetch_data()</code> was waiting for 2 sec, for loop in <code>print_numbers()</code> executed 8 times (~2 sec) and gave a chance back to fetch_data() as it&rsquo;s waiting time had ended.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>When we write <code>async def func_name()</code>, what we are doing is wrapping another function with an asynchronous version of it. That version is the <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines"><em>Coroutine</em></a>. To run the <em>coroutine</em> you must <em>await</em> it in some way or add it to the event loop. You can add it to the event loop by creating a task ( <code>asyncio.create_task(func_name())</code> ). This allows you to start multiple <em>coroutines</em> concurrently. Finally, to start your asynchronous program you must create an <a href="https://docs.python.org/3/library/asyncio-eventloop.html"><em>event loop</em></a> which can be done by <a href="http://asyncio.run"><code>asyncio. run(driver_func())</code></a> and passing an entry point coroutine which is generally the driver function of your program (for example the main function).</p>
+<p><strong><!-- raw HTML omitted -->One thing to note is that at a time only a single execution is happening, and it is not to be confused with parallel processing or threading.<!-- raw HTML omitted --></strong></p>
+<h3 id="references">References</h3>
+<ol>
+<li>
+<p><a href="https://deepsource.com/glossary/synchronous-programming">https://deepsource.com/glossary/synchronous-programming</a></p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)">https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)</a></p>
+</li>
+<li>
+<p><a href="https://asyncio.run/">https://asyncio.run/</a></p>
+</li>
+<li>
+<p><a href="https://docs.python.org/3/library/asyncio-task.html#coroutines">https://docs.python.org/3/library/asyncio-task.htm</a>l</p>
+</li>
+<li>
+<p><a href="https://docs.python.org/3/library/asyncio-eventloop.html">https://docs.python.org/3/library/asyncio-eventloop.html</a></p>
+</li>
+<li>
+<p><a href="https://www.youtube.com/@TechWithTim">https://www.youtube.com/@TechWithTim</a></p>
+</li>
+</ol>
+
+</content>
+<p>
+  
+  <a href="https://gupta-aryaman.github.io/blog/asynchronous/">#asynchronous</a>
+  
+  <a href="https://gupta-aryaman.github.io/blog/async/">#async</a>
+  
+  <a href="https://gupta-aryaman.github.io/blog/python/">#python</a>
+  
+</p>
+
+  </main>
+  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+    
+</body>
+
+</html>
