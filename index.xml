@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
-    <lastBuildDate>Sun, 17 Dec 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://gupta-aryaman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 14 Apr 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://gupta-aryaman.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Demystifying Replication and Sharding in MongoDB</title>
+      <link>https://gupta-aryaman.github.io/demystifying-replication-and-sharding-in-mongodb/</link>
+      <pubDate>Sun, 14 Apr 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://gupta-aryaman.github.io/demystifying-replication-and-sharding-in-mongodb/</guid>
+      <description>Making a MongoDB cluster &amp;ldquo;Production Ready&amp;rdquo; by performing database Replication and Sharding (horizontal fragmentation)
+What is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.
+By doing this, will get redundancy and increases data availability with multiple copies of data on different database servers.</description>
+    </item>
+    
     <item>
       <title>Breaking Boundaries</title>
       <link>https://gupta-aryaman.github.io/breaking-boundaries/</link>
@@ -53,7 +64,12 @@ import time start_time = time.time() **call your function** #calling your functi
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://gupta-aryaman.github.io/about/</guid>
-      <description>I love sharing what I’ve learned because I believe teaching and writing are the best ways to see how well I&amp;rsquo;ve grasped something. Here are some of the articles I&amp;rsquo;ve written so far, with many more to come!</description>
+      <description>i am arya-man.
+appreciate you for being here.
+whether it’s dissecting massive SaaS architectures or tinkering with hardware, i love diving deep into the nitty-gritty.
+sharing what i’ve learned is like a virtual high-five, and i’m constantly on the lookout for new challenges.
+next up on my radar? game dev via cpp
+always avaliable on twitter and linkedin</description>
     </item>
     
     <item>
@@ -62,7 +78,7 @@ import time start_time = time.time() **call your function** #calling your functi
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://gupta-aryaman.github.io/papershelf/</guid>
-      <description>Papershelf Lately, I have started reading some papers, both research and white (courtesy - Arpit Bhayani). The ones I have read so far are listed down below -
+      <description>Papershelf i’ve been diving into the world of research and white papers (thanks to Arpit Bhayani!). so far, I’ve checked out these awesome articles -
  WTF: The Who to Follow Service at Twitter Attention Is All You Need  </description>
     </item>
     
