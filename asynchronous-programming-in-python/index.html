@@ -44,11 +44,11 @@
     padding: 20px;
     max-width: 720px;
     text-align: left;
-    background-color: #1A1A1A;
+    background-color: #f1f1f1;
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.5;
-    color: #E0E0E0;
+    color: #444;
   }
 
   h1,
@@ -62,9 +62,12 @@
     color: #222;
   }
 
-  a {
-    color: #3273dc;
-     
+  a, a:visited  {
+    color: #126fad;
+    text-decoration: none;
+  }
+  a:hover {
+    color: hotpink;
   }
 
   .title {
@@ -186,6 +189,7 @@
       color: #3A9AD9;
       text-decoration: none;
     }
+
     a:hover {
       color: hotpink;
     }
@@ -244,7 +248,7 @@
 <content>
   <h3 id="sync-vs-async">Sync vs Async</h3>
 <p><em><strong>What is a synchronous programming?</strong></em></p>
-<p><a href="https://deepsource.com/glossary/synchronous-programming"><em>Synchronous programming</em></a> is a programming paradigm in which operations are executed sequentially, one after the other. In this model, each operation waits for the previous one to complete before moving on to the next step. This sequential execution can lead to &lsquo;blocking&rsquo; operations, where certain tasks may take a significant amount of time to finish. These blocking operations can pause the entire program&rsquo;s execution, forcing it to wait until the time-consuming task is done before it can proceed. Let&rsquo;s understand it with an example:</p>
+<p><a href="https://deepsource.com/glossary/synchronous-programming" target="_blank" rel="noopener"><em>Synchronous programming</em></a> is a programming paradigm in which operations are executed sequentially, one after the other. In this model, each operation waits for the previous one to complete before moving on to the next step. This sequential execution can lead to &lsquo;blocking&rsquo; operations, where certain tasks may take a significant amount of time to finish. These blocking operations can pause the entire program&rsquo;s execution, forcing it to wait until the time-consuming task is done before it can proceed. Let&rsquo;s understand it with an example:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> time <span style="color:#f92672">import</span> sleep
 
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>():
@@ -259,10 +263,10 @@ print(<span style="color:#e6db74">&#34;Termination of the program&#34;</span>)
 <p>This situation isn&rsquo;t ideal because these blocking operations could encompass a wide range of tasks, such as database queries or waiting for API responses, and they unnecessarily delay the execution of unrelated parts of the program. This is precisely where the concept of <em>asynchronization</em> becomes valuable.</p>
 <p><img src="/images/asynchronous-programming-in-python/image2.jpg" alt="Distributed Thoughts: Asynchronous APIs Done Right"></p>
 <p><em><strong>So, what is asynchronization?</strong></em></p>
-<p>In computer programming, <a href="https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)"><em>asynchrony</em></a> encompasses events that occur independently of the primary program flow and methods for managing these events. In essence, asynchronization implies that you can proceed with executing other sections of code without the need to wait for a particular task to finish.</p>
-<p>The first thing when creating an asynchronous program creating a <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines"><em>coroutine</em></a>.</p>
+<p>In computer programming, <a href="https://en.wikipedia.org/wiki/Asynchrony_%28computer_programming%29" target="_blank" rel="noopener"><em>asynchrony</em></a> encompasses events that occur independently of the primary program flow and methods for managing these events. In essence, asynchronization implies that you can proceed with executing other sections of code without the need to wait for a particular task to finish.</p>
+<p>The first thing when creating an asynchronous program creating a <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines" target="_blank" rel="noopener"><em>coroutine</em></a>.</p>
 <h3 id="whats-a-coroutine-in-python">What&rsquo;s a coroutine in Python?</h3>
-<p>A <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines"><em>coroutine</em></a> is simply a wrapped version of a function that allows it to run asynchronously. I would recommend using Python 3.7+ to follow the following guide.</p>
+<p>A <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines" target="_blank" rel="noopener"><em>coroutine</em></a> is simply a wrapped version of a function that allows it to run asynchronously. I would recommend using Python 3.7+ to follow the following guide.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio <span style="color:#75715e">#importing async library</span>
 
 <span style="color:#66d9ef">async</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>(): <span style="color:#75715e">#defining a coroutine object</span>
@@ -271,7 +275,7 @@ print(<span style="color:#e6db74">&#34;Termination of the program&#34;</span>)
 print(main()) <span style="color:#75715e">#Output - &lt;coroutine object main at 0x7f013de5fd80&gt;</span>
 </code></pre></div><p>To create a coroutine object you just need to create a function normally and add an <code>async</code> keyword in front of it. What it essentially does is create a wrapper around this function.</p>
 <p>So when we call this function it creates a coroutine object <code>&lt;coroutine object main at 0x7f013de5fd80&gt;</code> This coroutine object works just like a function and can be executed. To execute a coroutine you need to <em>await</em> it.</p>
-<p>Wait, WHAT?! <!-- raw HTML omitted -->What&rsquo;s <!-- raw HTML omitted --> <a href="https://docs.python.org/3/library/asyncio-task.html#awaitables"><!-- raw HTML omitted -->awaiting<!-- raw HTML omitted --></a><!-- raw HTML omitted -->?<!-- raw HTML omitted --> Let me show you the output of the above snippet of code.</p>
+<p>Wait, WHAT?! <!-- raw HTML omitted -->What&rsquo;s <!-- raw HTML omitted --> <a href="https://docs.python.org/3/library/asyncio-task.html#awaitables" target="_blank" rel="noopener"><!-- raw HTML omitted -->awaiting<!-- raw HTML omitted --></a><!-- raw HTML omitted -->?<!-- raw HTML omitted --> Let me show you the output of the above snippet of code.</p>
 <p><img src="/images/asynchronous-programming-in-python/image3.png" alt=""></p>
 <p>As we have a coroutine object now, it does not work like a regular Python function.</p>
 <h3 id="async-event-loop">Async Event-Loop</h3>
@@ -283,7 +287,7 @@ print(main()) <span style="color:#75715e">#Output - &lt;coroutine object main at
 
 <span style="color:#66d9ef">await</span> main()
 </code></pre></div><p><img src="/images/asynchronous-programming-in-python/image4.png" alt=""></p>
-<p>Oh, no! It gave an error. So what&rsquo;s the issue? The reason it&rsquo;s not running our code because we haven&rsquo;t created an <a href="https://docs.python.org/3/library/asyncio-eventloop.html"><em>event-loop.</em></a></p>
+<p>Oh, no! It gave an error. So what&rsquo;s the issue? The reason it&rsquo;s not running our code because we haven&rsquo;t created an <a href="https://docs.python.org/3/library/asyncio-eventloop.html" target="_blank" rel="noopener"><em>event-loop.</em></a></p>
 <p>Whenever we create an asynchronous program in Python we need to start/create an <em>event loop</em>. An <em>event loop</em> typically refers to the core mechanism used for managing and handling asynchronous or non-blocking operations. It&rsquo;s a fundamental component of many asynchronous programming frameworks, such as asyncio which we are using in our study. It is responsible for this simple async syntax, we are seeing here, in the backend. We must start an <strong>event loop</strong> in whatever thread we are running this asynchronous program in.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> asyncio
 
@@ -305,7 +309,7 @@ asyncio<span style="color:#f92672">.</span>run(main())
     <span style="color:#66d9ef">await</span> asyncio<span style="color:#f92672">.</span>sleep(<span style="color:#ae81ff">1</span>)
 
 asyncio<span style="color:#f92672">.</span>run(main())
-</code></pre></div><p>If we look inside the <code>foo()</code> function, the <a href="https://docs.python.org/3/library/asyncio-task.html#awaitables"><em>await keyword</em></a> is required to run an object of coroutine, <!-- raw HTML omitted -->because if you just write something like <!-- raw HTML omitted --> <code>asyncio.sleep(1)</code> <!-- raw HTML omitted -->you are just creating a coroutine but not executing it.<!-- raw HTML omitted --></p>
+</code></pre></div><p>If we look inside the <code>foo()</code> function, the <a href="https://docs.python.org/3/library/asyncio-task.html#awaitables" target="_blank" rel="noopener"><em>await keyword</em></a> is required to run an object of coroutine, <!-- raw HTML omitted -->because if you just write something like <!-- raw HTML omitted --> <code>asyncio.sleep(1)</code> <!-- raw HTML omitted -->you are just creating a coroutine but not executing it.<!-- raw HTML omitted --></p>
 <p>And we are allowed to use await because we are present inside an asynchronous function. So, if we try to see the output of the entire code, it would be as follows:</p>
 <p><img src="/images/asynchronous-programming-in-python/image5.png" alt=""></p>
 <p>We can see that we awaited the <code>foo()</code> function call, and going inside the <code>foo()</code> function we waited for 1 sec and then the execution was back to the <code>main()</code> function.</p>
@@ -405,27 +409,27 @@ asyncio<span style="color:#f92672">.</span>run(main())
 </code></pre></div><p><img src="/images/asynchronous-programming-in-python/image10.png" alt=""></p>
 <p>As we can see in the output, because we awaited for task1 to finish, we can get the value returned by it and print it later. We can further see that as <code>fetch_data()</code> was waiting for 2 sec, for loop in <code>print_numbers()</code> executed 8 times (~2 sec) and gave a chance back to fetch_data() as it&rsquo;s waiting time had ended.</p>
 <h3 id="conclusion">Conclusion</h3>
-<p>When we write <code>async def func_name()</code>, what we are doing is wrapping another function with an asynchronous version of it. That version is the <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines"><em>Coroutine</em></a>. To run the <em>coroutine</em> you must <em>await</em> it in some way or add it to the event loop. You can add it to the event loop by creating a task ( <code>asyncio.create_task(func_name())</code> ). This allows you to start multiple <em>coroutines</em> concurrently. Finally, to start your asynchronous program you must create an <a href="https://docs.python.org/3/library/asyncio-eventloop.html"><em>event loop</em></a> which can be done by <a href="http://asyncio.run"><code>asyncio. run(driver_func())</code></a> and passing an entry point coroutine which is generally the driver function of your program (for example the main function).</p>
+<p>When we write <code>async def func_name()</code>, what we are doing is wrapping another function with an asynchronous version of it. That version is the <a href="https://docs.python.org/3/library/asyncio-task.html#coroutines" target="_blank" rel="noopener"><em>Coroutine</em></a>. To run the <em>coroutine</em> you must <em>await</em> it in some way or add it to the event loop. You can add it to the event loop by creating a task ( <code>asyncio.create_task(func_name())</code> ). This allows you to start multiple <em>coroutines</em> concurrently. Finally, to start your asynchronous program you must create an <a href="https://docs.python.org/3/library/asyncio-eventloop.html" target="_blank" rel="noopener"><em>event loop</em></a> which can be done by <a href="http://asyncio.run" target="_blank" rel="noopener"><code>asyncio. run(driver_func())</code></a> and passing an entry point coroutine which is generally the driver function of your program (for example the main function).</p>
 <p><strong><!-- raw HTML omitted -->One thing to note is that at a time only a single execution is happening, and it is not to be confused with parallel processing or threading.<!-- raw HTML omitted --></strong></p>
 <h3 id="references">References</h3>
 <ol>
 <li>
-<p><a href="https://deepsource.com/glossary/synchronous-programming">https://deepsource.com/glossary/synchronous-programming</a></p>
+<p><a href="https://deepsource.com/glossary/synchronous-programming" target="_blank" rel="noopener">https://deepsource.com/glossary/synchronous-programming</a></p>
 </li>
 <li>
-<p><a href="https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)">https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Asynchrony_%28computer_programming%29" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)</a></p>
 </li>
 <li>
-<p><a href="https://asyncio.run/">https://asyncio.run/</a></p>
+<p><a href="https://asyncio.run/" target="_blank" rel="noopener">https://asyncio.run/</a></p>
 </li>
 <li>
-<p><a href="https://docs.python.org/3/library/asyncio-task.html#coroutines">https://docs.python.org/3/library/asyncio-task.htm</a>l</p>
+<p><a href="https://docs.python.org/3/library/asyncio-task.html#coroutines" target="_blank" rel="noopener">https://docs.python.org/3/library/asyncio-task.htm</a>l</p>
 </li>
 <li>
-<p><a href="https://docs.python.org/3/library/asyncio-eventloop.html">https://docs.python.org/3/library/asyncio-eventloop.html</a></p>
+<p><a href="https://docs.python.org/3/library/asyncio-eventloop.html" target="_blank" rel="noopener">https://docs.python.org/3/library/asyncio-eventloop.html</a></p>
 </li>
 <li>
-<p><a href="https://www.youtube.com/@TechWithTim">https://www.youtube.com/@TechWithTim</a></p>
+<p><a href="https://www.youtube.com/@TechWithTim" target="_blank" rel="noopener">https://www.youtube.com/@TechWithTim</a></p>
 </li>
 </ol>
 
@@ -441,10 +445,72 @@ asyncio<span style="color:#f92672">.</span>run(main())
 </p>
 
   </main>
-  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+  <footer>
+
+
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .newsletter-container {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+    .newsletter-container p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .newsletter-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .newsletter-input {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px 0 0 5px;
+        flex: 1;
+    }
+    .newsletter-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        background-color: #555;
+        color: white;
+        cursor: pointer;
+        border-radius: 0 5px 5px 0;
+    }
+    .newsletter-button:hover {
+        background-color: #333;
+    }
+</style>
+</head>
+<body>
+
+
+
+<div class="newsletter-container">
+<p>Want more content like this? Join my newsletter down below to receive updates to your mailbox</p>
+<form class="newsletter-form" action="https://space.us14.list-manage.com/subscribe/post?u=9826b167b24adbcba9091190f&amp;amp;id=f90f480251&amp;amp;f_id=00eb8fe1f0" method="post">
+    <input class="newsletter-input" type="email" name="EMAIL" placeholder="example@example.com" required>
+    <button class="newsletter-button" type="submit">Subscribe</button>
+</form>
+</div>
+
+
+
+
+Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
 </footer>
 
     
-</body>
+
+  </body>
 
 </html>

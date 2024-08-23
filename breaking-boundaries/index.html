@@ -44,11 +44,11 @@
     padding: 20px;
     max-width: 720px;
     text-align: left;
-    background-color: #1A1A1A;
+    background-color: #f1f1f1;
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.5;
-    color: #E0E0E0;
+    color: #444;
   }
 
   h1,
@@ -62,9 +62,12 @@
     color: #222;
   }
 
-  a {
-    color: #3273dc;
-     
+  a, a:visited  {
+    color: #126fad;
+    text-decoration: none;
+  }
+  a:hover {
+    color: hotpink;
   }
 
   .title {
@@ -186,6 +189,7 @@
       color: #3A9AD9;
       text-decoration: none;
     }
+
     a:hover {
       color: hotpink;
     }
@@ -252,7 +256,7 @@
 <p>3 big contenders for dealing with multiple tasks in Python -</p>
 <ol>
 <li>
-<p>Asyncio - <strong>In computer programming,</strong> <a href="https://en.wikipedia.org/wiki/Asynchrony_(computer_programming)"><em><strong>asynchrony</strong></em></a> <strong>encompasses events that occur independently of the primary program flow and methods for managing these events. In essence, asynchronization implies that you can proceed with executing other sections of code without the need to wait for a particular task to finish.</strong></p>
+<p>Asyncio - <strong>In computer programming,</strong> <a href="https://en.wikipedia.org/wiki/Asynchrony_%28computer_programming%29" target="_blank" rel="noopener"><em><strong>asynchrony</strong></em></a> <strong>encompasses events that occur independently of the primary program flow and methods for managing these events. In essence, asynchronization implies that you can proceed with executing other sections of code without the need to wait for a particular task to finish.</strong></p>
 <p>For example, asynchronous programming is beneficial to use where multiple database interactions are there, database read/write operations generally take a lot of time hence the flow of execution can be changed instead of the database call to get completed.</p>
 <ul>
 <li>
@@ -451,7 +455,7 @@ print(ans)
 <p><img src="/images/breaking-boundaries/image12.png" alt=""></p>
 <p><img src="/images/breaking-boundaries/image13.png" alt=""></p>
 <!-- raw HTML omitted -->
-<p>In PEP - Python Enhancement Proposals - a <a href="https://peps.python.org/pep-0703/">proposal</a> was made, to make the GIL optional, proposing to adding a build configuration and to let it run Python code without the global interpreter lock and with the necessary changes needed to make the interpreter thread-safe.</p>
+<p>In PEP - Python Enhancement Proposals - a <a href="https://peps.python.org/pep-0703/" target="_blank" rel="noopener">proposal</a> was made, to make the GIL optional, proposing to adding a build configuration and to let it run Python code without the global interpreter lock and with the necessary changes needed to make the interpreter thread-safe.</p>
 <p>Over the years, various efforts have been made to overcome the limitations posed by the GIL:</p>
 <ol>
 <li>
@@ -523,14 +527,14 @@ print(ans)
 <p>Cons: More unknowns and a large cost.</p>
 </li>
 </ul>
-<h3 id="free-threading-patch---linkhttpwwwpythonorgftppythoncontrib-09-dec-1999systemthreadingtargz"><strong>FREE-THREADING Patch -</strong> <a href="http://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.tar.gz">link</a></h3>
+<h3 id="free-threading-patch---linkhttpwwwpythonorgftppythoncontrib-09-dec-1999systemthreadingtargz"><strong>FREE-THREADING Patch -</strong> <a href="http://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.tar.gz" target="_blank" rel="noopener">link</a></h3>
 <blockquote>
-<p><em>Released in 1996, the Free Threading patch was built for Python 1.4 by Greg Stein. Unfortunately, Python 1.4 is very old and cannot be built on modern systems of today’s times. Hence, we would be looking into</em> <a href="http://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html"><em>benchmarkings done by Dave Beazley</em></a> <em>in 2011.</em></p>
+<p><em>Released in 1996, the Free Threading patch was built for Python 1.4 by Greg Stein. Unfortunately, Python 1.4 is very old and cannot be built on modern systems of today’s times. Hence, we would be looking into</em> <a href="http://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html" target="_blank" rel="noopener"><em>benchmarkings done by Dave Beazley</em></a> <em>in 2011.</em></p>
 </blockquote>
 <p>First, he wrote a simple spin-loop and see what happened:</p>
 <p><img src="/images/breaking-boundaries/image14.png" alt=""></p>
 <p>Using the original version of Python-1.4 (with the GIL), this code ran in about 1.9 seconds. Using the patched GIL-less version, it ran in about 12.7 seconds. <strong>That&rsquo;s about 6.7 times slower</strong>. Yow!</p>
-<p>Just to further confirm his findings, he ran the included Tools/scripts/<a href="http://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.tar.gz">pystone.py</a> benchmark (modified to run slightly longer in order to get more accurate timings).</p>
+<p>Just to further confirm his findings, he ran the included Tools/scripts/<a href="http://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.tar.gz" target="_blank" rel="noopener">pystone.py</a> benchmark (modified to run slightly longer in order to get more accurate timings).</p>
 <p>First, with the GIL:</p>
 <p><img src="/images/breaking-boundaries/image15.png" alt=""></p>
 <p>Now, without the GIL:</p>
@@ -540,7 +544,7 @@ print(ans)
 <p><img src="/images/breaking-boundaries/image17.png" alt=""></p>
 <p>If we run this code with the GIL, the execution time is <strong>about 2.5 seconds or approximately 1.3 times slower than the single-threaded version</strong> (1.9 seconds). Using the <strong>GIL-less Python, the execution time is 18.5 seconds or approximately 1.45 times slower than the single-threaded version</strong> (12.7 seconds). <!-- raw HTML omitted -->Just to emphasize, the GIL-less Python running with two-threads is running more than<!-- raw HTML omitted --> <strong><!-- raw HTML omitted -->7 times slower<!-- raw HTML omitted --></strong> <!-- raw HTML omitted -->than the version with a GIL. <!-- raw HTML omitted --> </p>
 <p><em>Ah, but what about preemption you ask? If we return to the example above in the section about reentrancy, we will find that removing the GIL, does indeed, allow free threading and long-running calculations to be preempted. Success! Needless to say, there might be a few reasons why the patch quietly disappeared.</em></p>
-<h3 id="gilectomy-by-larry-hastings---linkhttpsgithubcomlarryhastingsgilectomy"><strong>GILECTOMY <em>by Larry Hastings</em> -</strong> <a href="https://github.com/larryhastings/gilectomy"><strong>link</strong></a></h3>
+<h3 id="gilectomy-by-larry-hastings---linkhttpsgithubcomlarryhastingsgilectomy"><strong>GILECTOMY <em>by Larry Hastings</em> -</strong> <a href="https://github.com/larryhastings/gilectomy" target="_blank" rel="noopener"><strong>link</strong></a></h3>
 <p>The earlier effort of removing GIL was more of a failure, as it worsened single thread performance as well as the multi threaded program ran slower compared running the same on single thread.</p>
 <p>Hence, <strong>3 political considerations</strong> Larry Hastings tried to keep in mind while building Gilectomy were -</p>
 <ul>
@@ -619,7 +623,7 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span
 </blockquote>
 <p><strong>What happened to Gilectomy later?</strong></p>
 <p>The last update in Pycon 2019 was that after significant work <em>Larry Hastings</em> was still able to get the performance of his non-GIL version to match that of to Python with the GIL, but with a significant caveat; the default Python version ran only on a single core (as expected) - the non-GIL version needed to run on 7 cores to keep up. Larry Hastings later admitted that work has stalled, and he needs a new approach since the general idea of trying to maintain the general reference counting system, but protect the reference counts without a Global lock is not tenable.</p>
-<h3 id="nogil-by-sam-gross---linkhttpsgithubcomcolesburynogil">nogil by <em>Sam Gross</em> - <a href="https://github.com/colesbury/nogil">link</a></h3>
+<h3 id="nogil-by-sam-gross---linkhttpsgithubcomcolesburynogil">nogil by <em>Sam Gross</em> - <a href="https://github.com/colesbury/nogil" target="_blank" rel="noopener">link</a></h3>
 <p><em>nogil</em> is a <strong>proof-of-concept implementation</strong> of CPython that supports multithreading without the global interpreter lock (GIL). The purpose of this project was to show -</p>
 <ol>
 <li>
@@ -716,31 +720,31 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span
 <h3 id="references--">References -</h3>
 <ul>
 <li>
-<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://discuss.python.org/t/a-fast-free-threading-python/27903</a></p>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903" target="_blank" rel="noopener">https://discuss.python.org/t/a-fast-free-threading-python/27903</a></p>
 </li>
 <li>
-<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.README</a></p>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903" target="_blank" rel="noopener">https://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.README</a></p>
 </li>
 <li>
-<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://stackify.com/python-garbage-collection/</a></p>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903" target="_blank" rel="noopener">https://stackify.com/python-garbage-collection/</a></p>
 </li>
 <li>
-<p><a href="https://www.youtube.com/watch?v=P3AyI_u66Bw">Larry Hastings - Removing Python&rsquo;s GIL: The Gilectomy - PyCon 2016</a></p>
+<p><a href="https://www.youtube.com/watch?v=P3AyI_u66Bw" target="_blank" rel="noopener">Larry Hastings - Removing Python&rsquo;s GIL: The Gilectomy - PyCon 2016</a></p>
 </li>
 <li>
-<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">http://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html</a></p>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903" target="_blank" rel="noopener">http://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html</a></p>
 </li>
 <li>
-<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://pythoncapi.readthedocs.io/gilectomy.html</a></p>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903" target="_blank" rel="noopener">https://pythoncapi.readthedocs.io/gilectomy.html</a></p>
 </li>
 <li>
-<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://github.com/larryhastings/gilectomy</a></p>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903" target="_blank" rel="noopener">https://github.com/larryhastings/gilectomy</a></p>
 </li>
 <li>
-<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://github.com/colesbury/nogil</a></p>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903" target="_blank" rel="noopener">https://github.com/colesbury/nogil</a></p>
 </li>
 <li>
-<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903">https://docs.google.com/document/d/18CXhDb1ygxg-YXNBJNzfzZsDFosB5e6BfnXLlejd9l0</a></p>
+<p><a href="https://discuss.python.org/t/a-fast-free-threading-python/27903" target="_blank" rel="noopener">https://docs.google.com/document/d/18CXhDb1ygxg-YXNBJNzfzZsDFosB5e6BfnXLlejd9l0</a></p>
 </li>
 </ul>
 
@@ -760,10 +764,72 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span
 </p>
 
   </main>
-  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+  <footer>
+
+
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .newsletter-container {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+    .newsletter-container p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .newsletter-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .newsletter-input {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px 0 0 5px;
+        flex: 1;
+    }
+    .newsletter-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        background-color: #555;
+        color: white;
+        cursor: pointer;
+        border-radius: 0 5px 5px 0;
+    }
+    .newsletter-button:hover {
+        background-color: #333;
+    }
+</style>
+</head>
+<body>
+
+
+
+<div class="newsletter-container">
+<p>Want more content like this? Join my newsletter down below to receive updates to your mailbox</p>
+<form class="newsletter-form" action="https://space.us14.list-manage.com/subscribe/post?u=9826b167b24adbcba9091190f&amp;amp;id=f90f480251&amp;amp;f_id=00eb8fe1f0" method="post">
+    <input class="newsletter-input" type="email" name="EMAIL" placeholder="example@example.com" required>
+    <button class="newsletter-button" type="submit">Subscribe</button>
+</form>
+</div>
+
+
+
+
+Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
 </footer>
 
     
-</body>
+
+  </body>
 
 </html>

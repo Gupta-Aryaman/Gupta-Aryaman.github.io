@@ -44,11 +44,11 @@
     padding: 20px;
     max-width: 720px;
     text-align: left;
-    background-color: #1A1A1A;
+    background-color: #f1f1f1;
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.5;
-    color: #E0E0E0;
+    color: #444;
   }
 
   h1,
@@ -62,9 +62,12 @@
     color: #222;
   }
 
-  a {
-    color: #3273dc;
-     
+  a, a:visited  {
+    color: #126fad;
+    text-decoration: none;
+  }
+  a:hover {
+    color: hotpink;
   }
 
   .title {
@@ -186,6 +189,7 @@
       color: #3A9AD9;
       text-decoration: none;
     }
+
     a:hover {
       color: hotpink;
     }
@@ -290,10 +294,72 @@
 </p>
 
   </main>
-  <footer>Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+  <footer>
+
+
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .newsletter-container {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+    .newsletter-container p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+    .newsletter-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .newsletter-input {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px 0 0 5px;
+        flex: 1;
+    }
+    .newsletter-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        background-color: #555;
+        color: white;
+        cursor: pointer;
+        border-radius: 0 5px 5px 0;
+    }
+    .newsletter-button:hover {
+        background-color: #333;
+    }
+</style>
+</head>
+<body>
+
+
+
+<div class="newsletter-container">
+<p>Want more content like this? Join my newsletter down below to receive updates to your mailbox</p>
+<form class="newsletter-form" action="https://space.us14.list-manage.com/subscribe/post?u=9826b167b24adbcba9091190f&amp;amp;id=f90f480251&amp;amp;f_id=00eb8fe1f0" method="post">
+    <input class="newsletter-input" type="email" name="EMAIL" placeholder="example@example.com" required>
+    <button class="newsletter-button" type="submit">Subscribe</button>
+</form>
+</div>
+
+
+
+
+Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
 </footer>
 
     
-</body>
+
+  </body>
 
 </html>
