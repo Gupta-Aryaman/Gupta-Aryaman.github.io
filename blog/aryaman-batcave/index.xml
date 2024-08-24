@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>aryaman-batcave on aryaman&#39;s batcave</title>
+    <link>https://aryaman.space/blog/aryaman-batcave/</link>
+    <description>Recent content in aryaman-batcave on aryaman&#39;s batcave</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
+    <lastBuildDate>Sun, 14 Apr 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://aryaman.space/blog/aryaman-batcave/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Demystifying Replication and Sharding in MongoDB</title>
+      <link>https://aryaman.space/demystifying-replication-and-sharding-in-mongodb/</link>
+      <pubDate>Sun, 14 Apr 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://aryaman.space/demystifying-replication-and-sharding-in-mongodb/</guid>
+      <description>Making a MongoDB cluster &amp;ldquo;Production Ready&amp;rdquo; by performing database Replication and Sharding (horizontal fragmentation)
+What is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.
+By doing this, will get redundancy and increases data availability with multiple copies of data on different database servers.</description>
+    </item>
+    
+    <item>
+      <title>Breaking Boundaries</title>
+      <link>https://aryaman.space/breaking-boundaries/</link>
+      <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://aryaman.space/breaking-boundaries/</guid>
+      <description>Python faces challenges in fully exploiting the growing capabilities of modern hardware. As hardware continues to advance with more CPU cores, faster processors, and abundant memory, Python&amp;rsquo;s inherent design and execution model can often fall short in taking full advantage of these resources. Its single-threaded nature and certain architectural choices can result in suboptimal performance in scenarios where parallelism and hardware acceleration are vital. This limitation prompts developers to seek alternative solutions, such as integrating Python with external libraries, languages, or technologies, to overcome these hardware-related constraints.</description>
+    </item>
+    
+    <item>
+      <title>Asynchronous Programming in Python</title>
+      <link>https://aryaman.space/asynchronous-programming-in-python/</link>
+      <pubDate>Thu, 21 Sep 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://aryaman.space/asynchronous-programming-in-python/</guid>
+      <description>Sync vs Async What is a synchronous programming?
+Synchronous programming is a programming paradigm in which operations are executed sequentially, one after the other. In this model, each operation waits for the previous one to complete before moving on to the next step. This sequential execution can lead to &amp;lsquo;blocking&amp;rsquo; operations, where certain tasks may take a significant amount of time to finish. These blocking operations can pause the entire program&amp;rsquo;s execution, forcing it to wait until the time-consuming task is done before it can proceed.</description>
+    </item>
+    
+    <item>
+      <title>Finding Success in a Dynamic Environment</title>
+      <link>https://aryaman.space/finding-success-in-a-dynamic-environment/</link>
+      <pubDate>Tue, 25 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://aryaman.space/finding-success-in-a-dynamic-environment/</guid>
+      <description>Lessons learned from my internship at a government firm Introduction Embarking on an internship journey within a corporate government firm can be exciting and challenging. I was amazed by the valuable lessons and experiences that awaited me as I delved into this professional realm. In this article, I will share the key insights I gained during my internship, from the importance of collaboration to the significance of clean code practices. Join me as we uncover the secrets to thriving in this dynamic and rewarding environment.</description>
+    </item>
+    
+    <item>
+      <title>Decorators in Python</title>
+      <link>https://aryaman.space/decorators-in-python/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://aryaman.space/decorators-in-python/</guid>
+      <description>What on earth are decorators??? Decorators are essentially single reusable functions that take a &amp;ldquo;function&amp;rdquo; as input and return a modified version of it. Decorators are just a bit different from regular functions because they wrap the &amp;ldquo;input function&amp;rdquo; to extend its functionality without modifying it.
+What does wrapping mean?
+import time start_time = time.time() **call your function** #calling your function end_time = time.time() print(&amp;#34;Time Taken = &amp;#34;, end_time-start_time) Here you can see that your function call is being &amp;ldquo;wrapped&amp;rdquo; between lines of code.</description>
+    </item>
+    
+  </channel>
+</rss>
