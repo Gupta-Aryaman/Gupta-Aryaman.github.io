@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>blog@aryaman on aryaman&#39;s batcave</title>
+    <title>home on aryaman&#39;s batcave</title>
     <link>https://gupta-aryaman.github.io/</link>
-    <description>Recent content in blog@aryaman on aryaman&#39;s batcave</description>
+    <description>Recent content in home on aryaman&#39;s batcave</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
@@ -59,7 +59,7 @@ import time start_time = time.time() **call your function** #calling your functi
     </item>
     
     <item>
-      <title>About</title>
+      <title>about</title>
       <link>https://gupta-aryaman.github.io/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -74,7 +74,7 @@ you can check out my work on github</description>
     </item>
     
     <item>
-      <title>Papershelf</title>
+      <title>papershelf</title>
       <link>https://gupta-aryaman.github.io/papershelf/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       

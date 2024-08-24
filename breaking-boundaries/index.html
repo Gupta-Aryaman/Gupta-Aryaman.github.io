@@ -769,7 +769,7 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span
 <style>
     .newsletter-container {
         width: 100%;
-        max-width: 50%;
+        max-width: 60%;
         margin: 0 auto;
         padding: 20px;
         text-align: center;
@@ -777,11 +777,7 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span
 
     .newsletter-container p {
         font-size: 16px;
-        margin-bottom: -17px;
-    }
-
-    .p-group {
-        margin-bottom: 5px;
+        margin-bottom: -15px;
     }
 
     .newsletter-container p:hover {
@@ -790,7 +786,7 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span
 
     .newsletter-form {
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         align-items: center;
         width: 100%;
     }
@@ -801,7 +797,7 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span
         border: 0px solid #ccc;
         border-radius: 5px 0 0 5px;
         flex: 1;
-        width: 100%;
+        width: 70%;  
     }
 
     .newsletter-button {
@@ -812,12 +808,31 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span
         color: white;
         cursor: pointer;
         border-radius: 0 5px 5px 0;
-        white-space: nowrap;
+        width: 30%;  
+        box-sizing: border-box;  
     }
 
     .newsletter-button:hover {
         background-color: rgb(187, 35, 111);
     }
+
+     
+    @media (max-width: 655px) {
+        .newsletter-input {
+            width: 60%;
+            font-size: 12px;
+        }
+
+        .newsletter-container {
+            max-width: 80%;
+        }
+
+        .newsletter-button {
+            width: 40%;
+            font-size: 12px;  
+        }
+    }
+</style>
 </style>
 </head>
 <body>
@@ -835,10 +850,6 @@ threads <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span
         <button class="newsletter-button" type="submit">Subscribe</button>
     </form>
 </div>
-
-
-
-
 
 
 
