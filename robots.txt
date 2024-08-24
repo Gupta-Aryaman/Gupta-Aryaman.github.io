@@ -1,2 +1,2 @@
 User-Agent: *
-Sitemap: https://gupta-aryaman.github.io/sitemap.xml
+Sitemap: https://aryaman.space/sitemap.xml

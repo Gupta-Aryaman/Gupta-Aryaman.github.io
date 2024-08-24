@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>no-gil on aryaman&#39;s batcave</title>
-    <link>https://gupta-aryaman.github.io/blog/no-gil/</link>
+    <link>https://aryaman.space/blog/no-gil/</link>
     <description>Recent content in no-gil on aryaman&#39;s batcave</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
-    <lastBuildDate>Sun, 17 Dec 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://gupta-aryaman.github.io/blog/no-gil/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 17 Dec 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://aryaman.space/blog/no-gil/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Breaking Boundaries</title>
-      <link>https://gupta-aryaman.github.io/breaking-boundaries/</link>
+      <link>https://aryaman.space/breaking-boundaries/</link>
       <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://gupta-aryaman.github.io/breaking-boundaries/</guid>
+      <guid>https://aryaman.space/breaking-boundaries/</guid>
       <description>Python faces challenges in fully exploiting the growing capabilities of modern hardware. As hardware continues to advance with more CPU cores, faster processors, and abundant memory, Python&amp;rsquo;s inherent design and execution model can often fall short in taking full advantage of these resources. Its single-threaded nature and certain architectural choices can result in suboptimal performance in scenarios where parallelism and hardware acceleration are vital. This limitation prompts developers to seek alternative solutions, such as integrating Python with external libraries, languages, or technologies, to overcome these hardware-related constraints.</description>
     </item>
     
