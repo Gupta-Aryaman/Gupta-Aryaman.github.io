@@ -238,6 +238,17 @@
     <li>
       <span>
         <i>
+          <time datetime='2024-08-21' pubdate>
+            21 Aug, 2024
+          </time>
+        </i>
+      </span>
+      <a href="https://gupta-aryaman.github.io/test/" >test</a>
+    </li>
+    
+    <li>
+      <span>
+        <i>
           <time datetime='2024-04-14' pubdate>
             14 Apr, 2024
           </time>
@@ -338,32 +349,41 @@
 <style>
     .newsletter-container {
         width: 100%;
-        max-width: 400px;
+        max-width: 50%;
         margin: 0 auto;
         padding: 20px;
-         
         text-align: center;
     }
+
     .newsletter-container p {
         font-size: 16px;
-        margin-bottom: -15px;
+        margin-bottom: -17px;
     }
+
+    .p-group {
+        margin-bottom: 5px;
+    }
+
     .newsletter-container p:hover {
         color: hotpink;
     }
+
     .newsletter-form {
         display: flex;
         justify-content: center;
         align-items: center;
+        width: 100%;
     }
+
     .newsletter-input {
         padding: 10px;
         font-size: 16px;
         border: 0px solid #ccc;
         border-radius: 5px 0 0 5px;
         flex: 1;
-         
+        width: 100%;
     }
+
     .newsletter-button {
         padding: 10px 20px;
         font-size: 14px;
@@ -372,7 +392,9 @@
         color: white;
         cursor: pointer;
         border-radius: 0 5px 5px 0;
+        white-space: nowrap;
     }
+
     .newsletter-button:hover {
         background-color: rgb(187, 35, 111);
     }
@@ -380,15 +402,13 @@
 </head>
 <body>
 
-
-
-
-
 <div class="newsletter-container">
-    <p>this sounds fun</p>
-    <p>this sounds fun</p>
-    <p>this sounds fun</p>
-    <p>this sounds fun</p>
+    <div class="p-group">
+        <p>this sounds fun</p>
+        <p>this sounds fun</p>
+        <p>this sounds fun</p>
+        <p>this sounds fun</p>
+    </div>
     
     <form class="newsletter-form" action="https://space.us14.list-manage.com/subscribe/post?u=9826b167b24adbcba9091190f&amp;amp;id=f90f480251&amp;amp;f_id=00eb8fe1f0" method="post">
         <input class="newsletter-input" type="email" name="EMAIL" placeholder="subscribe@newsletter.com" required>
