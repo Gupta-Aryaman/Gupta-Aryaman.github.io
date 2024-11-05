@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="https://aryaman.space/images/favicon.png" />
+<title>From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP | aryaman&#39;s batcave</title>
+<meta name="title" content="From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP" />
+<meta name="description" content="Using Spark NLP to Process Handwritten Medical Prescriptions and discuss various underlying concepts." />
+<meta name="keywords" content="Spark-NLP,Handwritten-Prescription-Processing,Medical-Text-Extraction,NER,LSTM,Document,Char-CNN,BERT,BERT-Embeddings,CoNLL," />
+
+
+<meta property="og:title" content="From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP" />
+<meta property="og:description" content="Using Spark NLP to Process Handwritten Medical Prescriptions and discuss various underlying concepts." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://aryaman.space/from-scribbles-to-structured-data-processing-handwritten-prescriptions-with-spark-nlp/" /><meta property="og:image" content="https://aryaman.space/images/medical-text-extraction/cover_img.webp" /><meta property="article:section" content="blog" />
+<meta property="article:published_time" content="2024-11-05T21:10:01+05:30" />
+<meta property="article:modified_time" content="2024-11-05T21:10:01+05:30" /><meta property="og:site_name" content="aryaman&#39;s batcave" />
+
+
+
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://aryaman.space/images/medical-text-extraction/cover_img.webp"/>
+
+<meta name="twitter:title" content="From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP"/>
+<meta name="twitter:description" content="Using Spark NLP to Process Handwritten Medical Prescriptions and discuss various underlying concepts."/>
+
+
+
+<meta itemprop="name" content="From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP">
+<meta itemprop="description" content="Using Spark NLP to Process Handwritten Medical Prescriptions and discuss various underlying concepts."><meta itemprop="datePublished" content="2024-11-05T21:10:01+05:30" />
+<meta itemprop="dateModified" content="2024-11-05T21:10:01+05:30" />
+<meta itemprop="wordCount" content="2412"><meta itemprop="image" content="https://aryaman.space/images/medical-text-extraction/cover_img.webp">
+<meta itemprop="keywords" content="Spark-NLP,Handwritten-Prescription-Processing,Medical-Text-Extraction,NER,LSTM,Document,Char-CNN,BERT,BERT-Embeddings,CoNLL," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  body {
+    font-family: Verdana, sans-serif;
+    margin: auto;
+    padding: 20px;
+    max-width: 720px;
+    text-align: left;
+    background-color: #f1f1f1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: #444;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  strong,
+  b {
+    color: #222;
+  }
+
+  a, a:visited  {
+    color: #126fad;
+    text-decoration: none;
+  }
+  a:hover {
+    color: hotpink;
+  }
+
+  .title {
+    text-decoration: none;
+    border: 0;
+  }
+
+  .title span {
+    font-weight: 400;
+  }
+
+  nav a {
+    margin-right: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  input {
+    font-size: 16px;
+  }
+
+  content {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    padding: 2px 5px;
+    background-color: #E0E0E0;
+  }
+
+  pre code {
+    color: #222;
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 14px;
+    overflow-x: auto;
+  }
+
+  div.highlight pre {
+    background-color: initial;
+    color: initial;
+  }
+
+  div.highlight code {
+    background-color: unset;
+    color: unset;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: #222;
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px;
+    text-align: center;
+  }
+
+  .helptext {
+    color: #777;
+    font-size: small;
+  }
+
+  .errorlist {
+    color: #eba613;
+    font-size: small;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: #8b6fcb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #1A1A1A;
+      color: #E0E0E0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    strong,
+    b {
+      color: #eee;
+    }
+
+    a, a:visited {
+      color: #3A9AD9;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: hotpink;
+    }
+    
+    code {
+      background-color: #777;
+    }
+
+    pre code {
+      color: #ddd;
+    }
+
+    blockquote {
+      color: #ccc;
+    }
+
+    textarea,
+    input {
+      background-color: #252525;
+      color: #ddd;
+    }
+
+    .helptext {
+      color: #aaa;
+    }
+  }
+
+</style>
+</head>
+
+<body>
+  <header><a href="/" class="title">
+  <h2>aryaman&#39;s batcave</h2>
+</a>
+<nav><a href="/">home</a>
+
+
+<a href="/blog">blog</a>
+
+
+<a href="/papershelf">papershelf</a>
+<a href="/about">about</a>
+</nav>
+</header>
+  <main>
+
+<h1>From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP</h1>
+<p>
+  <i>
+    <time datetime='2024-11-05' pubdate>
+      05 Nov, 2024
+    </time>
+  </i>
+</p>
+
+<content>
+  <!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<h2 id="introduction">Introduction</h2>
+<p>Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.</p>
+<p>Automating this process requires a robust combination of <em>Optical Character Recognition</em> (OCR) and <em>Natural Language Processing</em> (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.</p>
+<p>In this article, we delve into a <em>Spark</em> NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging <em>BERT embeddings</em> for contextual understanding and a custom <em>Named Entity Recognition</em>(NER) model, this approach promises to streamline information extraction in medical workflows. From OCR text extraction to entity recognition and model training, each step is tailored to maximize accuracy for complex medical terminology.</p>
+<h2 id="1-extract-handwritten-text-using-ocr">1. Extract Handwritten text using OCR</h2>
+<p>The first and foremost step is to use an OCR to extract handwritten texts from the doctor&rsquo;s prescriptions. I have used <a href="https://aws.amazon.com/textract/" target="_blank" rel="noopener">AWS Textract</a> that automatically extracts text, handwriting, layout elements, and data from scanned documents.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">detect_text</span>(local_file, region_name, aws_access_key_id, aws_secret_access_key):
+    <span style="color:#75715e"># Initialize Textract client</span>
+    textract <span style="color:#f92672">=</span> boto3<span style="color:#f92672">.</span>client(
+        <span style="color:#e6db74">&#39;textract&#39;</span>, 
+        region_name<span style="color:#f92672">=</span>region_name, 
+        aws_access_key_id<span style="color:#f92672">=</span>aws_access_key_id, 
+        aws_secret_access_key<span style="color:#f92672">=</span>aws_secret_access_key
+    )
+
+    <span style="color:#75715e"># Open file and detect text</span>
+    <span style="color:#66d9ef">with</span> open(local_file, <span style="color:#e6db74">&#39;rb&#39;</span>) <span style="color:#66d9ef">as</span> document:
+        response <span style="color:#f92672">=</span> textract<span style="color:#f92672">.</span>detect_document_text(Document<span style="color:#f92672">=</span>{<span style="color:#e6db74">&#39;Bytes&#39;</span>: document<span style="color:#f92672">.</span>read()})
+
+    <span style="color:#75715e"># Extract text from response</span>
+    text_lines <span style="color:#f92672">=</span> [
+        item[<span style="color:#e6db74">&#34;Text&#34;</span>]
+        <span style="color:#66d9ef">for</span> item <span style="color:#f92672">in</span> response<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;Blocks&#34;</span>, [])
+        <span style="color:#66d9ef">if</span> item<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;BlockType&#34;</span>) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;LINE&#34;</span>
+    ]
+    extracted_text <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">.</span>join(text_lines)
+    logger<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Successfully extracted text from </span><span style="color:#e6db74">{</span>local_file<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+
+    <span style="color:#66d9ef">return</span> extracted_text
+</code></pre></div><p>The data extracted from the OCR is then sent further into the NER pipeline, which we will be creating later in this blog, for extraction of Named Entities.</p>
+<h2 id="2-initializing-the-ner-model">2. Initializing the NER Model</h2>
+<p>We create a class <code>InitiateNER</code> to initialize the Spark NLP session, embeddings, and NER tagger.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InitiateNER</span>:
+    <span style="color:#66d9ef">def</span> __init__(self, gpu<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, embedding_model<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bert_base_uncased&#39;</span>, language<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;en&#39;</span>):
+        <span style="color:#75715e"># Initialize Spark session</span>
+        self<span style="color:#f92672">.</span>spark <span style="color:#f92672">=</span> sparknlp<span style="color:#f92672">.</span>start(gpu<span style="color:#f92672">=</span>gpu)
+        logger<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Spark NLP session started.&#34;</span>)
+
+        <span style="color:#75715e"># Initialize embeddings and NER tagger</span>
+        self<span style="color:#f92672">.</span>bert_embeddings <span style="color:#f92672">=</span> BertEmbeddings<span style="color:#f92672">.</span>pretrained(embedding_model, language) \
+            <span style="color:#f92672">.</span>setInputCols([<span style="color:#e6db74">&#34;sentence&#34;</span>, <span style="color:#e6db74">&#39;token&#39;</span>]) \
+            <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#34;embeddings&#34;</span>) \
+            <span style="color:#f92672">.</span>setCaseSensitive(<span style="color:#66d9ef">False</span>)
+
+        self<span style="color:#f92672">.</span>ner_tagger <span style="color:#f92672">=</span> NerDLApproach() \
+            <span style="color:#f92672">.</span>setInputCols([<span style="color:#e6db74">&#34;sentence&#34;</span>, <span style="color:#e6db74">&#34;token&#34;</span>, <span style="color:#e6db74">&#34;embeddings&#34;</span>]) \
+            <span style="color:#f92672">.</span>setLabelColumn(<span style="color:#e6db74">&#34;label&#34;</span>) \
+            <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#34;ner&#34;</span>) \
+            <span style="color:#f92672">.</span>setMaxEpochs(<span style="color:#ae81ff">20</span>) \
+            <span style="color:#f92672">.</span>setLr(<span style="color:#ae81ff">0.001</span>) \
+            <span style="color:#f92672">.</span>setPo(<span style="color:#ae81ff">0.005</span>) \
+            <span style="color:#f92672">.</span>setBatchSize(<span style="color:#ae81ff">32</span>) \
+            <span style="color:#f92672">.</span>setValidationSplit(<span style="color:#ae81ff">0.1</span>) \
+            <span style="color:#f92672">.</span>setUseBestModel(<span style="color:#66d9ef">True</span>) \
+            <span style="color:#f92672">.</span>setEnableOutputLogs(<span style="color:#66d9ef">True</span>)
+        
+        <span style="color:#75715e"># Initialize other components for prediction</span>
+        self<span style="color:#f92672">.</span>document_assembler <span style="color:#f92672">=</span> DocumentAssembler() \
+            <span style="color:#f92672">.</span>setInputCol(<span style="color:#e6db74">&#34;text&#34;</span>) \
+            <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#34;document&#34;</span>)
+
+        self<span style="color:#f92672">.</span>sentence_detector <span style="color:#f92672">=</span> SentenceDetector() \
+            <span style="color:#f92672">.</span>setInputCols([<span style="color:#e6db74">&#39;document&#39;</span>]) \
+            <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#39;sentence&#39;</span>)
+
+        self<span style="color:#f92672">.</span>tokenizer <span style="color:#f92672">=</span> Tokenizer() \
+            <span style="color:#f92672">.</span>setInputCols([<span style="color:#e6db74">&#39;sentence&#39;</span>]) \
+            <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#39;token&#39;</span>)
+
+        self<span style="color:#f92672">.</span>converter <span style="color:#f92672">=</span> NerConverter() \
+            <span style="color:#f92672">.</span>setInputCols([<span style="color:#e6db74">&#34;document&#34;</span>, <span style="color:#e6db74">&#34;token&#34;</span>, <span style="color:#e6db74">&#34;ner&#34;</span>]) \
+            <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#34;ner_span&#34;</span>)
+</code></pre></div><p>The NerDLModel is an encoder-decoder neural network (we will talk about it later) which needs <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach" target="_blank" rel="noopener">the input in the form of embeddings</a>[1]. This can be achieved via a <strong>WordEmbeddings model</strong>. We are using BertEmbeddings in this case.</p>
+<h3 id="wordembeddings-model">WordEmbeddings model</h3>
+<p><a href="https://www.ibm.com/topics/word-embeddings" target="_blank" rel="noopener">Word embeddings</a>[2] capture semantic relationships between words, allowing models to understand and represent words in a continuous vector space where similar words are close to each other. This semantic representation enables more nuanced understanding of language.</p>
+<h4 id="why-i-chose-bert-embeddings-over-others">Why I chose BERT Embeddings over others?</h4>
+<p><a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener">BERT embeddings</a> [3, 4, 5, 6] offer several advantages over traditional embeddings for Named Entity Recognition (NER):</p>
+<ol>
+<li>
+<p><em>Contextualized Embeddings</em>: BERT creates different embeddings for the same word based on its context, unlike Word2Vec or GloVe, which give each word a single fixed representation. This is crucial in NER, where the meaning of a word can change with context.</p>
+</li>
+<li>
+<p><em>Bidirectional Attention</em>: BERT reads sentences in both directions (left-to-right and right-to-left), capturing a full understanding of each word&rsquo;s context. Traditional embeddings lack this bidirectional context, missing nuances especially useful in medical text.</p>
+</li>
+<li>
+<p><em>Pre-Trained on Large Data</em>: BERT is pre-trained on a large corpus, which enhances its versatility for fine-tuning in domain-specific applications like medical NER, where context-rich understanding is needed.</p>
+</li>
+<li>
+<p><em>Handling Rare or OOV Words</em>: BERT uses subword tokenization, which allows it to break down unknown words and still retain meaning, a huge advantage for handling medical terminology.</p>
+</li>
+<li>
+<p><em>Proven Performance</em>: BERT consistently outperforms older embeddings on NER tasks due to its deep contextual understanding and flexibility in handling diverse language structures.</p>
+</li>
+</ol>
+<h3 id="nerdlapproach">NerDLApproach</h3>
+<p>The <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach" target="_blank" rel="noopener">NerDLApproach</a>[1] in Spark NLP is a neural network model designed for Named Entity Recognition (NER) tasks.
+<!-- raw HTML omitted -->It uses a combination of Character-level Convolutional Neural Networks (Char CNNs), Bidirectional Long Short-Term Memory networks (BiLSTMs) (<a href="https://arxiv.org/pdf/1511.08308v5" target="_blank" rel="noopener">Char CNN - BiLSTM</a>[7]), and followed by a Conditional Random Fields (CRFs). Let&rsquo;s break down why this architecture is used and how it processes normal text input.</p>
+<h4 id="why-char-cnns---bilstm---crf">Why Char CNNs - BiLSTM - CRF?</h4>
+<ol>
+<li>
+<p><em>Character-level CNNs (Char CNNs)</em>:</p>
+<ul>
+<li>
+<p><strong>Purpose</strong>: Capture <em>morphological features</em> of words, such as prefixes, suffixes, and other subword patterns.</p>
+</li>
+<li>
+<p><strong>Input</strong>: Character embeddings of each word.</p>
+</li>
+<li>
+<p><strong>Output</strong>: Character-level features that are useful for understanding the structure of words, especially for handling out-of-vocabulary words or misspellings.</p>
+<p><img src="/images/medical-text-extraction/CNN.png" alt="Char CNN"></p>
+</li>
+</ul>
+</li>
+<li>
+<p><em>Bidirectional LSTMs (BiLSTMs)</em>:</p>
+<ul>
+<li>
+<p><strong>Purpose</strong>: Capture contextual information from both past (left) and future (right) contexts in the text.</p>
+</li>
+<li>
+<p><strong>Input</strong>: Word embeddings (e.g., BERT embeddings) and character-level features from Char CNNs.</p>
+</li>
+<li>
+<p><strong>Output</strong>: Contextualized word representations that consider the entire sentence.</p>
+<p><img src="/images/medical-text-extraction/BiLSTM.png" alt="BiLSTM"></p>
+</li>
+</ul>
+</li>
+<li>
+<p><em>Conditional Random Fields (CRFs)</em>:</p>
+<ul>
+<li><strong>Purpose</strong>: Model the dependencies between output labels (e.g., the sequence of named entity tags) to ensure valid sequences.</li>
+<li><strong>Input</strong>: Contextualized word representations from BiLSTMs.</li>
+<li><strong>Output</strong>: The most likely sequence of named entity tags for the input text.</li>
+</ul>
+</li>
+</ol>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<h4 id="example">Example</h4>
+<p>Let&rsquo;s consider an example to illustrate this process:</p>
+<p><strong>Input Text</strong>: <code>&quot;John Doe works at Store Ninja.&quot;</code></p>
+<ol>
+<li>
+<p><em>Tokenization</em>:</p>
+<ul>
+<li>Tokens: <code>[&quot;John&quot;, &quot;Doe&quot;, &quot;works&quot;, &quot;at&quot;, &quot;Store&quot;, &quot;Ninja&quot;, &quot;.&quot;]</code></li>
+</ul>
+</li>
+<li>
+<p><em>Character Embeddings</em>:</p>
+<ul>
+<li>Characters for &ldquo;John&rdquo;: <code>[&quot;J&quot;, &quot;o&quot;, &quot;h&quot;, &quot;n&quot;]</code></li>
+<li>Character embeddings are generated for each character.</li>
+</ul>
+</li>
+<li>
+<p><em>Char CNNs</em>:</p>
+<ul>
+<li>Char CNNs process the character embeddings to capture morphological features.</li>
+</ul>
+</li>
+<li>
+<p><em>Word Embeddings</em>:</p>
+<ul>
+<li>Word embeddings (e.g., BERT embeddings) are generated for each token.</li>
+</ul>
+</li>
+<li>
+<p><em>BiLSTMs</em>:</p>
+<ul>
+<li>BiLSTMs process the word embeddings and character-level features to capture contextual information.</li>
+<li>For example, the representation for &ldquo;John&rdquo; will consider the context provided by &ldquo;Doe works at Store Ninja.&rdquo;</li>
+</ul>
+</li>
+<li>
+<p><em>CRFs</em>:</p>
+<ul>
+<li>CRFs predict the sequence of named entity tags.</li>
+<li>Output: <code>[&quot;B-PER&quot;, &quot;I-PER&quot;, &quot;O&quot;, &quot;O&quot;, &quot;B-ORG&quot;, &quot;O&quot;]</code></li>
+</ul>
+</li>
+</ol>
+<!-- raw HTML omitted -->
+<h2 id="3-training-the-model">3. Training the Model</h2>
+<p>The <code>train_model</code> method reads the CoNLL dataset, applies BERT embeddings, and trains the NER model.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">train_model</span>(self, training_file, save_path):
+        <span style="color:#66d9ef">try</span>:
+            training_data <span style="color:#f92672">=</span> CoNLL()<span style="color:#f92672">.</span>readDataset(self<span style="color:#f92672">.</span>spark, training_file)
+            training_data <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>bert_embeddings<span style="color:#f92672">.</span>transform(training_data)<span style="color:#f92672">.</span>drop(<span style="color:#e6db74">&#34;text&#34;</span>, <span style="color:#e6db74">&#34;document&#34;</span>, <span style="color:#e6db74">&#34;pos&#34;</span>)
+
+            logger<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Training model...&#34;</span>)
+            self<span style="color:#f92672">.</span>ner_model <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>ner_tagger<span style="color:#f92672">.</span>fit(training_data)
+            logger<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Model trained successfully.&#34;</span>)
+
+            self<span style="color:#f92672">.</span>ner_model<span style="color:#f92672">.</span>write()<span style="color:#f92672">.</span>overwrite()<span style="color:#f92672">.</span>save(save_path)
+            logger<span style="color:#f92672">.</span>info(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Model saved at: </span><span style="color:#e6db74">{</span>save_path<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+
+        <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+            logger<span style="color:#f92672">.</span>error(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Error during training: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><ul>
+<li><strong><code>train_model</code> method</strong>: Trains the NER model.</li>
+<li><strong><code>CoNLL().readDataset</code></strong>: Reads training data in <strong>CoNLL</strong> format.</li>
+<li><strong><code>self.bert_embeddings.transform</code></strong>: Applies BERT embeddings to the training data.</li>
+<li><strong><code>self.ner_tagger.fit</code></strong>: Trains the NER model.</li>
+<li><strong><code>self.ner_model.write().overwrite().save</code></strong>: Saves the trained model.</li>
+</ul>
+<h3 id="what-is-conll-format">What is CoNLL format?</h3>
+<p>The CoNLL (Conference on Natural Language Learning) format is a structured text format commonly used to label tokens in natural language processing tasks, especially named entity recognition (NER). In a CoNLL-formatted dataset, each line represents a token (such as a word or punctuation), with additional columns typically containing labels or annotations about that token. Sentences are separated by blank lines.</p>
+<h4 id="conll-format-structure">CoNLL Format Structure</h4>
+<p>A typical CoNLL dataset has multiple columns for each token. The columns can vary based on the dataset&rsquo;s intended task, but for NER, they usually look like this:</p>
+<pre tabindex="0"><code>Token   POS  Chunk  Entity
+John    NNP  B-NP   B-PER
+lives   VBZ  B-VP   O
+in      IN   B-PP   O
+New     NNP  B-NP   B-LOC
+York    NNP  -X-   I-LOC
+.       .    O      O
+</code></pre><p>In this example:</p>
+<ul>
+<li>Each line corresponds to a word, and there may be additional columns with part-of-speech (POS) or chunk tags.</li>
+<li>The &ldquo;Entity&rdquo; column marks NER tags (e.g., B-PER for &ldquo;Beginning of a PERSON entity&rdquo; and O for &ldquo;Outside of any entity&rdquo;).</li>
+<li>Blank lines separate sentences.</li>
+<li><strong>-X-</strong> represents that is often used as a placeholder or dummy value for certain columns, especially when the information in that column is not relevant for a particular token.</li>
+</ul>
+<p>The dataset I am using looks something like this -</p>
+<pre tabindex="0"><code>Token       POS     Chunk  Entity
+negative    -X-     -X-     O
+for         -X-     -X-     O
+chest       -X-     -X-     B-Medical_condition
+pain,       -X-     -X-     I-Medical_condition
+pressure,   -X-     -X-     B-Medical_condition
+dyspnea,    -X-     -X-     B-Medical_condition
+edema       -X-     -X-     B-Medical_condition
+or          -X-     -X-     O
+cold        -X-     -X-     B-Medical_condition
+symptoms.   -X-     -X-     O
+</code></pre><p>As we are only interested in Entity mapping, the POS and Chunk values are irrelevant to us, hence we have put a <strong>-X-</strong> or Empty Placeholder there.</p>
+<h4 id="why-conll-format-is-used-in-ner">Why CoNLL Format Is Used in NER</h4>
+<p>The CoNLL format is widely used in NER for several reasons:</p>
+<ol>
+<li><em>Structured yet simple</em>: It provides a structured, line-by-line format that’s easy to parse and interpret, both by humans and machines.</li>
+<li><em>Consistent token-label pairing</em>: Each token is directly paired with its label, simplifying the process of supervised learning where the model learns to associate tokens with specific tags.</li>
+<li><em>Sentence separation</em>: Blank lines make sentence boundaries clear, which is crucial for tasks like NER, where context within sentences matters.</li>
+<li><em>Widely supported by NLP tools</em>: Many NLP frameworks (like spaCy, NLTK, and transformers libraries) support CoNLL format, so training data in this format is easily integrated into NER pipelines.</li>
+</ol>
+<h3 id="where-to-get-clinical-ner-datasets">Where to get Clinical NER Datasets?</h3>
+<p>Such datasets can be found at various sources -</p>
+<ol>
+<li><a href="https://paperswithcode.com/dataset/conll-2003" target="_blank" rel="noopener">CoNLL-2003</a>[8]</li>
+<li><a href="https://paperswithcode.com/dataset/2010-i2b2-va" target="_blank" rel="noopener"> 2010 i2b2/VA</a>[9]</li>
+<li>2014 i2b2 De-identification Challenge</li>
+<li>2018 n2c2 Medication Extraction Challenge</li>
+</ol>
+<h2 id="4-loading-the-model">4. Loading the Model</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">load_model</span>(self, model_path):
+    <span style="color:#66d9ef">try</span>:
+        self<span style="color:#f92672">.</span>loaded_ner_model <span style="color:#f92672">=</span> NerDLModel<span style="color:#f92672">.</span>load(model_path) \
+            <span style="color:#f92672">.</span>setInputCols([<span style="color:#e6db74">&#34;sentence&#34;</span>, <span style="color:#e6db74">&#34;token&#34;</span>, <span style="color:#e6db74">&#34;embeddings&#34;</span>]) \
+            <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#34;ner&#34;</span>)
+
+        logger<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Model loaded successfully.&#34;</span>)
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+        logger<span style="color:#f92672">.</span>error(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Error loading model: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</code></pre></div><ul>
+<li><strong><code>load_model</code> method</strong>: Loads a pre-trained NER model.</li>
+<li><strong><code>NerDLModel.load</code></strong>: Loads the model from the specified path.</li>
+</ul>
+<h2 id="5-making-predictions">5. Making Predictions</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">predict</span>(self, text):
+    <span style="color:#66d9ef">try</span>:
+        <span style="color:#75715e"># Create or reuse prediction pipeline</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> hasattr(self, <span style="color:#e6db74">&#39;prediction_pipeline&#39;</span>):
+            self<span style="color:#f92672">.</span>prediction_pipeline <span style="color:#f92672">=</span> Pipeline(
+                stages<span style="color:#f92672">=</span>[
+                    self<span style="color:#f92672">.</span>document_assembler,
+                    self<span style="color:#f92672">.</span>sentence_detector,
+                    self<span style="color:#f92672">.</span>tokenizer,
+                    self<span style="color:#f92672">.</span>bert_embeddings,
+                    self<span style="color:#f92672">.</span>loaded_ner_model,
+                    self<span style="color:#f92672">.</span>converter
+                ]
+            )
+            logger<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Prediction pipeline created.&#34;</span>)
+
+        sample_data <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>spark<span style="color:#f92672">.</span>createDataFrame([[text]])<span style="color:#f92672">.</span>toDF(<span style="color:#e6db74">&#34;text&#34;</span>)
+        prediction_model <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>prediction_pipeline<span style="color:#f92672">.</span>fit(self<span style="color:#f92672">.</span>spark<span style="color:#f92672">.</span>createDataFrame([[<span style="color:#e6db74">&#39;&#39;</span>]])<span style="color:#f92672">.</span>toDF(<span style="color:#e6db74">&#34;text&#34;</span>))
+        preds <span style="color:#f92672">=</span> prediction_model<span style="color:#f92672">.</span>transform(sample_data)
+        pipeline_result <span style="color:#f92672">=</span> preds<span style="color:#f92672">.</span>collect()[<span style="color:#ae81ff">0</span>]
+
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>format_output(pipeline_result)
+
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+        logger<span style="color:#f92672">.</span>error(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Error during prediction: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#34;error&#34;</span>: str(e)}
+</code></pre></div><ul>
+<li>
+<p><strong>Pipeline Stages</strong>: The pipeline consists of several stages:</p>
+<ul>
+<li><strong><code>document_assembler</code></strong>: Converts raw text into a <strong>structured document format</strong> (read about it below).</li>
+<li><strong><code>sentence_detector</code></strong>: Detects sentences within the document.</li>
+<li><strong><code>tokenizer</code></strong>: Tokenizes sentences into individual words.</li>
+<li><strong><code>bert_embeddings</code></strong>: Applies BERT embeddings to the tokens.</li>
+<li><strong><code>loaded_ner_model</code></strong>: Uses the pre-trained NER model to identify named entities.</li>
+<li><strong><code>converter</code></strong>: Converts the NER results into a more readable format.</li>
+</ul>
+</li>
+<li>
+<h4 id="pipeline-example">Pipeline Example</h4>
+<ul>
+<li>
+<p>If the input text is <code>&quot;John Doe works at OpenAI.&quot;</code>, the pipeline stages will process it as follows:</p>
+<ol>
+<li><em>DocumentAssembler</em>: Converts the text into a document.</li>
+<li><em>SentenceDetector</em>: Identifies <code>&quot;John Doe works at OpenAI.&quot;</code> as a single sentence.</li>
+<li><em>Tokenizer</em>: Tokenizes the sentence into <code>[&quot;John&quot;, &quot;Doe&quot;, &quot;works&quot;, &quot;at&quot;, &quot;OpenAI&quot;, &quot;.&quot;]</code>.</li>
+<li><em>BertEmbeddings</em>: Generates embeddings for each token.</li>
+<li><em>Loaded NER Model</em>: Identifies <code>&quot;John Doe&quot;</code> as a person and <code>&quot;OpenAI&quot;</code> as an organization.</li>
+<li><em>Converter</em>: Converts the NER results into a readable format.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><strong><code>self.spark.createDataFrame</code></strong>: Creates a Spark DataFrame from the input text.</p>
+</li>
+<li>
+<p><strong><code>self.prediction_pipeline.fit</code></strong>: Fits the pipeline (required for some Spark operations).</p>
+</li>
+<li>
+<p><strong><code>prediction_model.transform</code></strong>: Transforms the input text using the pipeline.</p>
+</li>
+<li>
+<p><strong><code>preds.collect</code></strong>: Collects the prediction results.</p>
+</li>
+<li>
+<p><strong><code>self.format_output</code></strong>: Formats the prediction results.</p>
+</li>
+</ul>
+<h2 id="document">Document</h2>
+<p>In the context of Natural Language Processing (NLP) and Spark NLP, a &ldquo;document&rdquo; refers to a structured representation of text data. This structured representation is used as an intermediate format that allows various NLP components to process the text more effectively. Let&rsquo;s break down what this means in more detail:</p>
+<h3 id="document-in-spark-nlp">Document in Spark NLP</h3>
+<p>A &ldquo;document&rdquo; in Spark NLP is essentially a DataFrame column that contains metadata about the text, such as its content, the start and end positions of the text, and other relevant information. This structured format is crucial for the subsequent NLP tasks, such as sentence detection, tokenization, and named entity recognition.</p>
+<h3 id="documentassembler">DocumentAssembler</h3>
+<p>The <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/DocumentAssembler" target="_blank" rel="noopener">DocumentAssembler</a>[10] is a component in Spark NLP that converts raw text into this structured &ldquo;document&rdquo; format. Here&rsquo;s how it works:</p>
+<ol>
+<li><strong>Input Column</strong>: The <code>DocumentAssembler</code> takes a column of raw text as input.</li>
+<li><strong>Output Column</strong>: It produces a column of &ldquo;document&rdquo; type, which contains the structured representation of the text.</li>
+</ol>
+<h3 id="example-1">Example</h3>
+<p>Let&rsquo;s look at an example to understand this better:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> sparknlp.base <span style="color:#f92672">import</span> DocumentAssembler
+<span style="color:#f92672">from</span> pyspark.sql <span style="color:#f92672">import</span> SparkSession
+
+<span style="color:#75715e"># Initialize Spark session</span>
+spark <span style="color:#f92672">=</span> SparkSession<span style="color:#f92672">.</span>builder \
+    <span style="color:#f92672">.</span>appName(<span style="color:#e6db74">&#34;DocumentAssemblerExample&#34;</span>) \
+    <span style="color:#f92672">.</span>getOrCreate()
+
+<span style="color:#75715e"># Sample DataFrame with raw text</span>
+data <span style="color:#f92672">=</span> spark<span style="color:#f92672">.</span>createDataFrame([[<span style="color:#e6db74">&#34;This is a sample text.&#34;</span>]])<span style="color:#f92672">.</span>toDF(<span style="color:#e6db74">&#34;text&#34;</span>)
+
+<span style="color:#75715e"># Initialize DocumentAssembler</span>
+document_assembler <span style="color:#f92672">=</span> DocumentAssembler() \
+    <span style="color:#f92672">.</span>setInputCol(<span style="color:#e6db74">&#34;text&#34;</span>) \
+    <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#34;document&#34;</span>)
+
+<span style="color:#75715e"># Transform the DataFrame</span>
+document_df <span style="color:#f92672">=</span> document_assembler<span style="color:#f92672">.</span>transform(data)
+
+<span style="color:#75715e"># Show the result</span>
+document_df<span style="color:#f92672">.</span>select(<span style="color:#e6db74">&#34;document&#34;</span>)<span style="color:#f92672">.</span>show(truncate<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
+</code></pre></div><h3 id="output">Output</h3>
+<p>The output will be a DataFrame with a &ldquo;document&rdquo; column that contains the structured representation of the text:</p>
+<pre tabindex="0"><code>+-------------------------------------------------------------+
+|document                                                     |
++-------------------------------------------------------------+
+|[[document, 0, 20, This is a sample text., [sentence -&gt; 0], []]]|
++-------------------------------------------------------------+
+</code></pre><h3 id="explanation">Explanation</h3>
+<ul>
+<li><strong><code>document</code></strong>: The column name for the structured text.</li>
+<li><strong><code>0, 20</code></strong>: The start and end positions of the text.</li>
+<li><strong><code>This is a sample text.</code></strong>: The actual text content.</li>
+<li><strong><code>[sentence -&gt; 0]</code></strong>: Metadata indicating that this is the first sentence.</li>
+</ul>
+<h3 id="why-is-this-important">Why is this Important?</h3>
+<p>The structured &ldquo;document&rdquo; format is essential for the following reasons:</p>
+<ol>
+<li><em>Consistency</em>: It provides a consistent way to represent text data, making it easier to process.</li>
+<li><em>Metadata</em>: It includes metadata that can be useful for various NLP tasks.</li>
+<li><em>Pipeline Integration</em>: It allows different components in the NLP pipeline to work together seamlessly.</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this blog, we explored a comprehensive pipeline for extracting information from handwritten medical prescriptions using AWS Textract and Spark NLP. Starting with the OCR capabilities of AWS Textract, we efficiently transformed handwritten text into machine-readable format, setting the stage for the subsequent NER analysis.</p>
+<p>As we concluded with predictions, the seamless interaction of components within the prediction pipeline demonstrated the power of Spark NLP for real-time NER tasks. This approach not only streamlines the processing of medical prescriptions but also holds potential for further applications in healthcare, where accurate data extraction is paramount.</p>
+<p>By combining cutting-edge technology with thoughtful design, we can significantly enhance the efficiency of healthcare processes, ultimately leading to improved patient outcomes and better management of medical information. As we continue to innovate in this space, the opportunities for developing advanced applications in the realm of healthcare data processing are endless.</p>
+<h2 id="references">References</h2>
+<p>[1] “Spark NLP 5.5.1 ScalaDoc - com.johnsnowlabs.nlp.annotators.ner.dl.NerDLApproach,” Sparknlp.org, 2024. <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach" target="_blank" rel="noopener">https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach</a>.</p>
+<p>[2] J. Barnard, “What are Word Embeddings? | IBM,” <a href="http://www.ibm.com" target="_blank" rel="noopener">www.ibm.com</a>, Jan. 23, 2024. <a href="https://www.ibm.com/topics/word-embeddings" target="_blank" rel="noopener">https://www.ibm.com/topics/word-embeddings</a></p>
+<p>[3] Contextualized Embeddings and Bidirectional Attention: Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. Proceedings of NAACL-HLT, 4171–4186. <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener">https://arxiv.org/abs/1810.04805</a>.</p>
+<p>[4] Handling Out-of-Vocabulary Words and Subword Tokenization: Sennrich, R., Haddow, B., &amp; Birch, A. (2016). Neural Machine Translation of Rare Words with Subword Units. Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), 1715–1725. <a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener">https://arxiv.org/abs/1508.07909</a>.</p>
+<p>[5] Fine-Tuning and Performance on NER: Akbik, A., Blythe, D., &amp; Vollgraf, R. (2018). Contextual String Embeddings for Sequence Labeling. Proceedings of the 27th International Conference on Computational Linguistics, 1638–1649. <a href="https://www.aclweb.org/anthology/C18-1139/" target="_blank" rel="noopener">https://www.aclweb.org/anthology/C18-1139/</a>.</p>
+<p>[6] BERT’s Performance in Domain-Specific Applications: Lee, J., Yoon, W., Kim, S., Kim, D., Kim, S., So, C. H., &amp; Kang, J. (2020). BioBERT: a pre-trained biomedical language representation model for biomedical text mining. Bioinformatics, 36(4), 1234-1240. <a href="https://academic.oup.com/bioinformatics/article/36/4/1234/5566506" target="_blank" rel="noopener">https://academic.oup.com/bioinformatics/article/36/4/1234/5566506</a>.</p>
+<p>[7] J. P. C. Chiu and E. Nichols, “Named Entity Recognition with Bidirectional LSTM-CNNs,” Transactions of the Association for Computational Linguistics, vol. 4, pp. 357–370, Dec. 2016, doi: <a href="https://doi.org/10.1162/tacl_a_00104" target="_blank" rel="noopener">https://doi.org/10.1162/tacl_a_00104</a></p>
+<p>[8] “Papers with Code - CoNLL-2003 Dataset,” paperswithcode.com. <a href="https://paperswithcode.com/dataset/conll-2003" target="_blank" rel="noopener">https://paperswithcode.com/dataset/conll-2003</a></p>
+<p>[9] “Papers with Code - 2010 i2b2/VA Dataset,” Paperswithcode.com, 2022. <a href="https://paperswithcode.com/dataset/2010-i2b2-va" target="_blank" rel="noopener">https://paperswithcode.com/dataset/2010-i2b2-va</a>.</p>
+<p>[10] “Spark NLP 5.5.1 ScalaDoc - com.johnsnowlabs.nlp.DocumentAssembler,” Sparknlp.org, 2024. <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/DocumentAssembler" target="_blank" rel="noopener">https://sparknlp.org/api/com/johnsnowlabs/nlp/DocumentAssembler</a>.</p>
+
+</content>
+<p>
+  
+  <a href="https://aryaman.space/blog/spark-nlp/">#Spark-NLP</a>
+  
+  <a href="https://aryaman.space/blog/handwritten-prescription-processing/">#Handwritten-Prescription-Processing</a>
+  
+  <a href="https://aryaman.space/blog/medical-text-extraction/">#Medical-Text-Extraction</a>
+  
+  <a href="https://aryaman.space/blog/ner/">#NER</a>
+  
+  <a href="https://aryaman.space/blog/lstm/">#LSTM</a>
+  
+  <a href="https://aryaman.space/blog/document/">#Document</a>
+  
+  <a href="https://aryaman.space/blog/char-cnn/">#Char-CNN</a>
+  
+  <a href="https://aryaman.space/blog/bert/">#BERT</a>
+  
+  <a href="https://aryaman.space/blog/bert-embeddings/">#BERT-Embeddings</a>
+  
+  <a href="https://aryaman.space/blog/conll/">#CoNLL</a>
+  
+</p>
+
+  </main>
+  <footer>
+
+<style>
+    .newsletter-container {
+        width: 100%;
+        max-width: 60%;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .newsletter-container p {
+        font-size: 16px;
+        margin-bottom: -15px;
+    }
+
+    .newsletter-container p:hover {
+        color: hotpink;
+    }
+
+    .newsletter-form {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+    }
+
+    .newsletter-input {
+        padding: 10px;
+        font-size: 16px;
+        border: 0px solid #ccc;
+        border-radius: 5px 0 0 5px;
+        flex: 1;
+        width: 70%;  
+    }
+
+    .newsletter-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        border: none;
+        background-color: #555;
+        color: white;
+        cursor: pointer;
+        border-radius: 0 5px 5px 0;
+        width: 30%;  
+        box-sizing: border-box;  
+    }
+
+    .newsletter-button:hover {
+        background-color: rgb(187, 35, 111);
+    }
+
+    .p-group{
+        margin-bottom: 5px;
+    }
+
+     
+    @media (max-width: 655px) {
+        .newsletter-input {
+            width: 60%;
+            font-size: 12px;
+        }
+
+        .newsletter-container {
+            max-width: 85%;
+        }
+
+        .newsletter-button {
+            width: 40%;
+            font-size: 12px;  
+        }
+    }
+</style>
+</style>
+</head>
+<body>
+
+<div class="newsletter-container">
+    <div class="p-group">
+        <p>this sounds fun</p>
+        <p>this sounds fun</p>
+        <p>this sounds fun</p>
+        <p>this sounds fun</p>
+    </div>
+    
+    <form class="newsletter-form" action="https://space.us14.list-manage.com/subscribe/post?u=9826b167b24adbcba9091190f&amp;amp;id=f90f480251&amp;amp;f_id=00eb8fe1f0" method="post">
+        <input class="newsletter-input" type="email" name="EMAIL" placeholder="subscribe@newsletter.com" required>
+        <button class="newsletter-button" type="submit">Subscribe</button>
+    </form>
+</div>
+
+
+
+Made with <a href="https://github.com/janraasch/hugo-bearblog/">Hugo ʕ•ᴥ•ʔ Bear</a>
+</footer>
+
+    
+
+  </body>
+
+</html>
