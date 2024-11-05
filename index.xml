@@ -7,7 +7,18 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
-    <lastBuildDate>Sun, 14 Apr 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://aryaman.space/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 05 Nov 2024 21:10:01 +0530</lastBuildDate><atom:link href="https://aryaman.space/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>From Scribbles to Structured Data: Using Spark NLP to Process Handwritten Medical Prescriptions</title>
+      <link>https://aryaman.space/from-scribbles-to-structured-data-using-spark-nlp-to-process-handwritten-medical-prescriptions/</link>
+      <pubDate>Tue, 05 Nov 2024 21:10:01 +0530</pubDate>
+      
+      <guid>https://aryaman.space/from-scribbles-to-structured-data-using-spark-nlp-to-process-handwritten-medical-prescriptions/</guid>
+      <description>Introduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.
+Automating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.
+In this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom *Named Entity Recognition *(NER) model, this approach promises to streamline information extraction in medical workflows.</description>
+    </item>
+    
     <item>
       <title>Demystifying Replication and Sharding in MongoDB</title>
       <link>https://aryaman.space/demystifying-replication-and-sharding-in-mongodb/</link>
@@ -77,7 +88,7 @@ this little corner of the internet has been my secret spot for ideas, projects, 
       
       <guid>https://aryaman.space/papershelf/</guid>
       <description>Papershelf i’ve been diving into the world of research and white papers (thanks to Arpit Bhayani!). so far, I’ve checked out these awesome articles -
- WTF: The Who to Follow Service at Twitter Attention Is All You Need  </description>
+ Named Entity Recognition with Bidirectional LSTM-CNNs Quantum supremacy using a programmable superconducting processor Quantum Computation by David P. DiVencenzo WTF: The Who to Follow Service at Twitter Attention Is All You Need  </description>
     </item>
     
   </channel>

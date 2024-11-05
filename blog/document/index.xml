@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Document on aryaman&#39;s batcave</title>
+    <link>https://aryaman.space/blog/document/</link>
+    <description>Recent content in Document on aryaman&#39;s batcave</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
+    <lastBuildDate>Tue, 05 Nov 2024 21:10:01 +0530</lastBuildDate><atom:link href="https://aryaman.space/blog/document/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>From Scribbles to Structured Data: Using Spark NLP to Process Handwritten Medical Prescriptions</title>
+      <link>https://aryaman.space/from-scribbles-to-structured-data-using-spark-nlp-to-process-handwritten-medical-prescriptions/</link>
+      <pubDate>Tue, 05 Nov 2024 21:10:01 +0530</pubDate>
+      
+      <guid>https://aryaman.space/from-scribbles-to-structured-data-using-spark-nlp-to-process-handwritten-medical-prescriptions/</guid>
+      <description>Introduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.
+Automating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.
+In this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom *Named Entity Recognition *(NER) model, this approach promises to streamline information extraction in medical workflows.</description>
+    </item>
+    
+  </channel>
+</rss>
