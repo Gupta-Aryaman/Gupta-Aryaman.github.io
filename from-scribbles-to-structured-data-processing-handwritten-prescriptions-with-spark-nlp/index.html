@@ -33,7 +33,7 @@
 <meta itemprop="name" content="From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP">
 <meta itemprop="description" content="Using Spark NLP to Process Handwritten Medical Prescriptions and discuss various underlying concepts."><meta itemprop="datePublished" content="2024-11-05T21:10:01+05:30" />
 <meta itemprop="dateModified" content="2024-11-05T21:10:01+05:30" />
-<meta itemprop="wordCount" content="2412"><meta itemprop="image" content="https://aryaman.space/images/medical-text-extraction/cover_img.webp">
+<meta itemprop="wordCount" content="2608"><meta itemprop="image" content="https://aryaman.space/images/medical-text-extraction/cover_img.webp">
 <meta itemprop="keywords" content="Spark-NLP,Handwritten-Prescription-Processing,Medical-Text-Extraction,NER,LSTM,Document,Char-CNN,BERT,BERT-Embeddings,CoNLL," />
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
@@ -246,12 +246,58 @@
 </p>
 
 <content>
-  <!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+  <p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
 <h2 id="introduction">Introduction</h2>
 <p>Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.</p>
 <p>Automating this process requires a robust combination of <em>Optical Character Recognition</em> (OCR) and <em>Natural Language Processing</em> (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.</p>
 <p>In this article, we delve into a <em>Spark</em> NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging <em>BERT embeddings</em> for contextual understanding and a custom <em>Named Entity Recognition</em>(NER) model, this approach promises to streamline information extraction in medical workflows. From OCR text extraction to entity recognition and model training, each step is tailored to maximize accuracy for complex medical terminology.</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#1-extract-handwritten-text-using-ocr">1. Extract Handwritten text using OCR</a></li>
+<li><a href="#2-initializing-the-ner-model">2. Initializing the NER Model</a>
+<ul>
+<li><a href="#wordembeddings-model">WordEmbeddings model</a>
+<ul>
+<li><a href="#why-i-chose-bert-embeddings-over-others">Why I chose BERT Embeddings over others?</a></li>
+</ul>
+</li>
+<li><a href="#nerdlapproach">NerDLApproach</a>
+<ul>
+<li><a href="#why-char-cnns-bilstm-crf">Why Char CNNs - BiLSTM - CRF?</a></li>
+<li><a href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#3-training-the-model">3. Training the Model</a>
+<ul>
+<li><a href="#what-is-conll-format">What is CoNLL format?</a>
+<ul>
+<li><a href="#conll-format-structure">CoNLL Format Structure</a></li>
+<li><a href="#why-conll-format-is-used-in-ner">Why CoNLL Format Is Used in NER</a></li>
+</ul>
+</li>
+<li><a href="#where-to-get-clinical-ner-datasets">Where to get Clinical NER Datasets?</a></li>
+</ul>
+</li>
+<li><a href="#4-loading-the-model">4. Loading the Model</a></li>
+<li><a href="#5-making-predictions">5. Making Predictions</a></li>
+<li><a href="#document">What&rsquo;s a Document?</a>
+<ul>
+<li><a href="#document-in-spark-nlp">Document in Spark NLP</a></li>
+<li><a href="#documentassembler">DocumentAssembler</a></li>
+<li><a href="#example-1">Example</a></li>
+<li><a href="#output">Output</a></li>
+<li><a href="#explanation">Explanation</a></li>
+<li><a href="#why-is-this-important">Why is this Important?</a></li>
+</ul>
+</li>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#actual-output">Actual Output</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<!-- raw HTML omitted -->
 <h2 id="1-extract-handwritten-text-using-ocr">1. Extract Handwritten text using OCR</h2>
 <p>The first and foremost step is to use an OCR to extract handwritten texts from the doctor&rsquo;s prescriptions. I have used <a href="https://aws.amazon.com/textract/" target="_blank" rel="noopener">AWS Textract</a> that automatically extracts text, handwriting, layout elements, and data from scanned documents.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">detect_text</span>(local_file, region_name, aws_access_key_id, aws_secret_access_key):
@@ -278,6 +324,7 @@
 
     <span style="color:#66d9ef">return</span> extracted_text
 </code></pre></div><p>The data extracted from the OCR is then sent further into the NER pipeline, which we will be creating later in this blog, for extraction of Named Entities.</p>
+<!-- raw HTML omitted -->
 <h2 id="2-initializing-the-ner-model">2. Initializing the NER Model</h2>
 <p>We create a class <code>InitiateNER</code> to initialize the Spark NLP session, embeddings, and NER tagger.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InitiateNER</span>:
@@ -321,8 +368,10 @@
             <span style="color:#f92672">.</span>setInputCols([<span style="color:#e6db74">&#34;document&#34;</span>, <span style="color:#e6db74">&#34;token&#34;</span>, <span style="color:#e6db74">&#34;ner&#34;</span>]) \
             <span style="color:#f92672">.</span>setOutputCol(<span style="color:#e6db74">&#34;ner_span&#34;</span>)
 </code></pre></div><p>The NerDLModel is an encoder-decoder neural network (we will talk about it later) which needs <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach" target="_blank" rel="noopener">the input in the form of embeddings</a>[1]. This can be achieved via a <strong>WordEmbeddings model</strong>. We are using BertEmbeddings in this case.</p>
+<!-- raw HTML omitted -->
 <h3 id="wordembeddings-model">WordEmbeddings model</h3>
 <p><a href="https://www.ibm.com/topics/word-embeddings" target="_blank" rel="noopener">Word embeddings</a>[2] capture semantic relationships between words, allowing models to understand and represent words in a continuous vector space where similar words are close to each other. This semantic representation enables more nuanced understanding of language.</p>
+<!-- raw HTML omitted -->
 <h4 id="why-i-chose-bert-embeddings-over-others">Why I chose BERT Embeddings over others?</h4>
 <p><a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener">BERT embeddings</a> [3, 4, 5, 6] offer several advantages over traditional embeddings for Named Entity Recognition (NER):</p>
 <ol>
@@ -342,9 +391,11 @@
 <p><em>Proven Performance</em>: BERT consistently outperforms older embeddings on NER tasks due to its deep contextual understanding and flexibility in handling diverse language structures.</p>
 </li>
 </ol>
+<!-- raw HTML omitted -->
 <h3 id="nerdlapproach">NerDLApproach</h3>
 <p>The <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach" target="_blank" rel="noopener">NerDLApproach</a>[1] in Spark NLP is a neural network model designed for Named Entity Recognition (NER) tasks.
 <!-- raw HTML omitted -->It uses a combination of Character-level Convolutional Neural Networks (Char CNNs), Bidirectional Long Short-Term Memory networks (BiLSTMs) (<a href="https://arxiv.org/pdf/1511.08308v5" target="_blank" rel="noopener">Char CNN - BiLSTM</a>[7]), and followed by a Conditional Random Fields (CRFs). Let&rsquo;s break down why this architecture is used and how it processes normal text input.</p>
+<!-- raw HTML omitted -->
 <h4 id="why-char-cnns---bilstm---crf">Why Char CNNs - BiLSTM - CRF?</h4>
 <ol>
 <li>
@@ -386,6 +437,7 @@
 </ul>
 </li>
 </ol>
+<!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
 <!-- raw HTML omitted -->
 <h4 id="example">Example</h4>
@@ -433,6 +485,7 @@
 </li>
 </ol>
 <!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
 <h2 id="3-training-the-model">3. Training the Model</h2>
 <p>The <code>train_model</code> method reads the CoNLL dataset, applies BERT embeddings, and trains the NER model.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">train_model</span>(self, training_file, save_path):
@@ -456,8 +509,10 @@
 <li><strong><code>self.ner_tagger.fit</code></strong>: Trains the NER model.</li>
 <li><strong><code>self.ner_model.write().overwrite().save</code></strong>: Saves the trained model.</li>
 </ul>
+<!-- raw HTML omitted -->
 <h3 id="what-is-conll-format">What is CoNLL format?</h3>
 <p>The CoNLL (Conference on Natural Language Learning) format is a structured text format commonly used to label tokens in natural language processing tasks, especially named entity recognition (NER). In a CoNLL-formatted dataset, each line represents a token (such as a word or punctuation), with additional columns typically containing labels or annotations about that token. Sentences are separated by blank lines.</p>
+<!-- raw HTML omitted -->
 <h4 id="conll-format-structure">CoNLL Format Structure</h4>
 <p>A typical CoNLL dataset has multiple columns for each token. The columns can vary based on the dataset&rsquo;s intended task, but for NER, they usually look like this:</p>
 <pre tabindex="0"><code>Token   POS  Chunk  Entity
@@ -487,6 +542,7 @@ or          -X-     -X-     O
 cold        -X-     -X-     B-Medical_condition
 symptoms.   -X-     -X-     O
 </code></pre><p>As we are only interested in Entity mapping, the POS and Chunk values are irrelevant to us, hence we have put a <strong>-X-</strong> or Empty Placeholder there.</p>
+<!-- raw HTML omitted -->
 <h4 id="why-conll-format-is-used-in-ner">Why CoNLL Format Is Used in NER</h4>
 <p>The CoNLL format is widely used in NER for several reasons:</p>
 <ol>
@@ -495,6 +551,7 @@ symptoms.   -X-     -X-     O
 <li><em>Sentence separation</em>: Blank lines make sentence boundaries clear, which is crucial for tasks like NER, where context within sentences matters.</li>
 <li><em>Widely supported by NLP tools</em>: Many NLP frameworks (like spaCy, NLTK, and transformers libraries) support CoNLL format, so training data in this format is easily integrated into NER pipelines.</li>
 </ol>
+<!-- raw HTML omitted -->
 <h3 id="where-to-get-clinical-ner-datasets">Where to get Clinical NER Datasets?</h3>
 <p>Such datasets can be found at various sources -</p>
 <ol>
@@ -503,6 +560,7 @@ symptoms.   -X-     -X-     O
 <li>2014 i2b2 De-identification Challenge</li>
 <li>2018 n2c2 Medication Extraction Challenge</li>
 </ol>
+<!-- raw HTML omitted -->
 <h2 id="4-loading-the-model">4. Loading the Model</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">load_model</span>(self, model_path):
     <span style="color:#66d9ef">try</span>:
@@ -517,6 +575,7 @@ symptoms.   -X-     -X-     O
 <li><strong><code>load_model</code> method</strong>: Loads a pre-trained NER model.</li>
 <li><strong><code>NerDLModel.load</code></strong>: Loads the model from the specified path.</li>
 </ul>
+<!-- raw HTML omitted -->
 <h2 id="5-making-predictions">5. Making Predictions</h2>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">predict</span>(self, text):
     <span style="color:#66d9ef">try</span>:
@@ -588,16 +647,20 @@ symptoms.   -X-     -X-     O
 <p><strong><code>self.format_output</code></strong>: Formats the prediction results.</p>
 </li>
 </ul>
-<h2 id="document">Document</h2>
+<!-- raw HTML omitted -->
+<h2 id="whats-a-document">What&rsquo;s a Document?</h2>
 <p>In the context of Natural Language Processing (NLP) and Spark NLP, a &ldquo;document&rdquo; refers to a structured representation of text data. This structured representation is used as an intermediate format that allows various NLP components to process the text more effectively. Let&rsquo;s break down what this means in more detail:</p>
+<!-- raw HTML omitted -->
 <h3 id="document-in-spark-nlp">Document in Spark NLP</h3>
 <p>A &ldquo;document&rdquo; in Spark NLP is essentially a DataFrame column that contains metadata about the text, such as its content, the start and end positions of the text, and other relevant information. This structured format is crucial for the subsequent NLP tasks, such as sentence detection, tokenization, and named entity recognition.</p>
+<!-- raw HTML omitted -->
 <h3 id="documentassembler">DocumentAssembler</h3>
 <p>The <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/DocumentAssembler" target="_blank" rel="noopener">DocumentAssembler</a>[10] is a component in Spark NLP that converts raw text into this structured &ldquo;document&rdquo; format. Here&rsquo;s how it works:</p>
 <ol>
 <li><strong>Input Column</strong>: The <code>DocumentAssembler</code> takes a column of raw text as input.</li>
 <li><strong>Output Column</strong>: It produces a column of &ldquo;document&rdquo; type, which contains the structured representation of the text.</li>
 </ol>
+<!-- raw HTML omitted -->
 <h3 id="example-1">Example</h3>
 <p>Let&rsquo;s look at an example to understand this better:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> sparknlp.base <span style="color:#f92672">import</span> DocumentAssembler
@@ -621,20 +684,23 @@ document_df <span style="color:#f92672">=</span> document_assembler<span style="
 
 <span style="color:#75715e"># Show the result</span>
 document_df<span style="color:#f92672">.</span>select(<span style="color:#e6db74">&#34;document&#34;</span>)<span style="color:#f92672">.</span>show(truncate<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
-</code></pre></div><h3 id="output">Output</h3>
+</code></pre></div><!-- raw HTML omitted -->
+<h3 id="output">Output</h3>
 <p>The output will be a DataFrame with a &ldquo;document&rdquo; column that contains the structured representation of the text:</p>
 <pre tabindex="0"><code>+-------------------------------------------------------------+
 |document                                                     |
 +-------------------------------------------------------------+
 |[[document, 0, 20, This is a sample text., [sentence -&gt; 0], []]]|
 +-------------------------------------------------------------+
-</code></pre><h3 id="explanation">Explanation</h3>
+</code></pre><!-- raw HTML omitted -->
+<h3 id="explanation">Explanation</h3>
 <ul>
 <li><strong><code>document</code></strong>: The column name for the structured text.</li>
 <li><strong><code>0, 20</code></strong>: The start and end positions of the text.</li>
 <li><strong><code>This is a sample text.</code></strong>: The actual text content.</li>
 <li><strong><code>[sentence -&gt; 0]</code></strong>: Metadata indicating that this is the first sentence.</li>
 </ul>
+<!-- raw HTML omitted -->
 <h3 id="why-is-this-important">Why is this Important?</h3>
 <p>The structured &ldquo;document&rdquo; format is essential for the following reasons:</p>
 <ol>
@@ -642,10 +708,47 @@ document_df<span style="color:#f92672">.</span>select(<span style="color:#e6db74
 <li><em>Metadata</em>: It includes metadata that can be useful for various NLP tasks.</li>
 <li><em>Pipeline Integration</em>: It allows different components in the NLP pipeline to work together seamlessly.</li>
 </ol>
+<!-- raw HTML omitted -->
+<h2 id="summary">Summary</h2>
+<h3 id="1-training-the-ner-model">1. Training the NER Model</h3>
+<p><img src="/images/medical-text-extraction/training.png" alt="Training"></p>
+<h3 id="2-ocr-and-ner-pipeline-for-prescription-processing">2. OCR and NER Pipeline for Prescription Processing</h3>
+<ul>
+<li>
+<p><strong>OCR (Optical Character Recognition)</strong></p>
+<ul>
+<li>Converts handwritten doctor prescriptions into machine-readable text using OCR techniques.</li>
+</ul>
+</li>
+<li>
+<p><strong>NER (Named Entity Recognition)</strong></p>
+<ul>
+<li><strong>Input:</strong> Text from the OCR step containing unstructured data such as medicine names and dosage instructions.</li>
+<li><strong>BERT Embedding:</strong> Converts the input text into context-aware embeddings.</li>
+<li><strong>CHAR CNN-BiLSTM:</strong>
+<ul>
+<li>Character-level CNN captures morphological features of words.</li>
+<li>BiLSTM captures bidirectional context of the text sequence.</li>
+</ul>
+</li>
+<li><strong>CRF (Conditional Random Field):</strong> Ensures valid label sequences for structured output like medicine names, dosages, and eating schedules.</li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/medical-text-extraction/pred-pipeline.png" alt="Prediction Pipeline"></p>
+<p><strong>Output:</strong> Structured data with medicine names, dosages, and schedules extracted from the text.</p>
+<!-- raw HTML omitted -->
+<h2 id="actual-output">Actual Output</h2>
+<h4 id="handwritten-doctors-prescription">Handwritten Doctor&rsquo;s Prescription</h4>
+<p><img src="/images/medical-text-extraction/prescription.jpeg" alt="Prescription"></p>
+<h4 id="output-1">Output</h4>
+<p><img src="/images/medical-text-extraction/output.jpeg" alt="Output"></p>
+<!-- raw HTML omitted -->
 <h2 id="conclusion">Conclusion</h2>
 <p>In this blog, we explored a comprehensive pipeline for extracting information from handwritten medical prescriptions using AWS Textract and Spark NLP. Starting with the OCR capabilities of AWS Textract, we efficiently transformed handwritten text into machine-readable format, setting the stage for the subsequent NER analysis.</p>
 <p>As we concluded with predictions, the seamless interaction of components within the prediction pipeline demonstrated the power of Spark NLP for real-time NER tasks. This approach not only streamlines the processing of medical prescriptions but also holds potential for further applications in healthcare, where accurate data extraction is paramount.</p>
 <p>By combining cutting-edge technology with thoughtful design, we can significantly enhance the efficiency of healthcare processes, ultimately leading to improved patient outcomes and better management of medical information. As we continue to innovate in this space, the opportunities for developing advanced applications in the realm of healthcare data processing are endless.</p>
+<!-- raw HTML omitted -->
 <h2 id="references">References</h2>
 <p>[1] “Spark NLP 5.5.1 ScalaDoc - com.johnsnowlabs.nlp.annotators.ner.dl.NerDLApproach,” Sparknlp.org, 2024. <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach" target="_blank" rel="noopener">https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach</a>.</p>
 <p>[2] J. Barnard, “What are Word Embeddings? | IBM,” <a href="http://www.ibm.com" target="_blank" rel="noopener">www.ibm.com</a>, Jan. 23, 2024. <a href="https://www.ibm.com/topics/word-embeddings" target="_blank" rel="noopener">https://www.ibm.com/topics/word-embeddings</a></p>
