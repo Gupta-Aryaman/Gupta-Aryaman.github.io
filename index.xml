@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>home on aryaman&#39;s batcave</title>
+    <title>home on ARYAMAN.SPACE</title>
     <link>https://aryaman.space/</link>
-    <description>Recent content in home on aryaman&#39;s batcave</description>
+    <description>Recent content in home on ARYAMAN.SPACE</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
     <lastBuildDate>Tue, 05 Nov 2024 21:10:01 +0530</lastBuildDate><atom:link href="https://aryaman.space/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP</title>
+      <title>FROM SCRIBBLES TO STRUCTURED DATA: PROCESSING HANDWRITTEN PRESCRIPTIONS WITH SPARK NLP</title>
       <link>https://aryaman.space/from-scribbles-to-structured-data-processing-handwritten-prescriptions-with-spark-nlp/</link>
       <pubDate>Tue, 05 Nov 2024 21:10:01 +0530</pubDate>
       
@@ -20,7 +20,7 @@ In this article, we delve into a Spark NLP-based pipeline to convert handwritten
     </item>
     
     <item>
-      <title>Demystifying Replication and Sharding in MongoDB</title>
+      <title>DEMYSTIFYING REPLICATION AND SHARDING IN MONGODB</title>
       <link>https://aryaman.space/demystifying-replication-and-sharding-in-mongodb/</link>
       <pubDate>Sun, 14 Apr 2024 00:00:00 +0000</pubDate>
       
@@ -31,7 +31,7 @@ By doing this, will get redundancy and increases data availability with multiple
     </item>
     
     <item>
-      <title>Breaking Boundaries</title>
+      <title>BREAKING BOUNDARIES</title>
       <link>https://aryaman.space/breaking-boundaries/</link>
       <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
       
@@ -40,7 +40,7 @@ By doing this, will get redundancy and increases data availability with multiple
     </item>
     
     <item>
-      <title>Asynchronous Programming in Python</title>
+      <title>ASYNCHRONOUS PROGRAMMING IN PYTHON</title>
       <link>https://aryaman.space/asynchronous-programming-in-python/</link>
       <pubDate>Thu, 21 Sep 2023 00:00:00 +0000</pubDate>
       
@@ -50,16 +50,16 @@ Synchronous programming is a programming paradigm in which operations are execut
     </item>
     
     <item>
-      <title>Finding Success in a Dynamic Environment</title>
-      <link>https://aryaman.space/finding-success-in-a-dynamic-environment/</link>
+      <title>FINDING SUCCESS IN DYNAMIC ENVIRONMENT</title>
+      <link>https://aryaman.space/finding-success-in-dynamic-environment/</link>
       <pubDate>Tue, 25 Jul 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://aryaman.space/finding-success-in-a-dynamic-environment/</guid>
+      <guid>https://aryaman.space/finding-success-in-dynamic-environment/</guid>
       <description>Lessons learned from my internship at a government firm Introduction Embarking on an internship journey within a corporate government firm can be exciting and challenging. I was amazed by the valuable lessons and experiences that awaited me as I delved into this professional realm. In this article, I will share the key insights I gained during my internship, from the importance of collaboration to the significance of clean code practices. Join me as we uncover the secrets to thriving in this dynamic and rewarding environment.</description>
     </item>
     
     <item>
-      <title>Decorators in Python</title>
+      <title>DECORATORS IN PYTHON</title>
       <link>https://aryaman.space/decorators-in-python/</link>
       <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
       
@@ -70,25 +70,13 @@ import time start_time = time.time() **call your function** #calling your functi
     </item>
     
     <item>
-      <title>about</title>
-      <link>https://aryaman.space/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://aryaman.space/about/</guid>
-      <description>i am aryaman.
-appreciate you for being here.
-whether i&amp;rsquo;m dissecting massive SaaS architectures or tinkering with hardware, i thrive on diving deep into the details. sharing what i learn feels super empowering, and it’s all fueled by my constant hunt for new challenges.
-this little corner of the internet has been my secret spot for ideas, projects, and favorite reads — until now. i’m really excited to have you along for the ride!</description>
-    </item>
-    
-    <item>
       <title>papershelf</title>
       <link>https://aryaman.space/papershelf/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://aryaman.space/papershelf/</guid>
-      <description>Papershelf i’ve been diving into the world of research and white papers (thanks to Arpit Bhayani!). so far, I’ve checked out these awesome articles -
- Named Entity Recognition with Bidirectional LSTM-CNNs Quantum supremacy using a programmable superconducting processor Quantum Computation by David P. DiVencenzo WTF: The Who to Follow Service at Twitter Attention Is All You Need  </description>
+      <description>PAPERSHELF I’VE BEEN DIVING INTO THE WORLD OF RESEARCH AND WHITE PAPERS. SO FAR, I’VE CHECKED OUT THESE AWESOME ARTICLES -
+AI/ML  CHAIN-OF-THOUGHT PROMPTING MEMGPT: TOWARDS LLMS AS OPERATING SYSTEMS CAMELOT: TOWARDS LARGE LANGUAGE MODELS WITH TRAINING-FREE CONSOLIDATED ASSOCIATIVE MEMORY NAMED ENTITY RECOGNITION WITH BIDIRECTIONAL LSTM-CNNS ATTENTION IS ALL YOU NEED  QUANTUM COMPUTING  PARTIAL LOOPHOLES FREE DEVICE-INDEPENDENT QUANTUM RANDOM NUMBER GENERATOR USING IBM&amp;rsquo;S QUANTUM COMPUTERS EXPERIMENTS WITH IBM QUANTUM DEVICES FOR RANDOM NUMBER GENERATION AND STRING MATCHING QUANTUM SUPREMACY USING A PROGRAMMABLE SUPERCONDUCTING PROCESSOR QUANTUM COMPUTATION BY DAVID P.</description>
     </item>
     
   </channel>

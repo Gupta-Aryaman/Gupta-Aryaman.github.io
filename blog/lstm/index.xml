@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>LSTM on aryaman&#39;s batcave</title>
+    <title>LSTM on ARYAMAN.SPACE</title>
     <link>https://aryaman.space/blog/lstm/</link>
-    <description>Recent content in LSTM on aryaman&#39;s batcave</description>
+    <description>Recent content in LSTM on ARYAMAN.SPACE</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <copyright>Copyright © 2024, Aryaman Gupta.</copyright>
     <lastBuildDate>Tue, 05 Nov 2024 21:10:01 +0530</lastBuildDate><atom:link href="https://aryaman.space/blog/lstm/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP</title>
+      <title>FROM SCRIBBLES TO STRUCTURED DATA: PROCESSING HANDWRITTEN PRESCRIPTIONS WITH SPARK NLP</title>
       <link>https://aryaman.space/from-scribbles-to-structured-data-processing-handwritten-prescriptions-with-spark-nlp/</link>
       <pubDate>Tue, 05 Nov 2024 21:10:01 +0530</pubDate>
       
