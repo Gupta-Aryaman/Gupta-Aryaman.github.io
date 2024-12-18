@@ -246,6 +246,7 @@
   <main>
 
 <link rel="stylesheet" href="/css/style.css">
+<div style="background-color: rgba(83, 83, 83, 0.2); padding: 0 10px; border-radius: 3px;">
 <h1>FROM SCRIBBLES TO STRUCTURED DATA: PROCESSING HANDWRITTEN PRESCRIPTIONS WITH SPARK NLP</h1>
 
   <figure class="entry-cover">
@@ -255,7 +256,7 @@
 <p>
   <i>
     <time datetime='2024-11-05' pubdate>
-      05 JAN, 2024
+      05 Nov, 2024
     </time>
   </i>
 </p>
@@ -519,11 +520,11 @@
         <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
             logger<span style="color:#f92672">.</span>error(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Error during training: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
 </code></pre></div><ul>
-<li><strong><code>train_model</code> method</strong>: Trains the NER model.</li>
-<li><strong><code>CoNLL().readDataset</code></strong>: Reads training data in <strong>CoNLL</strong> format.</li>
-<li><strong><code>self.bert_embeddings.transform</code></strong>: Applies BERT embeddings to the training data.</li>
-<li><strong><code>self.ner_tagger.fit</code></strong>: Trains the NER model.</li>
-<li><strong><code>self.ner_model.write().overwrite().save</code></strong>: Saves the trained model.</li>
+<li><code>train_model</code> method: Trains the NER model.</li>
+<li><code>CoNLL().readDataset</code>: Reads training data in <strong>CoNLL</strong> format.</li>
+<li><code>self.bert_embeddings.transform</code>: Applies BERT embeddings to the training data.</li>
+<li><code>self.ner_tagger.fit</code>: Trains the NER model.</li>
+<li><code>self.ner_model.write().overwrite().save</code>: Saves the trained model.</li>
 </ul>
 <!-- raw HTML omitted -->
 <h3 id="what-is-conll-format">What is CoNLL format?</h3>
@@ -588,8 +589,8 @@ symptoms.   -X-     -X-     O
     <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
         logger<span style="color:#f92672">.</span>error(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Error loading model: </span><span style="color:#e6db74">{</span>e<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
 </code></pre></div><ul>
-<li><strong><code>load_model</code> method</strong>: Loads a pre-trained NER model.</li>
-<li><strong><code>NerDLModel.load</code></strong>: Loads the model from the specified path.</li>
+<li><code>load_model</code> method: Loads a pre-trained NER model.</li>
+<li><code>NerDLModel.load</code>: Loads the model from the specified path.</li>
 </ul>
 <!-- raw HTML omitted -->
 <h2 id="5-making-predictions">5. Making Predictions</h2>
@@ -623,12 +624,12 @@ symptoms.   -X-     -X-     O
 <li>
 <p><strong>Pipeline Stages</strong>: The pipeline consists of several stages:</p>
 <ul>
-<li><strong><code>document_assembler</code></strong>: Converts raw text into a <strong>structured document format</strong> (read about it below).</li>
-<li><strong><code>sentence_detector</code></strong>: Detects sentences within the document.</li>
-<li><strong><code>tokenizer</code></strong>: Tokenizes sentences into individual words.</li>
-<li><strong><code>bert_embeddings</code></strong>: Applies BERT embeddings to the tokens.</li>
-<li><strong><code>loaded_ner_model</code></strong>: Uses the pre-trained NER model to identify named entities.</li>
-<li><strong><code>converter</code></strong>: Converts the NER results into a more readable format.</li>
+<li><code>document_assembler</code>: Converts raw text into a <strong>structured document format</strong> (read about it below).</li>
+<li><code>sentence_detector</code>: Detects sentences within the document.</li>
+<li><code>tokenizer</code>: Tokenizes sentences into individual words.</li>
+<li><code>bert_embeddings</code>: Applies BERT embeddings to the tokens.</li>
+<li><code>loaded_ner_model</code>: Uses the pre-trained NER model to identify named entities.</li>
+<li><code>converter</code>: Converts the NER results into a more readable format.</li>
 </ul>
 </li>
 <li>
@@ -648,19 +649,19 @@ symptoms.   -X-     -X-     O
 </ul>
 </li>
 <li>
-<p><strong><code>self.spark.createDataFrame</code></strong>: Creates a Spark DataFrame from the input text.</p>
+<p><code>self.spark.createDataFrame</code>: Creates a Spark DataFrame from the input text.</p>
 </li>
 <li>
-<p><strong><code>self.prediction_pipeline.fit</code></strong>: Fits the pipeline (required for some Spark operations).</p>
+<p><code>self.prediction_pipeline.fit</code>: Fits the pipeline (required for some Spark operations).</p>
 </li>
 <li>
-<p><strong><code>prediction_model.transform</code></strong>: Transforms the input text using the pipeline.</p>
+<p><code>prediction_model.transform</code>: Transforms the input text using the pipeline.</p>
 </li>
 <li>
-<p><strong><code>preds.collect</code></strong>: Collects the prediction results.</p>
+<p><code>preds.collect</code>: Collects the prediction results.</p>
 </li>
 <li>
-<p><strong><code>self.format_output</code></strong>: Formats the prediction results.</p>
+<p><code>self.format_output</code>: Formats the prediction results.</p>
 </li>
 </ul>
 <!-- raw HTML omitted -->
@@ -711,10 +712,10 @@ document_df<span style="color:#f92672">.</span>select(<span style="color:#e6db74
 </code></pre><!-- raw HTML omitted -->
 <h3 id="explanation">Explanation</h3>
 <ul>
-<li><strong><code>document</code></strong>: The column name for the structured text.</li>
-<li><strong><code>0, 20</code></strong>: The start and end positions of the text.</li>
-<li><strong><code>This is a sample text.</code></strong>: The actual text content.</li>
-<li><strong><code>[sentence -&gt; 0]</code></strong>: Metadata indicating that this is the first sentence.</li>
+<li><code>document</code>: The column name for the structured text.</li>
+<li><code>0, 20</code>: The start and end positions of the text.</li>
+<li><code>This is a sample text.</code>: The actual text content.</li>
+<li><code>[sentence -&gt; 0]</code>: Metadata indicating that this is the first sentence.</li>
 </ul>
 <!-- raw HTML omitted -->
 <h3 id="why-is-this-important">Why is this Important?</h3>
@@ -801,6 +802,7 @@ document_df<span style="color:#f92672">.</span>select(<span style="color:#e6db74
   <a href="https://aryaman.space/blog/conll/">#CoNLL</a>
   
 </p>
+</div>
 
   </main>
   
@@ -850,6 +852,8 @@ document_df<span style="color:#f92672">.</span>select(<span style="color:#e6db74
         border-radius: 0 5px 5px 0;
         width: 30%;  
         box-sizing: border-box;  
+        text-transform: lowercase;  
+
     }
 
     .newsletter-button:hover {
@@ -861,7 +865,7 @@ document_df<span style="color:#f92672">.</span>select(<span style="color:#e6db74
     }
 
      
-    @media (max-width: 655px) {
+    @media (max-width: 711px) {
         .newsletter-input {
             width: 60%;
             font-size: 12px;
@@ -874,6 +878,7 @@ document_df<span style="color:#f92672">.</span>select(<span style="color:#e6db74
         .newsletter-button {
             width: 40%;
             font-size: 12px;  
+            text-transform: lowercase;  
         }
     }
 </style>
