@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Demystifying Replication and Sharding in MongoDB | aryaman.space</title>
+<meta name="keywords" content="replication, sharding, mongodb, distributed-systems, aryaman-batcave">
+<meta name="description" content="Making a MongoDB cluster &ldquo;Production Ready&rdquo; by performing database Replication and Sharding (horizontal fragmentation)
+What is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.
+By doing this, will get redundancy and increases data availability with multiple copies of data on different database servers.">
+<meta name="author" content="Aryaman Gupta">
+<link rel="canonical" href="https://aryaman.space/blog/replication-and-sharding-in-mongo/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://aryaman.space/images/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://aryaman.space/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://aryaman.space/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://aryaman.space/apple-touch-icon.png">
+<link rel="mask-icon" href="https://aryaman.space/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://aryaman.space/blog/replication-and-sharding-in-mongo/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:url" content="https://aryaman.space/blog/replication-and-sharding-in-mongo/">
+  <meta property="og:site_name" content="aryaman.space">
+  <meta property="og:title" content="Demystifying Replication and Sharding in MongoDB">
+  <meta property="og:description" content="Making a MongoDB cluster “Production Ready” by performing database Replication and Sharding (horizontal fragmentation)
+What is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.
+By doing this, will get redundancy and increases data availability with multiple copies of data on different database servers.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-04-14T00:00:00+00:00">
+    <meta property="article:modified_time" content="2024-04-14T00:00:00+00:00">
+    <meta property="article:tag" content="Replication">
+    <meta property="article:tag" content="Sharding">
+    <meta property="article:tag" content="Mongodb">
+    <meta property="article:tag" content="Distributed-Systems">
+    <meta property="article:tag" content="Aryaman-Batcave">
+      <meta property="og:image" content="https://aryaman.space/images/about.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://aryaman.space/images/about.jpg">
+<meta name="twitter:title" content="Demystifying Replication and Sharding in MongoDB">
+<meta name="twitter:description" content="Making a MongoDB cluster &ldquo;Production Ready&rdquo; by performing database Replication and Sharding (horizontal fragmentation)
+What is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.
+By doing this, will get redundancy and increases data availability with multiple copies of data on different database servers.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Blog",
+      "item": "https://aryaman.space/blog/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Demystifying Replication and Sharding in MongoDB",
+      "item": "https://aryaman.space/blog/replication-and-sharding-in-mongo/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Demystifying Replication and Sharding in MongoDB",
+  "name": "Demystifying Replication and Sharding in MongoDB",
+  "description": "Making a MongoDB cluster \u0026ldquo;Production Ready\u0026rdquo; by performing database Replication and Sharding (horizontal fragmentation)\nWhat is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.\nBy doing this, will get redundancy and increases data availability with multiple copies of data on different database servers.",
+  "keywords": [
+    "replication", "sharding", "mongodb", "distributed-systems", "aryaman-batcave"
+  ],
+  "articleBody": "Making a MongoDB cluster “Production Ready” by performing database Replication and Sharding (horizontal fragmentation)\nWhat is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.\nBy doing this, will get redundancy and increases data availability with multiple copies of data on different database servers. So, it will increase the performance of reading scaling. The set of servers that maintain the same copy of data is known as replica servers or MongoDB instances.\nWhy Replication? High Availability of data disasters recovery\nNo downtime for maintenance ( like backups index rebuilds and compaction)\nRead Scaling (Extra copies to read from)\nWhat is Sharding? Sharding is a method for allocating data across multiple machines. MongoDB used sharding to help deployment with very big data sets and large throughput the operation. By sharding, you combine more devices to carry data extension and the needs of read and write operations.\nA sharded cluster consists of 3 things -\nShards - A replica set that contains a sunset of the cluster’s data\nMongos - For a sharded cluster, mongos provides an interface between client applications and sharded cluster\nConfig Servers - They are the authoritative source of sharding metadata. The metadata contains the list of sharded collections, routing info etc.\nWhy Sharding? Database systems having big data sets or high throughput requests can doubt the ability of a single server.\nFor example, High query flows can drain the CPU limit of the server.\nThe working set sizes are larger than the system’s RAM to stress the I/O capacity of the disk drive.\nData Replication in action Insert data into primary repl\nGoing into a secondary repl and querying peaks collection in peaksDB gives us the replicated result -\nWE CANNOT WRITE INTO A REPLICATIONED/SECONDARY DATABASE, WRITES ARE ONLY ALLOWED IN THE PRIMARY REPL.\nSteps to create the above sharded cluster Go to \\mongo\\data\\ folder\nMake cfg0, cfg1, cfg2 (representing 3 replicas of the config server)\nMake a0,a1,a2, b0,b1,b2, c0,c1,c2 (represents the replicas of shard a, b, c respectively)\nRun the 3 config servers in different terminals -\n1 mongod --configsvr --dbpath cfg0 --port 26050 --logpath log.cfg0 --replSet cfg 1 mongod --configsvr --dbpath cfg1 --port 26051 --logpath log.cfg1 --replSet cfg 1 mongod --configsvr --dbpath cfg2 --port 26052 --logpath log.cfg2 --replSet cfg Here,–configsvr represents that we are creating a config server, –dbpath represents the folder of that config replica, –port represents the port number on which I want the server to run, –logpath represents the log file of the particular server, and –replSet represents the name of the Replication Set.\nAttaching mongo shell to the config server running on port 26050 (as we want to make this server as the Primary Replica of the replSet)\n1 mongosh --port 26050 Initiate Replication Set for the config server, and add the other 2 servers to the set -\n1 2 3 rs.initiate() rs.add(\"localhost:26051\") #Adding the other config server to the replSet rs.add(\"localhost:26052\") Doing rs.status() we can see the members of the replica set -\nNow launch the servers for the shard ‘a’ having replicas a0, a1, a2 in it’s replSet (each server should be launched in different terminals) -\n1 mongod --shardsvr --replSet a --dbpath a0 --port 26000 --logpath log.a0 1 mongod --shardsvr --replSet a --dbpath a1 --port 26001 --logpath log.a1 1 mongod --shardsvr --replSet a --dbpath a2 --port 26002 --logpath log.a2 Do similar to create shards ‘b’ and ‘c’ -\n1 2 3 mongod --shardsvr --replSet b --dbpath b0 --port 26100 --logpath log.b0 mongod --shardsvr --replSet b --dbpath b1 --port 26101 --logpath log.b1 mongod --shardsvr --replSet b --dbpath b2 --port 26102 --logpath log.b2 1 2 3 mongod --shardsvr --replSet c --dbpath c0 --port 26200 --logpath log.c0 mongod --shardsvr --replSet c --dbpath c1 --port 26201 --logpath log.c1 mongod --shardsvr --replSet c --dbpath c2 --port 26202 --logpath log.c2 We can see the servers are actively “LISTENING” on all the ports -\nNow open a new terminal and connect a mongo shell to server running on port 26000, initiate a replSet and add replicas a1 and a2 to it (Inter-connecting the replSet ‘a’) -\n1 mongosh --port 26000 1 2 3 rs.initiate() rs.add(\"localhost:26001\") rs.add(\"localhost:26002\") Do the same for replSet ‘b’ and ‘c’ -\n1 2 3 4 mongosh --port 26100 rs.initiate() rs.add(\"localhost:26101\") rs.add(\"localhost:26102\") 1 2 3 4 mongosh --port 26200 rs.initiate() rs.add(\"localhost:26201\") rs.add(\"localhost:26202\") The next step is to start the mongos instance (in a new terminal) which would be the interaction point of the client with the sharded environment -\n1 mongos --configdb \"cfg/localhost:26050,localhost:26051,localhost:26052\" --logpath log.mongos1 --port 26061 Here, –configdb represents the ip address of the 3 config servers we created earlier.\nNow connect a mongo shell to this mongos instance (in a new terminal) and start adding the shards to it -\n1 2 3 4 mongosh --port 26061 sh.addShard(\"a/*[*localhost:26000*](http://localhost:26000)*\") sh.addShard(\"b/localhost:26100\") sh.addShard(\"c/localhost:26200\") In sh.addShard(“a/localhost:26000”), ‘a’ represents replSet, and localhost:26000 represents the Primary Replica of ‘a’ replSet.\nTo see the status of the sharded environment -\n1 sh.status() We can see that the 3 sharded replSets have been added. Also 1 mongos instance is active.\nAlso, we can see that the currently sharded database is only config db, as we have not sharded any other database.\nLets add peaksDB for sharding -\n1 sh.enableSharding(\"peaksDB\") Now doing sh.status(), we can see “peaksDB” in “databases” field -\nWe can see 1 sample document inside our ‘peaksDB.peaks’ collection. Lets shard the collection on ’name’ field -\nCreate an index of the proposed shard key -\n1 db.peaks.ensureIndex({name: \"hashed\"}) Shard the collection using that key -\n1 sh.shardCollection(\"peaksDB.peaks\", {name:\"hashed\"}) Now doing sh.status() we can see that for our collection “peaksDB.peaks” has a shardKey of ’name’ and is present on shard ‘c’ -\nFinally, we can get more details of all the shards present -\\\n1 2 use config db.shards.find() References mongodb.com/docs/manual/replication/\nmongodb.com/docs/manual/sharding/\nmongodb.com/docs/manual/core/sharded-cluster-config-servers/\nyoutube.com/@vemarahub\nengineeringdigest.net\n",
+  "wordCount" : "999",
+  "inLanguage": "en",
+  "image": "https://aryaman.space/images/about.jpg","datePublished": "2024-04-14T00:00:00Z",
+  "dateModified": "2024-04-14T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Aryaman Gupta"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://aryaman.space/blog/replication-and-sharding-in-mongo/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "aryaman.space",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://aryaman.space/images/favicon.png"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://aryaman.space/" accesskey="h" title="aryaman.space (Alt + H)">aryaman.space</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://aryaman.space/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/papershelf/" title="Papershelf">
+                    <span>Papershelf</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Demystifying Replication and Sharding in MongoDB
+    </h1>
+    <div class="post-meta"><span title='2024-04-14 00:00:00 +0000 UTC'>April 14, 2024</span>&nbsp;·&nbsp;5 min&nbsp;·&nbsp;999 words&nbsp;·&nbsp;Aryaman Gupta
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#what-is-replication">What is Replication?</a>
+      <ul>
+        <li><a href="#why-replication">Why Replication?</a></li>
+      </ul>
+    </li>
+    <li><a href="#what-is-sharding">What is Sharding?</a>
+      <ul>
+        <li><a href="#why-sharding">Why Sharding?</a></li>
+      </ul>
+    </li>
+    <li><a href="#data-replication-in-action">Data Replication in action</a></li>
+    <li><a href="#steps-to-create-the-above-sharded-cluster">Steps to create the above sharded cluster</a></li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>Making a MongoDB cluster &ldquo;Production Ready&rdquo; by performing database Replication and Sharding (horizontal fragmentation)</p>
+<h2 id="what-is-replication">What is Replication?<a hidden class="anchor" aria-hidden="true" href="#what-is-replication">#</a></h2>
+<p>Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.</p>
+<p><img alt="Replication of a Database" loading="lazy" src="/images/replication-and-sharding-in-mongo/image1.png"></p>
+<p>By doing this, will get redundancy and increases data availability with multiple copies of data on different database servers. So, it will increase the performance of reading scaling. The set of servers that maintain the same copy of data is known as replica servers or MongoDB instances.</p>
+<h3 id="why-replication">Why Replication?<a hidden class="anchor" aria-hidden="true" href="#why-replication">#</a></h3>
+<ol>
+<li>
+<p>High Availability of data disasters recovery</p>
+</li>
+<li>
+<p>No downtime for maintenance ( like backups index rebuilds and compaction)</p>
+</li>
+<li>
+<p>Read Scaling (Extra copies to read from)</p>
+</li>
+</ol>
+<h2 id="what-is-sharding">What is Sharding?<a hidden class="anchor" aria-hidden="true" href="#what-is-sharding">#</a></h2>
+<p>Sharding is a method for allocating data across multiple machines. MongoDB used sharding to help deployment with very big data sets and large throughput the operation. By sharding, you combine more devices to carry data extension and the needs of read and write operations.</p>
+<p><img alt="A sharded cluster&rsquo;s layout" loading="lazy" src="/images/replication-and-sharding-in-mongo/image2.png"></p>
+<p>A sharded cluster consists of 3 things -</p>
+<ol>
+<li>
+<p><strong>Shards</strong> - A replica set that contains a sunset of the cluster&rsquo;s data</p>
+</li>
+<li>
+<p><strong>Mongos</strong> - For a sharded cluster, mongos provides an interface between client applications and sharded cluster</p>
+</li>
+</ol>
+<p><strong>Config Servers</strong> - They are the authoritative source of sharding metadata. The metadata contains the list of sharded collections, routing info etc.</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image3.png"></p>
+<h3 id="why-sharding">Why Sharding?<a hidden class="anchor" aria-hidden="true" href="#why-sharding">#</a></h3>
+<ol>
+<li>
+<p>Database systems having big data sets or high throughput requests can doubt the ability of a single server.</p>
+</li>
+<li>
+<p>For example, High query flows can drain the CPU limit of the server.</p>
+</li>
+<li>
+<p>The working set sizes are larger than the system&rsquo;s RAM to stress the I/O capacity of the disk drive.</p>
+</li>
+</ol>
+<h2 id="data-replication-in-action">Data Replication in action<a hidden class="anchor" aria-hidden="true" href="#data-replication-in-action">#</a></h2>
+<ol>
+<li>
+<p>Insert data into primary repl</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image9.png"></p>
+</li>
+</ol>
+<p>Going into a secondary repl and querying peaks collection in peaksDB gives us the replicated result -</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image10.png"></p>
+<blockquote>
+<p><strong>WE CANNOT WRITE INTO A REPLICATIONED/SECONDARY DATABASE, WRITES ARE ONLY ALLOWED IN THE PRIMARY REPL.</strong></p>
+</blockquote>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image11.png"></p>
+<h2 id="steps-to-create-the-above-sharded-cluster">Steps to create the above sharded cluster<a hidden class="anchor" aria-hidden="true" href="#steps-to-create-the-above-sharded-cluster">#</a></h2>
+<ol>
+<li>
+<p>Go to \mongo\data\ folder</p>
+</li>
+<li>
+<p>Make cfg0, cfg1, cfg2 (representing 3 replicas of the config server)</p>
+</li>
+<li>
+<p>Make a0,a1,a2, b0,b1,b2, c0,c1,c2 (represents the replicas of shard a, b, c respectively)</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image13.png"></p>
+</li>
+<li>
+<p>Run the 3 config servers in different terminals -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"> <span class="n">mongod</span> <span class="p">-</span><span class="n">-configsvr</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">cfg0</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26050</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">cfg0</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">cfg</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-configsvr</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">cfg1</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26051</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">cfg1</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">cfg</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"> <span class="n">mongod</span> <span class="p">-</span><span class="n">-configsvr</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">cfg2</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26052</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">cfg2</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">cfg</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Here,<em><strong>&ndash;configsvr</strong></em> represents that we are creating a config server, <em><strong>–dbpath</strong></em> represents the folder of that config replica, <em><strong>–port</strong></em> represents the port number on which I want the server to run, <em><strong>–logpath</strong></em> represents the log file of the particular server, and <em><strong>–replSet</strong></em> represents the name of the Replication Set.</p>
+</li>
+<li>
+<p>Attaching mongo shell to the config server running on port 26050 (as we want to make this server as the Primary Replica of the replSet)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongosh</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26050</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>Initiate Replication Set for the config server, and add the other 2 servers to the set -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">initiate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">add</span><span class="p">(</span><span class="s2">&#34;localhost:26051&#34;</span><span class="p">)</span>  <span class="c">#Adding the other config server to the replSet</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">add</span><span class="p">(</span><span class="s2">&#34;localhost:26052&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image14.png"></p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image15.png"></p>
+</li>
+<li>
+<p>Doing <code>rs.status()</code> we can see the members of the replica set -</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image16.png"></p>
+</li>
+<li>
+<p>Now launch the servers for the shard &lsquo;a&rsquo; having replicas a0, a1, a2 in it&rsquo;s replSet (each server should be launched in different terminals) -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">a</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">a0</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26000</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">a0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">a</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">a1</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26001</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">a1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">a</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">a2</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26002</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">a2</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image17.png"></p>
+<p>Do similar to create shards &lsquo;b&rsquo; and &lsquo;c&rsquo; -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">b</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">b0</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26100</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">b0</span>
+</span></span><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">b</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">b1</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26101</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">b1</span>
+</span></span><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">b</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">b2</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26102</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">b2</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">c</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">c0</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26200</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">c0</span>
+</span></span><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">c</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">c1</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26201</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">c1</span>
+</span></span><span class="line"><span class="cl"><span class="n">mongod</span> <span class="p">-</span><span class="n">-shardsvr</span> <span class="p">-</span><span class="n">-replSet</span> <span class="n">c</span> <span class="p">-</span><span class="n">-dbpath</span> <span class="n">c2</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26202</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">c2</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>We can see the servers are actively &ldquo;LISTENING&rdquo; on all the ports -</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image18.png"></p>
+</li>
+<li>
+<p>Now open a new terminal and connect a mongo shell to server running on port 26000, initiate a replSet and add replicas a1 and a2 to it (Inter-connecting the replSet &lsquo;a&rsquo;) -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongosh</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26000</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">initiate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">add</span><span class="p">(</span><span class="s2">&#34;localhost:26001&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">add</span><span class="p">(</span><span class="s2">&#34;localhost:26002&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image19.png"></p>
+</li>
+<li>
+<p>Do the same for replSet &lsquo;b&rsquo; and &lsquo;c&rsquo; -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongosh</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26100</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">initiate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">add</span><span class="p">(</span><span class="s2">&#34;localhost:26101&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">add</span><span class="p">(</span><span class="s2">&#34;localhost:26102&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongosh</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26200</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">initiate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">add</span><span class="p">(</span><span class="s2">&#34;localhost:26201&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">rs</span><span class="p">.</span><span class="py">add</span><span class="p">(</span><span class="s2">&#34;localhost:26202&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>The next step is to start the mongos instance (in a new terminal) which would be the interaction point of the client with the sharded environment -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongos</span> <span class="p">-</span><span class="n">-configdb</span> <span class="s2">&#34;cfg/localhost:26050,localhost:26051,localhost:26052&#34;</span> <span class="p">-</span><span class="n">-logpath</span> <span class="n">log</span><span class="p">.</span><span class="py">mongos1</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26061</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Here, <em><strong>–configdb</strong></em> represents the ip address of the 3 config servers we created earlier.</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image20.png"></p>
+</li>
+<li>
+<p>Now connect a mongo shell to this mongos instance (in a new terminal) and start adding the shards to it -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">mongosh</span> <span class="p">-</span><span class="n">-port</span> <span class="mf">26061</span>
+</span></span><span class="line"><span class="cl"><span class="n">sh</span><span class="p">.</span><span class="py">addShard</span><span class="p">(</span><span class="s2">&#34;a/*[*localhost:26000*](http://localhost:26000)*&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sh</span><span class="p">.</span><span class="py">addShard</span><span class="p">(</span><span class="s2">&#34;b/localhost:26100&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">sh</span><span class="p">.</span><span class="py">addShard</span><span class="p">(</span><span class="s2">&#34;c/localhost:26200&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>In <em>sh.addShard(&ldquo;a/</em><a href="http://localhost:26000"><em>localhost:26000</em></a><em>&rdquo;)</em>, &lsquo;a&rsquo; represents replSet, and <a href="http://localhost:26000">localhost:26000</a> represents the Primary Replica of &lsquo;a&rsquo; replSet.</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image21.png"></p>
+</li>
+<li>
+<p>To see the status of the sharded environment -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">sh</span><span class="p">.</span><span class="py">status</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image22.png"></p>
+<p>We can see that the 3 sharded replSets have been added. Also 1 mongos instance is active.</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image23.png"></p>
+<p>Also, we can see that the currently sharded database is only config db, as we have not sharded any other database.</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image24.png"></p>
+</li>
+<li>
+<p>Lets add peaksDB for sharding -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">sh</span><span class="p">.</span><span class="py">enableSharding</span><span class="p">(</span><span class="s2">&#34;peaksDB&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image25.png"></p>
+<p>Now doing <code>sh.status()</code>, we can see &ldquo;peaksDB&rdquo; in &ldquo;databases&rdquo; field -</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image26.png"></p>
+</li>
+<li>
+<p>We can see 1 sample document inside our &lsquo;peaksDB.peaks&rsquo; collection. Lets shard the collection on &rsquo;name&rsquo; field -</p>
+<ol>
+<li>
+<p>Create an index of the proposed shard key -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">db</span><span class="p">.</span><span class="py">peaks</span><span class="p">.</span><span class="py">ensureIndex</span><span class="p">({</span><span class="n">name</span><span class="err">:</span> <span class="s2">&#34;hashed&#34;</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>Shard the collection using that key -</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">sh</span><span class="p">.</span><span class="py">shardCollection</span><span class="p">(</span><span class="s2">&#34;peaksDB.peaks&#34;</span><span class="p">,</span> <span class="p">{</span><span class="n">name</span><span class="err">:</span><span class="s2">&#34;hashed&#34;</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image27.png"></p>
+</li>
+</ol>
+</li>
+<li>
+<p>Now doing <code>sh.status()</code> we can see that for our collection &ldquo;peaksDB.peaks&rdquo; has a shardKey of &rsquo;name&rsquo; and is present on shard &lsquo;c&rsquo; -</p>
+<p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image28.png"></p>
+<p>Finally, we can get more details of all the shards present -\</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">use</span> <span class="n">config</span>
+</span></span><span class="line"><span class="cl"><span class="n">db</span><span class="p">.</span><span class="py">shards</span><span class="p">.</span><span class="py">find</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/images/replication-and-sharding-in-mongo/image29.png"></p>
+</li>
+</ol>
+<h1 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h1>
+<ul>
+<li>
+<p><a href="https://www.mongodb.com/docs/manual/replication/">mongodb.com/docs/manual/replication/</a></p>
+</li>
+<li>
+<p><a href="https://www.mongodb.com/docs/manual/sharding/">mongodb.com/docs/manual/sharding/</a></p>
+</li>
+<li>
+<p><a href="https://www.mongodb.com/docs/manual/core/sharded-cluster-config-servers/">mongodb.com/docs/manual/core/sharded-cluster-config-servers/</a></p>
+</li>
+<li>
+<p><a href="https://www.youtube.com/@vemarahub">youtube.com/@vemarahub</a></p>
+</li>
+<li>
+<p><a href="https://www.youtube.com/redirect?event=channel_description&amp;redir_token=QUFFLUhqbTNLVnQyczlPSDAtZHNWcVJDc1Axc0tKM0J0UXxBQ3Jtc0tsX2NSSEJiWTlnZG5Xc0VIUXJvLVJTSUs3OVk4RDZ6NGgwSEhQT2hJVkNUODFzNjVRRUl0WEl5enBPUDFvcDZZTGIweHJzaWpzQ1FMTWFiVHdGdE9FeXZtN2pGUWVTTFBmQTdCajlLMGFrNk1YSktaaw&amp;q=https%3A%2F%2Fengineeringdigest.net%2F">engineeringdigest.net</a></p>
+</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://aryaman.space/tags/replication/">Replication</a></li>
+      <li><a href="https://aryaman.space/tags/sharding/">Sharding</a></li>
+      <li><a href="https://aryaman.space/tags/mongodb/">Mongodb</a></li>
+      <li><a href="https://aryaman.space/tags/distributed-systems/">Distributed-Systems</a></li>
+      <li><a href="https://aryaman.space/tags/aryaman-batcave/">Aryaman-Batcave</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="https://aryaman.space/blog/medical-text-extraction/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP</span>
+  </a>
+  <a class="next" href="https://aryaman.space/blog/breaking-boundaries/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Breaking Boundaries</span>
+  </a>
+</nav>
+
+
+<ul class="share-buttons">
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Demystifying Replication and Sharding in MongoDB on x"
+            href="https://x.com/intent/tweet/?text=Demystifying%20Replication%20and%20Sharding%20in%20MongoDB&amp;url=https%3a%2f%2faryaman.space%2fblog%2freplication-and-sharding-in-mongo%2f&amp;hashtags=replication%2csharding%2cmongodb%2cdistributed-systems%2caryaman-batcave">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M512 62.554 L 512 449.446 C 512 483.97 483.97 512 449.446 512 L 62.554 512 C 28.03 512 0 483.97 0 449.446 L 0 62.554 C 0 28.03 28.029 0 62.554 0 L 449.446 0 C 483.971 0 512 28.03 512 62.554 Z M 269.951 190.75 L 182.567 75.216 L 56 75.216 L 207.216 272.95 L 63.9 436.783 L 125.266 436.783 L 235.9 310.383 L 332.567 436.783 L 456 436.783 L 298.367 228.367 L 432.367 75.216 L 371.033 75.216 Z M 127.633 110 L 164.101 110 L 383.481 400.065 L 349.5 400.065 Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Demystifying Replication and Sharding in MongoDB on linkedin"
+            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2faryaman.space%2fblog%2freplication-and-sharding-in-mongo%2f&amp;title=Demystifying%20Replication%20and%20Sharding%20in%20MongoDB&amp;summary=Demystifying%20Replication%20and%20Sharding%20in%20MongoDB&amp;source=https%3a%2f%2faryaman.space%2fblog%2freplication-and-sharding-in-mongo%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Demystifying Replication and Sharding in MongoDB on reddit"
+            href="https://reddit.com/submit?url=https%3a%2f%2faryaman.space%2fblog%2freplication-and-sharding-in-mongo%2f&title=Demystifying%20Replication%20and%20Sharding%20in%20MongoDB">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Demystifying Replication and Sharding in MongoDB on facebook"
+            href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2faryaman.space%2fblog%2freplication-and-sharding-in-mongo%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Demystifying Replication and Sharding in MongoDB on whatsapp"
+            href="https://api.whatsapp.com/send?text=Demystifying%20Replication%20and%20Sharding%20in%20MongoDB%20-%20https%3a%2f%2faryaman.space%2fblog%2freplication-and-sharding-in-mongo%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share Demystifying Replication and Sharding in MongoDB on telegram"
+            href="https://telegram.me/share/url?text=Demystifying%20Replication%20and%20Sharding%20in%20MongoDB&amp;url=https%3a%2f%2faryaman.space%2fblog%2freplication-and-sharding-in-mongo%2f">
+            <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+            </svg>
+        </a>
+    </li>
+</ul>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://aryaman.space/">aryaman.space</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

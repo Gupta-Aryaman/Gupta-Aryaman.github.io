@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Lstm on aryaman.space</title>
+    <link>https://aryaman.space/tags/lstm/</link>
+    <description>Recent content in Lstm on aryaman.space</description>
+    <image>
+      <title>aryaman.space</title>
+      <url>https://aryaman.space/images/about.jpg</url>
+      <link>https://aryaman.space/images/about.jpg</link>
+    </image>
+    <generator>Hugo -- 0.125.7</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 05 Nov 2024 21:10:01 +0530</lastBuildDate>
+    <atom:link href="https://aryaman.space/tags/lstm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP</title>
+      <link>https://aryaman.space/blog/medical-text-extraction/</link>
+      <pubDate>Tue, 05 Nov 2024 21:10:01 +0530</pubDate>
+      <guid>https://aryaman.space/blog/medical-text-extraction/</guid>
+      <description>Introduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.
+Automating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.
+In this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom Named Entity Recognition(NER) model, this approach promises to streamline information extraction in medical workflows.</description>
+    </item>
+  </channel>
+</rss>

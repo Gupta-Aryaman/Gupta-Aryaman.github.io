@@ -1,285 +1,1169 @@
 <!DOCTYPE html>
-<html lang="en-US">
-<link rel="stylesheet" href="/css/base.css">
+<html lang="en" dir="auto">
 
-<head>
-  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="shortcut icon" href="https://aryaman.space/images/favicon.png" />
-<title>Medical-Text-Extraction | aryaman.space</title>
-<meta name="title" content="Medical-Text-Extraction" />
-<meta name="description" content="a corner where ideas, projects, and favorite reads come together" />
-<meta name="keywords" content="aryaman-batcave,async,asynchronous,bert,bert-embeddings,breaking-boundaries,char-cnn,conll,corporate,decorators,decorators-in-python,distributed-systems,document,gil,government-job,handwritten-prescription-processing,lstm,medical-text-extraction,mongodb,multithreading,ner,no-gil,python,replication,sharding,spark-nlp,success," />
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP | aryaman.space</title>
+<meta name="keywords" content="spark-nlp, handwritten-prescription-processing, medical-text-extraction, ner, lstm, document, char-cnn, bert, bert-embeddings, conll">
+<meta name="description" content="Introduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.
+Automating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.
+In this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom Named Entity Recognition(NER) model, this approach promises to streamline information extraction in medical workflows.">
+<meta name="author" content="Aryaman Gupta">
+<link rel="canonical" href="https://aryaman.space/blog/medical-text-extraction/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://aryaman.space/images/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://aryaman.space/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://aryaman.space/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://aryaman.space/apple-touch-icon.png">
+<link rel="mask-icon" href="https://aryaman.space/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://aryaman.space/blog/medical-text-extraction/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+  
+
+<meta property="og:url" content="https://aryaman.space/blog/medical-text-extraction/">
+  <meta property="og:site_name" content="aryaman.space">
+  <meta property="og:title" content="From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP">
+  <meta property="og:description" content="Introduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.
+Automating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.
+In this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom Named Entity Recognition(NER) model, this approach promises to streamline information extraction in medical workflows.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2024-11-05T21:10:01+05:30">
+    <meta property="article:modified_time" content="2024-11-05T21:10:01+05:30">
+    <meta property="article:tag" content="Spark-Nlp">
+    <meta property="article:tag" content="Handwritten-Prescription-Processing">
+    <meta property="article:tag" content="Medical-Text-Extraction">
+    <meta property="article:tag" content="Ner">
+    <meta property="article:tag" content="Lstm">
+    <meta property="article:tag" content="Document">
+      <meta property="og:image" content="https://aryaman.space/images/medical-text-extraction/cover_img.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://aryaman.space/images/medical-text-extraction/cover_img.webp">
+<meta name="twitter:title" content="From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP">
+<meta name="twitter:description" content="Introduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.
+Automating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.
+In this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom Named Entity Recognition(NER) model, this approach promises to streamline information extraction in medical workflows.">
 
 
-<meta property="og:title" content="Medical-Text-Extraction" />
-<meta property="og:description" content="a corner where ideas, projects, and favorite reads come together" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://aryaman.space/blog/medical-text-extraction/" /><meta property="og:image" content="https://aryaman.space/images/about.jpg"/><meta property="og:site_name" content="aryaman&#39;s space" />
-
-
-
-
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://aryaman.space/images/about.jpg"/>
-
-<meta name="twitter:title" content="Medical-Text-Extraction"/>
-<meta name="twitter:description" content="a corner where ideas, projects, and favorite reads come together"/>
-
-
-
-<meta itemprop="name" content="Medical-Text-Extraction">
-<meta itemprop="description" content="a corner where ideas, projects, and favorite reads come together">
-<meta name="referrer" content="no-referrer-when-downgrade" />
-
-  <link rel="alternate" type="application/rss+xml" href="https://aryaman.space/blog/medical-text-extraction/index.xml" title="aryaman.space" />
-  <style>
-  body {
-    font-family: Verdana, sans-serif;
-    margin: auto;
-    padding: 20px;
-    max-width: 720px;
-    text-align: left;
-    background-color: #f1f1f1;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: #444;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  strong,
-  b {
-    color: #222;
-  }
-
-  a, a:visited  {
-    color: #126fad;
-    text-decoration: none;
-  }
-  a:hover {
-    color: hotpink;
-  }
-
-  .title {
-    text-decoration: none;
-    border: 0;
-  }
-
-  .title span {
-    font-weight: 400;
-  }
-
-  nav a {
-    margin-right: 10px;
-  }
-
-  textarea {
-    width: 100%;
-    font-size: 16px;
-  }
-
-  input {
-    font-size: 16px;
-  }
-
-  content {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  code {
-    padding: 2px 5px;
-    background-color: #E0E0E0;
-  }
-
-  pre code {
-    color: #222;
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 14px;
-    overflow-x: auto;
-  }
-
-  div.highlight pre {
-    background-color: initial;
-    color: initial;
-  }
-
-  div.highlight code {
-    background-color: unset;
-    color: unset;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: #222;
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px;
-    text-align: center;
-  }
-
-  .helptext {
-    color: #777;
-    font-size: small;
-  }
-
-  .errorlist {
-    color: #eba613;
-    font-size: small;
-  }
-
-   
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: #8b6fcb;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    body {
-      background-color: #1A1A1A;
-      color: #E0E0E0;
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Blog",
+      "item": "https://aryaman.space/blog/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP",
+      "item": "https://aryaman.space/blog/medical-text-extraction/"
     }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    strong,
-    b {
-      color: #eee;
-    }
-
-    strong,
-    b {
-      color: gray;
-      background-color: white;
-      padding: 2px 2px
-    }
-
-    a, a:visited {
-      color: #3A9AD9;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: hotpink;
-    }
-    
-    code {
-      background-color: #777;
-    }
-
-    pre code {
-      color: #ddd;
-    }
-
-    blockquote {
-      color: #ccc;
-    }
-
-    textarea,
-    input {
-      background-color: #252525;
-      color: #ddd;
-    }
-
-    .helptext {
-      color: #aaa;
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP",
+  "name": "From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP",
+  "description": "Introduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.\nAutomating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.\nIn this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom Named Entity Recognition(NER) model, this approach promises to streamline information extraction in medical workflows.",
+  "keywords": [
+    "spark-nlp", "handwritten-prescription-processing", "medical-text-extraction", "ner", "lstm", "document", "char-cnn", "bert", "bert-embeddings", "conll"
+  ],
+  "articleBody": "\nIntroduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.\nAutomating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.\nIn this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom Named Entity Recognition(NER) model, this approach promises to streamline information extraction in medical workflows. From OCR text extraction to entity recognition and model training, each step is tailored to maximize accuracy for complex medical terminology.\nGithub Link\n1. Extract Handwritten text using OCR The first and foremost step is to use an OCR to extract handwritten texts from the doctor’s prescriptions. I have used AWS Textract that automatically extracts text, handwriting, layout elements, and data from scanned documents.\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 def detect_text(local_file, region_name, aws_access_key_id, aws_secret_access_key): # Initialize Textract client textract = boto3.client( 'textract', region_name=region_name, aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key ) # Open file and detect text with open(local_file, 'rb') as document: response = textract.detect_document_text(Document={'Bytes': document.read()}) # Extract text from response text_lines = [ item[\"Text\"] for item in response.get(\"Blocks\", []) if item.get(\"BlockType\") == \"LINE\" ] extracted_text = \" \".join(text_lines) logger.info(f\"Successfully extracted text from {local_file}\") return extracted_text The data extracted from the OCR is then sent further into the NER pipeline, which we will be creating later in this blog, for extraction of Named Entities.\n2. Initializing the NER Model We create a class InitiateNER to initialize the Spark NLP session, embeddings, and NER tagger.\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 class InitiateNER: def __init__(self, gpu=True, embedding_model='bert_base_uncased', language='en'): # Initialize Spark session self.spark = sparknlp.start(gpu=gpu) logger.info(\"Spark NLP session started.\") # Initialize embeddings and NER tagger self.bert_embeddings = BertEmbeddings.pretrained(embedding_model, language) \\ .setInputCols([\"sentence\", 'token']) \\ .setOutputCol(\"embeddings\") \\ .setCaseSensitive(False) self.ner_tagger = NerDLApproach() \\ .setInputCols([\"sentence\", \"token\", \"embeddings\"]) \\ .setLabelColumn(\"label\") \\ .setOutputCol(\"ner\") \\ .setMaxEpochs(20) \\ .setLr(0.001) \\ .setPo(0.005) \\ .setBatchSize(32) \\ .setValidationSplit(0.1) \\ .setUseBestModel(True) \\ .setEnableOutputLogs(True) # Initialize other components for prediction self.document_assembler = DocumentAssembler() \\ .setInputCol(\"text\") \\ .setOutputCol(\"document\") self.sentence_detector = SentenceDetector() \\ .setInputCols(['document']) \\ .setOutputCol('sentence') self.tokenizer = Tokenizer() \\ .setInputCols(['sentence']) \\ .setOutputCol('token') self.converter = NerConverter() \\ .setInputCols([\"document\", \"token\", \"ner\"]) \\ .setOutputCol(\"ner_span\") The NerDLModel is an encoder-decoder neural network (we will talk about it later) which needs the input in the form of embeddings[1]. This can be achieved via a WordEmbeddings model. We are using BertEmbeddings in this case.\nWordEmbeddings model Word embeddings[2] capture semantic relationships between words, allowing models to understand and represent words in a continuous vector space where similar words are close to each other. This semantic representation enables more nuanced understanding of language.\nWhy I chose BERT Embeddings over others? BERT embeddings [3, 4, 5, 6] offer several advantages over traditional embeddings for Named Entity Recognition (NER):\nContextualized Embeddings: BERT creates different embeddings for the same word based on its context, unlike Word2Vec or GloVe, which give each word a single fixed representation. This is crucial in NER, where the meaning of a word can change with context.\nBidirectional Attention: BERT reads sentences in both directions (left-to-right and right-to-left), capturing a full understanding of each word’s context. Traditional embeddings lack this bidirectional context, missing nuances especially useful in medical text.\nPre-Trained on Large Data: BERT is pre-trained on a large corpus, which enhances its versatility for fine-tuning in domain-specific applications like medical NER, where context-rich understanding is needed.\nHandling Rare or OOV Words: BERT uses subword tokenization, which allows it to break down unknown words and still retain meaning, a huge advantage for handling medical terminology.\nProven Performance: BERT consistently outperforms older embeddings on NER tasks due to its deep contextual understanding and flexibility in handling diverse language structures.\nNerDLApproach The NerDLApproach[1] in Spark NLP is a neural network model designed for Named Entity Recognition (NER) tasks. It uses a combination of Character-level Convolutional Neural Networks (Char CNNs), Bidirectional Long Short-Term Memory networks (BiLSTMs) (Char CNN - BiLSTM[7]), and followed by a Conditional Random Fields (CRFs). Let’s break down why this architecture is used and how it processes normal text input.\nWhy Char CNNs - BiLSTM - CRF? Character-level CNNs (Char CNNs):\nPurpose: Capture morphological features of words, such as prefixes, suffixes, and other subword patterns.\nInput: Character embeddings of each word.\nOutput: Character-level features that are useful for understanding the structure of words, especially for handling out-of-vocabulary words or misspellings.\nBidirectional LSTMs (BiLSTMs):\nPurpose: Capture contextual information from both past (left) and future (right) contexts in the text.\nInput: Word embeddings (e.g., BERT embeddings) and character-level features from Char CNNs.\nOutput: Contextualized word representations that consider the entire sentence.\nConditional Random Fields (CRFs):\nPurpose: Model the dependencies between output labels (e.g., the sequence of named entity tags) to ensure valid sequences. Input: Contextualized word representations from BiLSTMs. Output: The most likely sequence of named entity tags for the input text. Example Let’s consider an example to illustrate this process:\nInput Text: \"John Doe works at Store Ninja.\"\nTokenization:\nTokens: [\"John\", \"Doe\", \"works\", \"at\", \"Store\", \"Ninja\", \".\"] Character Embeddings:\nCharacters for “John”: [\"J\", \"o\", \"h\", \"n\"] Character embeddings are generated for each character. Char CNNs:\nChar CNNs process the character embeddings to capture morphological features. Word Embeddings:\nWord embeddings (e.g., BERT embeddings) are generated for each token. BiLSTMs:\nBiLSTMs process the word embeddings and character-level features to capture contextual information. For example, the representation for “John” will consider the context provided by “Doe works at Store Ninja.” CRFs:\nCRFs predict the sequence of named entity tags. Output: [\"B-PER\", \"I-PER\", \"O\", \"O\", \"B-ORG\", \"O\"] I will be explaining all the instance variables as they come in use in other functions. 3. Training the Model The train_model method reads the CoNLL dataset, applies BERT embeddings, and trains the NER model.\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 def train_model(self, training_file, save_path): try: training_data = CoNLL().readDataset(self.spark, training_file) training_data = self.bert_embeddings.transform(training_data).drop(\"text\", \"document\", \"pos\") logger.info(\"Training model...\") self.ner_model = self.ner_tagger.fit(training_data) logger.info(\"Model trained successfully.\") self.ner_model.write().overwrite().save(save_path) logger.info(f\"Model saved at: {save_path}\") except Exception as e: logger.error(f\"Error during training: {e}\") train_model method: Trains the NER model. CoNLL().readDataset: Reads training data in CoNLL format. self.bert_embeddings.transform: Applies BERT embeddings to the training data. self.ner_tagger.fit: Trains the NER model. self.ner_model.write().overwrite().save: Saves the trained model. What is CoNLL format? The CoNLL (Conference on Natural Language Learning) format is a structured text format commonly used to label tokens in natural language processing tasks, especially named entity recognition (NER). In a CoNLL-formatted dataset, each line represents a token (such as a word or punctuation), with additional columns typically containing labels or annotations about that token. Sentences are separated by blank lines.\nCoNLL Format Structure A typical CoNLL dataset has multiple columns for each token. The columns can vary based on the dataset’s intended task, but for NER, they usually look like this:\nToken POS Chunk Entity John NNP B-NP B-PER lives VBZ B-VP O in IN B-PP O New NNP B-NP B-LOC York NNP -X- I-LOC . . O O In this example:\nEach line corresponds to a word, and there may be additional columns with part-of-speech (POS) or chunk tags. The “Entity” column marks NER tags (e.g., B-PER for “Beginning of a PERSON entity” and O for “Outside of any entity”). Blank lines separate sentences. -X- represents that is often used as a placeholder or dummy value for certain columns, especially when the information in that column is not relevant for a particular token. The dataset I am using looks something like this -\nToken POS Chunk Entity negative -X- -X- O for -X- -X- O chest -X- -X- B-Medical_condition pain, -X- -X- I-Medical_condition pressure, -X- -X- B-Medical_condition dyspnea, -X- -X- B-Medical_condition edema -X- -X- B-Medical_condition or -X- -X- O cold -X- -X- B-Medical_condition symptoms. -X- -X- O As we are only interested in Entity mapping, the POS and Chunk values are irrelevant to us, hence we have put a -X- or Empty Placeholder there.\nWhy CoNLL Format Is Used in NER The CoNLL format is widely used in NER for several reasons:\nStructured yet simple: It provides a structured, line-by-line format that’s easy to parse and interpret, both by humans and machines. Consistent token-label pairing: Each token is directly paired with its label, simplifying the process of supervised learning where the model learns to associate tokens with specific tags. Sentence separation: Blank lines make sentence boundaries clear, which is crucial for tasks like NER, where context within sentences matters. Widely supported by NLP tools: Many NLP frameworks (like spaCy, NLTK, and transformers libraries) support CoNLL format, so training data in this format is easily integrated into NER pipelines. Where to get Clinical NER Datasets? Such datasets can be found at various sources -\nCoNLL-2003[8] 2010 i2b2/VA[9] 2014 i2b2 De-identification Challenge 2018 n2c2 Medication Extraction Challenge 4. Loading the Model 1 2 3 4 5 6 7 8 9 def load_model(self, model_path): try: self.loaded_ner_model = NerDLModel.load(model_path) \\ .setInputCols([\"sentence\", \"token\", \"embeddings\"]) \\ .setOutputCol(\"ner\") logger.info(\"Model loaded successfully.\") except Exception as e: logger.error(f\"Error loading model: {e}\") load_model method: Loads a pre-trained NER model. NerDLModel.load: Loads the model from the specified path. 5. Making Predictions 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 def predict(self, text): try: # Create or reuse prediction pipeline if not hasattr(self, 'prediction_pipeline'): self.prediction_pipeline = Pipeline( stages=[ self.document_assembler, self.sentence_detector, self.tokenizer, self.bert_embeddings, self.loaded_ner_model, self.converter ] ) logger.info(\"Prediction pipeline created.\") sample_data = self.spark.createDataFrame([[text]]).toDF(\"text\") prediction_model = self.prediction_pipeline.fit(self.spark.createDataFrame([['']]).toDF(\"text\")) preds = prediction_model.transform(sample_data) pipeline_result = preds.collect()[0] return self.format_output(pipeline_result) except Exception as e: logger.error(f\"Error during prediction: {e}\") return {\"error\": str(e)} Pipeline Stages: The pipeline consists of several stages:\ndocument_assembler: Converts raw text into a structured document format (read about it below). sentence_detector: Detects sentences within the document. tokenizer: Tokenizes sentences into individual words. bert_embeddings: Applies BERT embeddings to the tokens. loaded_ner_model: Uses the pre-trained NER model to identify named entities. converter: Converts the NER results into a more readable format. Pipeline Example If the input text is \"John Doe works at OpenAI.\", the pipeline stages will process it as follows:\nDocumentAssembler: Converts the text into a document. SentenceDetector: Identifies \"John Doe works at OpenAI.\" as a single sentence. Tokenizer: Tokenizes the sentence into [\"John\", \"Doe\", \"works\", \"at\", \"OpenAI\", \".\"]. BertEmbeddings: Generates embeddings for each token. Loaded NER Model: Identifies \"John Doe\" as a person and \"OpenAI\" as an organization. Converter: Converts the NER results into a readable format. self.spark.createDataFrame: Creates a Spark DataFrame from the input text.\nself.prediction_pipeline.fit: Fits the pipeline (required for some Spark operations).\nprediction_model.transform: Transforms the input text using the pipeline.\npreds.collect: Collects the prediction results.\nself.format_output: Formats the prediction results.\nWhat’s a Document? In the context of Natural Language Processing (NLP) and Spark NLP, a “document” refers to a structured representation of text data. This structured representation is used as an intermediate format that allows various NLP components to process the text more effectively. Let’s break down what this means in more detail:\nDocument in Spark NLP A “document” in Spark NLP is essentially a DataFrame column that contains metadata about the text, such as its content, the start and end positions of the text, and other relevant information. This structured format is crucial for the subsequent NLP tasks, such as sentence detection, tokenization, and named entity recognition.\nDocumentAssembler The DocumentAssembler[10] is a component in Spark NLP that converts raw text into this structured “document” format. Here’s how it works:\nInput Column: The DocumentAssembler takes a column of raw text as input. Output Column: It produces a column of “document” type, which contains the structured representation of the text. Example Let’s look at an example to understand this better:\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 from sparknlp.base import DocumentAssembler from pyspark.sql import SparkSession # Initialize Spark session spark = SparkSession.builder \\ .appName(\"DocumentAssemblerExample\") \\ .getOrCreate() # Sample DataFrame with raw text data = spark.createDataFrame([[\"This is a sample text.\"]]).toDF(\"text\") # Initialize DocumentAssembler document_assembler = DocumentAssembler() \\ .setInputCol(\"text\") \\ .setOutputCol(\"document\") # Transform the DataFrame document_df = document_assembler.transform(data) # Show the result document_df.select(\"document\").show(truncate=False) Output The output will be a DataFrame with a “document” column that contains the structured representation of the text:\n+-------------------------------------------------------------+ |document | +-------------------------------------------------------------+ |[[document, 0, 20, This is a sample text., [sentence -\u003e 0], []]]| +-------------------------------------------------------------+ Explanation document: The column name for the structured text. 0, 20: The start and end positions of the text. This is a sample text.: The actual text content. [sentence -\u003e 0]: Metadata indicating that this is the first sentence. Why is this Important? The structured “document” format is essential for the following reasons:\nConsistency: It provides a consistent way to represent text data, making it easier to process. Metadata: It includes metadata that can be useful for various NLP tasks. Pipeline Integration: It allows different components in the NLP pipeline to work together seamlessly. Summary 1. Training the NER Model 2. OCR and NER Pipeline for Prescription Processing OCR (Optical Character Recognition)\nConverts handwritten doctor prescriptions into machine-readable text using OCR techniques. NER (Named Entity Recognition)\nInput: Text from the OCR step containing unstructured data such as medicine names and dosage instructions. BERT Embedding: Converts the input text into context-aware embeddings. CHAR CNN-BiLSTM: Character-level CNN captures morphological features of words. BiLSTM captures bidirectional context of the text sequence. CRF (Conditional Random Field): Ensures valid label sequences for structured output like medicine names, dosages, and eating schedules. Output: Structured data with medicine names, dosages, and schedules extracted from the text.\nActual Output Handwritten Doctor’s Prescription Output Conclusion In this blog, we explored a comprehensive pipeline for extracting information from handwritten medical prescriptions using AWS Textract and Spark NLP. Starting with the OCR capabilities of AWS Textract, we efficiently transformed handwritten text into machine-readable format, setting the stage for the subsequent NER analysis.\nAs we concluded with predictions, the seamless interaction of components within the prediction pipeline demonstrated the power of Spark NLP for real-time NER tasks. This approach not only streamlines the processing of medical prescriptions but also holds potential for further applications in healthcare, where accurate data extraction is paramount.\nBy combining cutting-edge technology with thoughtful design, we can significantly enhance the efficiency of healthcare processes, ultimately leading to improved patient outcomes and better management of medical information. As we continue to innovate in this space, the opportunities for developing advanced applications in the realm of healthcare data processing are endless.\nReferences [1] “Spark NLP 5.5.1 ScalaDoc - com.johnsnowlabs.nlp.annotators.ner.dl.NerDLApproach,” Sparknlp.org, 2024. https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach.\n[2] J. Barnard, “What are Word Embeddings? | IBM,” www.ibm.com, Jan. 23, 2024. https://www.ibm.com/topics/word-embeddings\n[3] Contextualized Embeddings and Bidirectional Attention: Devlin, J., Chang, M.-W., Lee, K., \u0026 Toutanova, K. (2019). BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. Proceedings of NAACL-HLT, 4171–4186. https://arxiv.org/abs/1810.04805.\n[4] Handling Out-of-Vocabulary Words and Subword Tokenization: Sennrich, R., Haddow, B., \u0026 Birch, A. (2016). Neural Machine Translation of Rare Words with Subword Units. Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), 1715–1725. https://arxiv.org/abs/1508.07909.\n[5] Fine-Tuning and Performance on NER: Akbik, A., Blythe, D., \u0026 Vollgraf, R. (2018). Contextual String Embeddings for Sequence Labeling. Proceedings of the 27th International Conference on Computational Linguistics, 1638–1649. https://www.aclweb.org/anthology/C18-1139/.\n[6] BERT’s Performance in Domain-Specific Applications: Lee, J., Yoon, W., Kim, S., Kim, D., Kim, S., So, C. H., \u0026 Kang, J. (2020). BioBERT: a pre-trained biomedical language representation model for biomedical text mining. Bioinformatics, 36(4), 1234-1240. https://academic.oup.com/bioinformatics/article/36/4/1234/5566506.\n[7] J. P. C. Chiu and E. Nichols, “Named Entity Recognition with Bidirectional LSTM-CNNs,” Transactions of the Association for Computational Linguistics, vol. 4, pp. 357–370, Dec. 2016, doi: https://doi.org/10.1162/tacl_a_00104\n[8] “Papers with Code - CoNLL-2003 Dataset,” paperswithcode.com. https://paperswithcode.com/dataset/conll-2003\n[9] “Papers with Code - 2010 i2b2/VA Dataset,” Paperswithcode.com, 2022. https://paperswithcode.com/dataset/2010-i2b2-va.\n[10] “Spark NLP 5.5.1 ScalaDoc - com.johnsnowlabs.nlp.DocumentAssembler,” Sparknlp.org, 2024. https://sparknlp.org/api/com/johnsnowlabs/nlp/DocumentAssembler.\n",
+  "wordCount" : "2676",
+  "inLanguage": "en",
+  "image": "https://aryaman.space/images/medical-text-extraction/cover_img.webp","datePublished": "2024-11-05T21:10:01+05:30",
+  "dateModified": "2024-11-05T21:10:01+05:30",
+  "author":{
+    "@type": "Person",
+    "name": "Aryaman Gupta"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://aryaman.space/blog/medical-text-extraction/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "aryaman.space",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://aryaman.space/images/favicon.png"
     }
   }
-
-</style>
+}
+</script>
 </head>
 
-<body>
-  
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
 
-  <header><a href="/" class="title">
-  <h2>aryaman.space</h2>
-</a>
-<nav><a href="/">HOME</a>
+</script>
 
-
-<a href="/blog">BLOG</a>
-
-
-<a href="/papershelf">PAPERSHELF</a></nav>
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://aryaman.space/" accesskey="h" title="aryaman.space (Alt + H)">aryaman.space</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://aryaman.space/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/papershelf/" title="Papershelf">
+                    <span>Papershelf</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </header>
-  
-  <main>
-<content>
-  
-  <h3 style="margin-bottom:0">Filtering for "Medical-Text-Extraction"</h3>
-  <small>
-    <a href="/blog">Remove filter</a>
-  </small>
-  
-  <ul class="blog-posts">
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
     
-    <li>
-      <span>
-        <i>
-          <time datetime='2024-11-05' pubdate>
-            05 Nov, 2024
-          </time>
-        </i>
-      </span>
-      <a href="https://aryaman.space/from-scribbles-to-structured-data-processing-handwritten-prescriptions-with-spark-nlp/">FROM SCRIBBLES TO STRUCTURED DATA: PROCESSING HANDWRITTEN PRESCRIPTIONS WITH SPARK NLP</a>
+    <h1 class="post-title entry-hint-parent">
+      From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP
+    </h1>
+    <div class="post-meta"><span title='2024-11-05 21:10:01 +0530 IST'>November 5, 2024</span>&nbsp;·&nbsp;13 min&nbsp;·&nbsp;2676 words&nbsp;·&nbsp;Aryaman Gupta
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#1-extract-handwritten-text-using-ocr">1. Extract Handwritten text using OCR</a></li>
+    <li><a href="#2-initializing-the-ner-model">2. Initializing the NER Model</a>
+      <ul>
+        <li><a href="#wordembeddings-model">WordEmbeddings model</a>
+          <ul>
+            <li><a href="#why-i-chose-bert-embeddings-over-others">Why I chose BERT Embeddings over others?</a></li>
+          </ul>
+        </li>
+        <li><a href="#nerdlapproach">NerDLApproach</a>
+          <ul>
+            <li><a href="#why-char-cnns---bilstm---crf">Why Char CNNs - BiLSTM - CRF?</a></li>
+            <li><a href="#example">Example</a></li>
+          </ul>
+        </li>
+      </ul>
     </li>
-    
+    <li><a href="#3-training-the-model">3. Training the Model</a>
+      <ul>
+        <li><a href="#what-is-conll-format">What is CoNLL format?</a>
+          <ul>
+            <li><a href="#conll-format-structure">CoNLL Format Structure</a></li>
+            <li><a href="#why-conll-format-is-used-in-ner">Why CoNLL Format Is Used in NER</a></li>
+          </ul>
+        </li>
+        <li><a href="#where-to-get-clinical-ner-datasets">Where to get Clinical NER Datasets?</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-loading-the-model">4. Loading the Model</a></li>
+    <li><a href="#5-making-predictions">5. Making Predictions</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#pipeline-example">Pipeline Example</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#whats-a-document">What&rsquo;s a Document?</a>
+      <ul>
+        <li><a href="#document-in-spark-nlp">Document in Spark NLP</a></li>
+        <li><a href="#documentassembler">DocumentAssembler</a></li>
+        <li><a href="#example-1">Example</a></li>
+        <li><a href="#output">Output</a></li>
+        <li><a href="#explanation">Explanation</a></li>
+        <li><a href="#why-is-this-important">Why is this Important?</a></li>
+      </ul>
+    </li>
+    <li><a href="#summary">Summary</a>
+      <ul>
+        <li><a href="#1-training-the-ner-model">1. Training the NER Model</a></li>
+        <li><a href="#2-ocr-and-ner-pipeline-for-prescription-processing">2. OCR and NER Pipeline for Prescription Processing</a></li>
+      </ul>
+    </li>
+    <li><a href="#actual-output">Actual Output</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#handwritten-doctors-prescription">Handwritten Doctor&rsquo;s Prescription</a></li>
+            <li><a href="#output-1">Output</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#references">References</a></li>
   </ul>
-  
-  
-</content>
+</nav>
+        </div>
+    </details>
+</div>
 
-  </main>
-  
-  <footer>
+  <div class="post-content"><p><a name="introduction"></a></p>
+<h2 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h2>
+<p>Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.</p>
+<p>Automating this process requires a robust combination of <em>Optical Character Recognition</em> (OCR) and <em>Natural Language Processing</em> (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.</p>
+<p>In this article, we delve into a <em>Spark</em> NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging <em>BERT embeddings</em> for contextual understanding and a custom <em>Named Entity Recognition</em>(NER) model, this approach promises to streamline information extraction in medical workflows. From OCR text extraction to entity recognition and model training, each step is tailored to maximize accuracy for complex medical terminology.</p>
+<p><a href="https://github.com/Gupta-Aryaman/scanplus">Github Link</a></p>
+<!-- TOC --><a name="1-extract-handwritten-text-using-ocr"></a>
+<h2 id="1-extract-handwritten-text-using-ocr">1. Extract Handwritten text using OCR<a hidden class="anchor" aria-hidden="true" href="#1-extract-handwritten-text-using-ocr">#</a></h2>
+<p>The first and foremost step is to use an OCR to extract handwritten texts from the doctor&rsquo;s prescriptions. I have used <a href="https://aws.amazon.com/textract/">AWS Textract</a> that automatically extracts text, handwriting, layout elements, and data from scanned documents.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">detect_text</span><span class="p">(</span><span class="n">local_file</span><span class="p">,</span> <span class="n">region_name</span><span class="p">,</span> <span class="n">aws_access_key_id</span><span class="p">,</span> <span class="n">aws_secret_access_key</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># Initialize Textract client</span>
+</span></span><span class="line"><span class="cl">    <span class="n">textract</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="s1">&#39;textract&#39;</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">        <span class="n">region_name</span><span class="o">=</span><span class="n">region_name</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">        <span class="n">aws_access_key_id</span><span class="o">=</span><span class="n">aws_access_key_id</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">        <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="n">aws_secret_access_key</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Open file and detect text</span>
+</span></span><span class="line"><span class="cl">    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">document</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">response</span> <span class="o">=</span> <span class="n">textract</span><span class="o">.</span><span class="n">detect_document_text</span><span class="p">(</span><span class="n">Document</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Bytes&#39;</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">read</span><span class="p">()})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Extract text from response</span>
+</span></span><span class="line"><span class="cl">    <span class="n">text_lines</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="n">item</span><span class="p">[</span><span class="s2">&#34;Text&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;Blocks&#34;</span><span class="p">,</span> <span class="p">[])</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;BlockType&#34;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&#34;LINE&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">extracted_text</span> <span class="o">=</span> <span class="s2">&#34; &#34;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text_lines</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Successfully extracted text from </span><span class="si">{</span><span class="n">local_file</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">extracted_text</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>The data extracted from the OCR is then sent further into the NER pipeline, which we will be creating later in this blog, for extraction of Named Entities.</p>
+<!-- TOC --><a name="2-initializing-the-ner-model"></a>
+<h2 id="2-initializing-the-ner-model">2. Initializing the NER Model<a hidden class="anchor" aria-hidden="true" href="#2-initializing-the-ner-model">#</a></h2>
+<p>We create a class <code>InitiateNER</code> to initialize the Spark NLP session, embeddings, and NER tagger.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">InitiateNER</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">embedding_model</span><span class="o">=</span><span class="s1">&#39;bert_base_uncased&#39;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s1">&#39;en&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Initialize Spark session</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">spark</span> <span class="o">=</span> <span class="n">sparknlp</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">gpu</span><span class="o">=</span><span class="n">gpu</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&#34;Spark NLP session started.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># Initialize embeddings and NER tagger</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">bert_embeddings</span> <span class="o">=</span> <span class="n">BertEmbeddings</span><span class="o">.</span><span class="n">pretrained</span><span class="p">(</span><span class="n">embedding_model</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setInputCols</span><span class="p">([</span><span class="s2">&#34;sentence&#34;</span><span class="p">,</span> <span class="s1">&#39;token&#39;</span><span class="p">])</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setOutputCol</span><span class="p">(</span><span class="s2">&#34;embeddings&#34;</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setCaseSensitive</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">ner_tagger</span> <span class="o">=</span> <span class="n">NerDLApproach</span><span class="p">()</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setInputCols</span><span class="p">([</span><span class="s2">&#34;sentence&#34;</span><span class="p">,</span> <span class="s2">&#34;token&#34;</span><span class="p">,</span> <span class="s2">&#34;embeddings&#34;</span><span class="p">])</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setLabelColumn</span><span class="p">(</span><span class="s2">&#34;label&#34;</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setOutputCol</span><span class="p">(</span><span class="s2">&#34;ner&#34;</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setMaxEpochs</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setLr</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setPo</span><span class="p">(</span><span class="mf">0.005</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setBatchSize</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setValidationSplit</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setUseBestModel</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setEnableOutputLogs</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># Initialize other components for prediction</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">document_assembler</span> <span class="o">=</span> <span class="n">DocumentAssembler</span><span class="p">()</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setInputCol</span><span class="p">(</span><span class="s2">&#34;text&#34;</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setOutputCol</span><span class="p">(</span><span class="s2">&#34;document&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">sentence_detector</span> <span class="o">=</span> <span class="n">SentenceDetector</span><span class="p">()</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setInputCols</span><span class="p">([</span><span class="s1">&#39;document&#39;</span><span class="p">])</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setOutputCol</span><span class="p">(</span><span class="s1">&#39;sentence&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">()</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setInputCols</span><span class="p">([</span><span class="s1">&#39;sentence&#39;</span><span class="p">])</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setOutputCol</span><span class="p">(</span><span class="s1">&#39;token&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">converter</span> <span class="o">=</span> <span class="n">NerConverter</span><span class="p">()</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setInputCols</span><span class="p">([</span><span class="s2">&#34;document&#34;</span><span class="p">,</span> <span class="s2">&#34;token&#34;</span><span class="p">,</span> <span class="s2">&#34;ner&#34;</span><span class="p">])</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setOutputCol</span><span class="p">(</span><span class="s2">&#34;ner_span&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>The NerDLModel is an encoder-decoder neural network (we will talk about it later) which needs <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach">the input in the form of embeddings</a>[1]. This can be achieved via a <strong>WordEmbeddings model</strong>. We are using BertEmbeddings in this case.</p>
+<!-- TOC --><a name="wordembeddings-model"></a>
+<h3 id="wordembeddings-model">WordEmbeddings model<a hidden class="anchor" aria-hidden="true" href="#wordembeddings-model">#</a></h3>
+<p><a href="https://www.ibm.com/topics/word-embeddings">Word embeddings</a>[2] capture semantic relationships between words, allowing models to understand and represent words in a continuous vector space where similar words are close to each other. This semantic representation enables more nuanced understanding of language.</p>
+<!-- TOC --><a name="why-i-chose-bert-embeddings-over-others"></a>
+<h4 id="why-i-chose-bert-embeddings-over-others">Why I chose BERT Embeddings over others?<a hidden class="anchor" aria-hidden="true" href="#why-i-chose-bert-embeddings-over-others">#</a></h4>
+<p><a href="https://arxiv.org/abs/1810.04805">BERT embeddings</a> [3, 4, 5, 6] offer several advantages over traditional embeddings for Named Entity Recognition (NER):</p>
+<ol>
+<li>
+<p><em>Contextualized Embeddings</em>: BERT creates different embeddings for the same word based on its context, unlike Word2Vec or GloVe, which give each word a single fixed representation. This is crucial in NER, where the meaning of a word can change with context.</p>
+</li>
+<li>
+<p><em>Bidirectional Attention</em>: BERT reads sentences in both directions (left-to-right and right-to-left), capturing a full understanding of each word&rsquo;s context. Traditional embeddings lack this bidirectional context, missing nuances especially useful in medical text.</p>
+</li>
+<li>
+<p><em>Pre-Trained on Large Data</em>: BERT is pre-trained on a large corpus, which enhances its versatility for fine-tuning in domain-specific applications like medical NER, where context-rich understanding is needed.</p>
+</li>
+<li>
+<p><em>Handling Rare or OOV Words</em>: BERT uses subword tokenization, which allows it to break down unknown words and still retain meaning, a huge advantage for handling medical terminology.</p>
+</li>
+<li>
+<p><em>Proven Performance</em>: BERT consistently outperforms older embeddings on NER tasks due to its deep contextual understanding and flexibility in handling diverse language structures.</p>
+</li>
+</ol>
+<!-- TOC --><a name="nerdlapproach"></a>
+<h3 id="nerdlapproach">NerDLApproach<a hidden class="anchor" aria-hidden="true" href="#nerdlapproach">#</a></h3>
+<p>The <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach">NerDLApproach</a>[1] in Spark NLP is a neural network model designed for Named Entity Recognition (NER) tasks.
+<br>It uses a combination of Character-level Convolutional Neural Networks (Char CNNs), Bidirectional Long Short-Term Memory networks (BiLSTMs) (<a href="https://arxiv.org/pdf/1511.08308v5">Char CNN - BiLSTM</a>[7]), and followed by a Conditional Random Fields (CRFs). Let&rsquo;s break down why this architecture is used and how it processes normal text input.</p>
+<!-- TOC --><a name="why-char-cnns-bilstm-crf"></a>
+<h4 id="why-char-cnns---bilstm---crf">Why Char CNNs - BiLSTM - CRF?<a hidden class="anchor" aria-hidden="true" href="#why-char-cnns---bilstm---crf">#</a></h4>
+<ol>
+<li>
+<p><em>Character-level CNNs (Char CNNs)</em>:</p>
+<ul>
+<li>
+<p><strong>Purpose</strong>: Capture <em>morphological features</em> of words, such as prefixes, suffixes, and other subword patterns.</p>
+</li>
+<li>
+<p><strong>Input</strong>: Character embeddings of each word.</p>
+</li>
+<li>
+<p><strong>Output</strong>: Character-level features that are useful for understanding the structure of words, especially for handling out-of-vocabulary words or misspellings.</p>
+<p><img alt="Char CNN" loading="lazy" src="/images/medical-text-extraction/CNN.png"></p>
+</li>
+</ul>
+</li>
+<li>
+<p><em>Bidirectional LSTMs (BiLSTMs)</em>:</p>
+<ul>
+<li>
+<p><strong>Purpose</strong>: Capture contextual information from both past (left) and future (right) contexts in the text.</p>
+</li>
+<li>
+<p><strong>Input</strong>: Word embeddings (e.g., BERT embeddings) and character-level features from Char CNNs.</p>
+</li>
+<li>
+<p><strong>Output</strong>: Contextualized word representations that consider the entire sentence.</p>
+<p><img alt="BiLSTM" loading="lazy" src="/images/medical-text-extraction/BiLSTM.png"></p>
+</li>
+</ul>
+</li>
+<li>
+<p><em>Conditional Random Fields (CRFs)</em>:</p>
+<ul>
+<li><strong>Purpose</strong>: Model the dependencies between output labels (e.g., the sequence of named entity tags) to ensure valid sequences.</li>
+<li><strong>Input</strong>: Contextualized word representations from BiLSTMs.</li>
+<li><strong>Output</strong>: The most likely sequence of named entity tags for the input text.</li>
+</ul>
+</li>
+</ol>
+<!-- #### How It Processes Normal Text
 
-MADE WITH <a href="https://github.com/janraasch/hugo-bearblog/">HUGO ʕ•ᴥ•ʔ BEAR</a>
-</footer>
+The `NerDLApproach` processes normal text through several steps similar to how a normal CNN would work, even though it is not dealing with images. Here's how it works:
 
-  <div id="noise-bg"></div>
-  
-  <video autoplay muted loop playsinline class="background-video" disablePictureInPicture>
-    <source src="https://aryaman.space/videos/applevideo.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+1. *Text Input*:
+   - The input is normal text, such as a sentence or a document.
 
+2. *Tokenization*:
+   - The text is tokenized into individual words or tokens.
+
+3. *Character Embeddings*:
+   - Each token is further broken down into characters, and character embeddings are generated.
+
+4. *Char CNNs*:
+   - Character embeddings are passed through Char CNNs to capture morphological features.
+
+5. *Word Embeddings*:
+   - Word embeddings (e.g., BERT embeddings) are generated for each token.
+
+6. *BiLSTMs*:
+   - The word embeddings and character-level features are fed into BiLSTMs to capture contextual information from both directions.
+
+7. *CRFs*:
+   - The output from BiLSTMs is passed through CRFs to predict the most likely sequence of named entity tags. -->
+<!-- TOC --><a name="example"></a>
+<h4 id="example">Example<a hidden class="anchor" aria-hidden="true" href="#example">#</a></h4>
+<p>Let&rsquo;s consider an example to illustrate this process:</p>
+<p><strong>Input Text</strong>: <code>&quot;John Doe works at Store Ninja.&quot;</code></p>
+<ol>
+<li>
+<p><em>Tokenization</em>:</p>
+<ul>
+<li>Tokens: <code>[&quot;John&quot;, &quot;Doe&quot;, &quot;works&quot;, &quot;at&quot;, &quot;Store&quot;, &quot;Ninja&quot;, &quot;.&quot;]</code></li>
+</ul>
+</li>
+<li>
+<p><em>Character Embeddings</em>:</p>
+<ul>
+<li>Characters for &ldquo;John&rdquo;: <code>[&quot;J&quot;, &quot;o&quot;, &quot;h&quot;, &quot;n&quot;]</code></li>
+<li>Character embeddings are generated for each character.</li>
+</ul>
+</li>
+<li>
+<p><em>Char CNNs</em>:</p>
+<ul>
+<li>Char CNNs process the character embeddings to capture morphological features.</li>
+</ul>
+</li>
+<li>
+<p><em>Word Embeddings</em>:</p>
+<ul>
+<li>Word embeddings (e.g., BERT embeddings) are generated for each token.</li>
+</ul>
+</li>
+<li>
+<p><em>BiLSTMs</em>:</p>
+<ul>
+<li>BiLSTMs process the word embeddings and character-level features to capture contextual information.</li>
+<li>For example, the representation for &ldquo;John&rdquo; will consider the context provided by &ldquo;Doe works at Store Ninja.&rdquo;</li>
+</ul>
+</li>
+<li>
+<p><em>CRFs</em>:</p>
+<ul>
+<li>CRFs predict the sequence of named entity tags.</li>
+<li>Output: <code>[&quot;B-PER&quot;, &quot;I-PER&quot;, &quot;O&quot;, &quot;O&quot;, &quot;B-ORG&quot;, &quot;O&quot;]</code></li>
+</ul>
+</li>
+</ol>
+<br>
+I will be explaining all the instance variables as they come in use in other functions.
+<!-- TOC --><a name="3-training-the-model"></a>
+<h2 id="3-training-the-model">3. Training the Model<a hidden class="anchor" aria-hidden="true" href="#3-training-the-model">#</a></h2>
+<p>The <code>train_model</code> method reads the CoNLL dataset, applies BERT embeddings, and trains the NER model.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">train_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_file</span><span class="p">,</span> <span class="n">save_path</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">training_data</span> <span class="o">=</span> <span class="n">CoNLL</span><span class="p">()</span><span class="o">.</span><span class="n">readDataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spark</span><span class="p">,</span> <span class="n">training_file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">training_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bert_embeddings</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&#34;text&#34;</span><span class="p">,</span> <span class="s2">&#34;document&#34;</span><span class="p">,</span> <span class="s2">&#34;pos&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&#34;Training model...&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">ner_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ner_tagger</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&#34;Model trained successfully.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">ner_model</span><span class="o">.</span><span class="n">write</span><span class="p">()</span><span class="o">.</span><span class="n">overwrite</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Model saved at: </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Error during training: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>train_model</code> method: Trains the NER model.</li>
+<li><code>CoNLL().readDataset</code>: Reads training data in <strong>CoNLL</strong> format.</li>
+<li><code>self.bert_embeddings.transform</code>: Applies BERT embeddings to the training data.</li>
+<li><code>self.ner_tagger.fit</code>: Trains the NER model.</li>
+<li><code>self.ner_model.write().overwrite().save</code>: Saves the trained model.</li>
+</ul>
+<!-- TOC --><a name="what-is-conll-format"></a>
+<h3 id="what-is-conll-format">What is CoNLL format?<a hidden class="anchor" aria-hidden="true" href="#what-is-conll-format">#</a></h3>
+<p>The CoNLL (Conference on Natural Language Learning) format is a structured text format commonly used to label tokens in natural language processing tasks, especially named entity recognition (NER). In a CoNLL-formatted dataset, each line represents a token (such as a word or punctuation), with additional columns typically containing labels or annotations about that token. Sentences are separated by blank lines.</p>
+<!-- TOC --><a name="conll-format-structure"></a>
+<h4 id="conll-format-structure">CoNLL Format Structure<a hidden class="anchor" aria-hidden="true" href="#conll-format-structure">#</a></h4>
+<p>A typical CoNLL dataset has multiple columns for each token. The columns can vary based on the dataset&rsquo;s intended task, but for NER, they usually look like this:</p>
+<pre tabindex="0"><code>Token   POS  Chunk  Entity
+John    NNP  B-NP   B-PER
+lives   VBZ  B-VP   O
+in      IN   B-PP   O
+New     NNP  B-NP   B-LOC
+York    NNP  -X-   I-LOC
+.       .    O      O
+</code></pre><p>In this example:</p>
+<ul>
+<li>Each line corresponds to a word, and there may be additional columns with part-of-speech (POS) or chunk tags.</li>
+<li>The &ldquo;Entity&rdquo; column marks NER tags (e.g., B-PER for &ldquo;Beginning of a PERSON entity&rdquo; and O for &ldquo;Outside of any entity&rdquo;).</li>
+<li>Blank lines separate sentences.</li>
+<li><strong>-X-</strong> represents that is often used as a placeholder or dummy value for certain columns, especially when the information in that column is not relevant for a particular token.</li>
+</ul>
+<p>The dataset I am using looks something like this -</p>
+<pre tabindex="0"><code>Token       POS     Chunk  Entity
+negative    -X-     -X-     O
+for         -X-     -X-     O
+chest       -X-     -X-     B-Medical_condition
+pain,       -X-     -X-     I-Medical_condition
+pressure,   -X-     -X-     B-Medical_condition
+dyspnea,    -X-     -X-     B-Medical_condition
+edema       -X-     -X-     B-Medical_condition
+or          -X-     -X-     O
+cold        -X-     -X-     B-Medical_condition
+symptoms.   -X-     -X-     O
+</code></pre><p>As we are only interested in Entity mapping, the POS and Chunk values are irrelevant to us, hence we have put a <strong>-X-</strong> or Empty Placeholder there.</p>
+<!-- TOC --><a name="why-conll-format-is-used-in-ner"></a>
+<h4 id="why-conll-format-is-used-in-ner">Why CoNLL Format Is Used in NER<a hidden class="anchor" aria-hidden="true" href="#why-conll-format-is-used-in-ner">#</a></h4>
+<p>The CoNLL format is widely used in NER for several reasons:</p>
+<ol>
+<li><em>Structured yet simple</em>: It provides a structured, line-by-line format that’s easy to parse and interpret, both by humans and machines.</li>
+<li><em>Consistent token-label pairing</em>: Each token is directly paired with its label, simplifying the process of supervised learning where the model learns to associate tokens with specific tags.</li>
+<li><em>Sentence separation</em>: Blank lines make sentence boundaries clear, which is crucial for tasks like NER, where context within sentences matters.</li>
+<li><em>Widely supported by NLP tools</em>: Many NLP frameworks (like spaCy, NLTK, and transformers libraries) support CoNLL format, so training data in this format is easily integrated into NER pipelines.</li>
+</ol>
+<!-- TOC --><a name="where-to-get-clinical-ner-datasets"></a>
+<h3 id="where-to-get-clinical-ner-datasets">Where to get Clinical NER Datasets?<a hidden class="anchor" aria-hidden="true" href="#where-to-get-clinical-ner-datasets">#</a></h3>
+<p>Such datasets can be found at various sources -</p>
+<ol>
+<li><a href="https://paperswithcode.com/dataset/conll-2003">CoNLL-2003</a>[8]</li>
+<li><a href="https://paperswithcode.com/dataset/2010-i2b2-va"> 2010 i2b2/VA</a>[9]</li>
+<li>2014 i2b2 De-identification Challenge</li>
+<li>2018 n2c2 Medication Extraction Challenge</li>
+</ol>
+<!-- TOC --><a name="4-loading-the-model"></a>
+<h2 id="4-loading-the-model">4. Loading the Model<a hidden class="anchor" aria-hidden="true" href="#4-loading-the-model">#</a></h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">loaded_ner_model</span> <span class="o">=</span> <span class="n">NerDLModel</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setInputCols</span><span class="p">([</span><span class="s2">&#34;sentence&#34;</span><span class="p">,</span> <span class="s2">&#34;token&#34;</span><span class="p">,</span> <span class="s2">&#34;embeddings&#34;</span><span class="p">])</span> \
+</span></span><span class="line"><span class="cl">            <span class="o">.</span><span class="n">setOutputCol</span><span class="p">(</span><span class="s2">&#34;ner&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&#34;Model loaded successfully.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Error loading model: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>load_model</code> method: Loads a pre-trained NER model.</li>
+<li><code>NerDLModel.load</code>: Loads the model from the specified path.</li>
+</ul>
+<!-- TOC --><a name="5-making-predictions"></a>
+<h2 id="5-making-predictions">5. Making Predictions<a hidden class="anchor" aria-hidden="true" href="#5-making-predictions">#</a></h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Create or reuse prediction pipeline</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;prediction_pipeline&#39;</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">prediction_pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">stages</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">document_assembler</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">sentence_detector</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">bert_embeddings</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">loaded_ner_model</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="bp">self</span><span class="o">.</span><span class="n">converter</span>
+</span></span><span class="line"><span class="cl">                <span class="p">]</span>
+</span></span><span class="line"><span class="cl">            <span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&#34;Prediction pipeline created.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">sample_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">([[</span><span class="n">text</span><span class="p">]])</span><span class="o">.</span><span class="n">toDF</span><span class="p">(</span><span class="s2">&#34;text&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">prediction_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prediction_pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">([[</span><span class="s1">&#39;&#39;</span><span class="p">]])</span><span class="o">.</span><span class="n">toDF</span><span class="p">(</span><span class="s2">&#34;text&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">preds</span> <span class="o">=</span> <span class="n">prediction_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pipeline_result</span> <span class="o">=</span> <span class="n">preds</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_output</span><span class="p">(</span><span class="n">pipeline_result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&#34;Error during prediction: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">{</span><span class="s2">&#34;error&#34;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>
+<p><strong>Pipeline Stages</strong>: The pipeline consists of several stages:</p>
+<ul>
+<li><code>document_assembler</code>: Converts raw text into a <strong>structured document format</strong> (read about it below).</li>
+<li><code>sentence_detector</code>: Detects sentences within the document.</li>
+<li><code>tokenizer</code>: Tokenizes sentences into individual words.</li>
+<li><code>bert_embeddings</code>: Applies BERT embeddings to the tokens.</li>
+<li><code>loaded_ner_model</code>: Uses the pre-trained NER model to identify named entities.</li>
+<li><code>converter</code>: Converts the NER results into a more readable format.</li>
+</ul>
+</li>
+<li>
+<h4 id="pipeline-example">Pipeline Example<a hidden class="anchor" aria-hidden="true" href="#pipeline-example">#</a></h4>
+<ul>
+<li>
+<p>If the input text is <code>&quot;John Doe works at OpenAI.&quot;</code>, the pipeline stages will process it as follows:</p>
+<ol>
+<li><em>DocumentAssembler</em>: Converts the text into a document.</li>
+<li><em>SentenceDetector</em>: Identifies <code>&quot;John Doe works at OpenAI.&quot;</code> as a single sentence.</li>
+<li><em>Tokenizer</em>: Tokenizes the sentence into <code>[&quot;John&quot;, &quot;Doe&quot;, &quot;works&quot;, &quot;at&quot;, &quot;OpenAI&quot;, &quot;.&quot;]</code>.</li>
+<li><em>BertEmbeddings</em>: Generates embeddings for each token.</li>
+<li><em>Loaded NER Model</em>: Identifies <code>&quot;John Doe&quot;</code> as a person and <code>&quot;OpenAI&quot;</code> as an organization.</li>
+<li><em>Converter</em>: Converts the NER results into a readable format.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><code>self.spark.createDataFrame</code>: Creates a Spark DataFrame from the input text.</p>
+</li>
+<li>
+<p><code>self.prediction_pipeline.fit</code>: Fits the pipeline (required for some Spark operations).</p>
+</li>
+<li>
+<p><code>prediction_model.transform</code>: Transforms the input text using the pipeline.</p>
+</li>
+<li>
+<p><code>preds.collect</code>: Collects the prediction results.</p>
+</li>
+<li>
+<p><code>self.format_output</code>: Formats the prediction results.</p>
+</li>
+</ul>
+<!-- TOC --><a name="document"></a>
+<h2 id="whats-a-document">What&rsquo;s a Document?<a hidden class="anchor" aria-hidden="true" href="#whats-a-document">#</a></h2>
+<p>In the context of Natural Language Processing (NLP) and Spark NLP, a &ldquo;document&rdquo; refers to a structured representation of text data. This structured representation is used as an intermediate format that allows various NLP components to process the text more effectively. Let&rsquo;s break down what this means in more detail:</p>
+<!-- TOC --><a name="document-in-spark-nlp"></a>
+<h3 id="document-in-spark-nlp">Document in Spark NLP<a hidden class="anchor" aria-hidden="true" href="#document-in-spark-nlp">#</a></h3>
+<p>A &ldquo;document&rdquo; in Spark NLP is essentially a DataFrame column that contains metadata about the text, such as its content, the start and end positions of the text, and other relevant information. This structured format is crucial for the subsequent NLP tasks, such as sentence detection, tokenization, and named entity recognition.</p>
+<!-- TOC --><a name="documentassembler"></a>
+<h3 id="documentassembler">DocumentAssembler<a hidden class="anchor" aria-hidden="true" href="#documentassembler">#</a></h3>
+<p>The <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/DocumentAssembler">DocumentAssembler</a>[10] is a component in Spark NLP that converts raw text into this structured &ldquo;document&rdquo; format. Here&rsquo;s how it works:</p>
+<ol>
+<li><strong>Input Column</strong>: The <code>DocumentAssembler</code> takes a column of raw text as input.</li>
+<li><strong>Output Column</strong>: It produces a column of &ldquo;document&rdquo; type, which contains the structured representation of the text.</li>
+</ol>
+<!-- TOC --><a name="example-1"></a>
+<h3 id="example-1">Example<a hidden class="anchor" aria-hidden="true" href="#example-1">#</a></h3>
+<p>Let&rsquo;s look at an example to understand this better:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">sparknlp.base</span> <span class="kn">import</span> <span class="n">DocumentAssembler</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Initialize Spark session</span>
+</span></span><span class="line"><span class="cl"><span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span> \
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">&#34;DocumentAssemblerExample&#34;</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Sample DataFrame with raw text</span>
+</span></span><span class="line"><span class="cl"><span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">([[</span><span class="s2">&#34;This is a sample text.&#34;</span><span class="p">]])</span><span class="o">.</span><span class="n">toDF</span><span class="p">(</span><span class="s2">&#34;text&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Initialize DocumentAssembler</span>
+</span></span><span class="line"><span class="cl"><span class="n">document_assembler</span> <span class="o">=</span> <span class="n">DocumentAssembler</span><span class="p">()</span> \
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">setInputCol</span><span class="p">(</span><span class="s2">&#34;text&#34;</span><span class="p">)</span> \
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">setOutputCol</span><span class="p">(</span><span class="s2">&#34;document&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Transform the DataFrame</span>
+</span></span><span class="line"><span class="cl"><span class="n">document_df</span> <span class="o">=</span> <span class="n">document_assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Show the result</span>
+</span></span><span class="line"><span class="cl"><span class="n">document_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&#34;document&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><!-- TOC --><a name="output"></a>
+<h3 id="output">Output<a hidden class="anchor" aria-hidden="true" href="#output">#</a></h3>
+<p>The output will be a DataFrame with a &ldquo;document&rdquo; column that contains the structured representation of the text:</p>
+<pre tabindex="0"><code>+-------------------------------------------------------------+
+|document                                                     |
++-------------------------------------------------------------+
+|[[document, 0, 20, This is a sample text., [sentence -&gt; 0], []]]|
++-------------------------------------------------------------+
+</code></pre><!-- TOC --><a name="explanation"></a>
+<h3 id="explanation">Explanation<a hidden class="anchor" aria-hidden="true" href="#explanation">#</a></h3>
+<ul>
+<li><code>document</code>: The column name for the structured text.</li>
+<li><code>0, 20</code>: The start and end positions of the text.</li>
+<li><code>This is a sample text.</code>: The actual text content.</li>
+<li><code>[sentence -&gt; 0]</code>: Metadata indicating that this is the first sentence.</li>
+</ul>
+<!-- TOC --><a name="why-is-this-important"></a>
+<h3 id="why-is-this-important">Why is this Important?<a hidden class="anchor" aria-hidden="true" href="#why-is-this-important">#</a></h3>
+<p>The structured &ldquo;document&rdquo; format is essential for the following reasons:</p>
+<ol>
+<li><em>Consistency</em>: It provides a consistent way to represent text data, making it easier to process.</li>
+<li><em>Metadata</em>: It includes metadata that can be useful for various NLP tasks.</li>
+<li><em>Pipeline Integration</em>: It allows different components in the NLP pipeline to work together seamlessly.</li>
+</ol>
+<!-- TOC --><a name="summary"></a>
+<h2 id="summary">Summary<a hidden class="anchor" aria-hidden="true" href="#summary">#</a></h2>
+<h3 id="1-training-the-ner-model">1. Training the NER Model<a hidden class="anchor" aria-hidden="true" href="#1-training-the-ner-model">#</a></h3>
+<p><img alt="Training" loading="lazy" src="/images/medical-text-extraction/training.png"></p>
+<h3 id="2-ocr-and-ner-pipeline-for-prescription-processing">2. OCR and NER Pipeline for Prescription Processing<a hidden class="anchor" aria-hidden="true" href="#2-ocr-and-ner-pipeline-for-prescription-processing">#</a></h3>
+<ul>
+<li>
+<p><strong>OCR (Optical Character Recognition)</strong></p>
+<ul>
+<li>Converts handwritten doctor prescriptions into machine-readable text using OCR techniques.</li>
+</ul>
+</li>
+<li>
+<p><strong>NER (Named Entity Recognition)</strong></p>
+<ul>
+<li><strong>Input:</strong> Text from the OCR step containing unstructured data such as medicine names and dosage instructions.</li>
+<li><strong>BERT Embedding:</strong> Converts the input text into context-aware embeddings.</li>
+<li><strong>CHAR CNN-BiLSTM:</strong>
+<ul>
+<li>Character-level CNN captures morphological features of words.</li>
+<li>BiLSTM captures bidirectional context of the text sequence.</li>
+</ul>
+</li>
+<li><strong>CRF (Conditional Random Field):</strong> Ensures valid label sequences for structured output like medicine names, dosages, and eating schedules.</li>
+</ul>
+</li>
+</ul>
+<p><img alt="Prediction Pipeline" loading="lazy" src="/images/medical-text-extraction/pred-pipeline.png"></p>
+<p><strong>Output:</strong> Structured data with medicine names, dosages, and schedules extracted from the text.</p>
+<!-- TOC --><a name="actual-output"></a>
+<h2 id="actual-output">Actual Output<a hidden class="anchor" aria-hidden="true" href="#actual-output">#</a></h2>
+<h4 id="handwritten-doctors-prescription">Handwritten Doctor&rsquo;s Prescription<a hidden class="anchor" aria-hidden="true" href="#handwritten-doctors-prescription">#</a></h4>
+<p><img alt="Prescription" loading="lazy" src="/images/medical-text-extraction/prescription.jpeg"></p>
+<h4 id="output-1">Output<a hidden class="anchor" aria-hidden="true" href="#output-1">#</a></h4>
+<p><img alt="Output" loading="lazy" src="/images/medical-text-extraction/output.jpeg"></p>
+<!-- TOC --><a name="conclusion"></a>
+<h2 id="conclusion">Conclusion<a hidden class="anchor" aria-hidden="true" href="#conclusion">#</a></h2>
+<p>In this blog, we explored a comprehensive pipeline for extracting information from handwritten medical prescriptions using AWS Textract and Spark NLP. Starting with the OCR capabilities of AWS Textract, we efficiently transformed handwritten text into machine-readable format, setting the stage for the subsequent NER analysis.</p>
+<p>As we concluded with predictions, the seamless interaction of components within the prediction pipeline demonstrated the power of Spark NLP for real-time NER tasks. This approach not only streamlines the processing of medical prescriptions but also holds potential for further applications in healthcare, where accurate data extraction is paramount.</p>
+<p>By combining cutting-edge technology with thoughtful design, we can significantly enhance the efficiency of healthcare processes, ultimately leading to improved patient outcomes and better management of medical information. As we continue to innovate in this space, the opportunities for developing advanced applications in the realm of healthcare data processing are endless.</p>
+<!-- TOC --><a name="references"></a>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<p>[1] “Spark NLP 5.5.1 ScalaDoc - com.johnsnowlabs.nlp.annotators.ner.dl.NerDLApproach,” Sparknlp.org, 2024. <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach">https://sparknlp.org/api/com/johnsnowlabs/nlp/annotators/ner/dl/NerDLApproach</a>.</p>
+<p>[2] J. Barnard, “What are Word Embeddings? | IBM,” <a href="https://www.ibm.com">www.ibm.com</a>, Jan. 23, 2024. <a href="https://www.ibm.com/topics/word-embeddings">https://www.ibm.com/topics/word-embeddings</a></p>
+<p>[3] Contextualized Embeddings and Bidirectional Attention: Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding. Proceedings of NAACL-HLT, 4171–4186. <a href="https://arxiv.org/abs/1810.04805">https://arxiv.org/abs/1810.04805</a>.</p>
+<p>[4] Handling Out-of-Vocabulary Words and Subword Tokenization: Sennrich, R., Haddow, B., &amp; Birch, A. (2016). Neural Machine Translation of Rare Words with Subword Units. Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), 1715–1725. <a href="https://arxiv.org/abs/1508.07909">https://arxiv.org/abs/1508.07909</a>.</p>
+<p>[5] Fine-Tuning and Performance on NER: Akbik, A., Blythe, D., &amp; Vollgraf, R. (2018). Contextual String Embeddings for Sequence Labeling. Proceedings of the 27th International Conference on Computational Linguistics, 1638–1649. <a href="https://www.aclweb.org/anthology/C18-1139/">https://www.aclweb.org/anthology/C18-1139/</a>.</p>
+<p>[6] BERT’s Performance in Domain-Specific Applications: Lee, J., Yoon, W., Kim, S., Kim, D., Kim, S., So, C. H., &amp; Kang, J. (2020). BioBERT: a pre-trained biomedical language representation model for biomedical text mining. Bioinformatics, 36(4), 1234-1240. <a href="https://academic.oup.com/bioinformatics/article/36/4/1234/5566506">https://academic.oup.com/bioinformatics/article/36/4/1234/5566506</a>.</p>
+<p>[7] J. P. C. Chiu and E. Nichols, “Named Entity Recognition with Bidirectional LSTM-CNNs,” Transactions of the Association for Computational Linguistics, vol. 4, pp. 357–370, Dec. 2016, doi: <a href="https://doi.org/10.1162/tacl_a_00104">https://doi.org/10.1162/tacl_a_00104</a></p>
+<p>[8] “Papers with Code - CoNLL-2003 Dataset,” paperswithcode.com. <a href="https://paperswithcode.com/dataset/conll-2003">https://paperswithcode.com/dataset/conll-2003</a></p>
+<p>[9] “Papers with Code - 2010 i2b2/VA Dataset,” Paperswithcode.com, 2022. <a href="https://paperswithcode.com/dataset/2010-i2b2-va">https://paperswithcode.com/dataset/2010-i2b2-va</a>.</p>
+<p>[10] “Spark NLP 5.5.1 ScalaDoc - com.johnsnowlabs.nlp.DocumentAssembler,” Sparknlp.org, 2024. <a href="https://sparknlp.org/api/com/johnsnowlabs/nlp/DocumentAssembler">https://sparknlp.org/api/com/johnsnowlabs/nlp/DocumentAssembler</a>.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://aryaman.space/tags/spark-nlp/">Spark-Nlp</a></li>
+      <li><a href="https://aryaman.space/tags/handwritten-prescription-processing/">Handwritten-Prescription-Processing</a></li>
+      <li><a href="https://aryaman.space/tags/medical-text-extraction/">Medical-Text-Extraction</a></li>
+      <li><a href="https://aryaman.space/tags/ner/">Ner</a></li>
+      <li><a href="https://aryaman.space/tags/lstm/">Lstm</a></li>
+      <li><a href="https://aryaman.space/tags/document/">Document</a></li>
+      <li><a href="https://aryaman.space/tags/char-cnn/">Char-Cnn</a></li>
+      <li><a href="https://aryaman.space/tags/bert/">Bert</a></li>
+      <li><a href="https://aryaman.space/tags/bert-embeddings/">Bert-Embeddings</a></li>
+      <li><a href="https://aryaman.space/tags/conll/">Conll</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://aryaman.space/blog/replication-and-sharding-in-mongo/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Demystifying Replication and Sharding in MongoDB</span>
+  </a>
+</nav>
+
+
+<ul class="share-buttons">
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP on x"
+            href="https://x.com/intent/tweet/?text=From%20Scribbles%20to%20Structured%20Data%3a%20Processing%20Handwritten%20Prescriptions%20with%20Spark%20NLP&amp;url=https%3a%2f%2faryaman.space%2fblog%2fmedical-text-extraction%2f&amp;hashtags=spark-nlp%2chandwritten-prescription-processing%2cmedical-text-extraction%2cner%2clstm%2cdocument%2cchar-cnn%2cbert%2cbert-embeddings%2cconll">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M512 62.554 L 512 449.446 C 512 483.97 483.97 512 449.446 512 L 62.554 512 C 28.03 512 0 483.97 0 449.446 L 0 62.554 C 0 28.03 28.029 0 62.554 0 L 449.446 0 C 483.971 0 512 28.03 512 62.554 Z M 269.951 190.75 L 182.567 75.216 L 56 75.216 L 207.216 272.95 L 63.9 436.783 L 125.266 436.783 L 235.9 310.383 L 332.567 436.783 L 456 436.783 L 298.367 228.367 L 432.367 75.216 L 371.033 75.216 Z M 127.633 110 L 164.101 110 L 383.481 400.065 L 349.5 400.065 Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP on linkedin"
+            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2faryaman.space%2fblog%2fmedical-text-extraction%2f&amp;title=From%20Scribbles%20to%20Structured%20Data%3a%20Processing%20Handwritten%20Prescriptions%20with%20Spark%20NLP&amp;summary=From%20Scribbles%20to%20Structured%20Data%3a%20Processing%20Handwritten%20Prescriptions%20with%20Spark%20NLP&amp;source=https%3a%2f%2faryaman.space%2fblog%2fmedical-text-extraction%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP on reddit"
+            href="https://reddit.com/submit?url=https%3a%2f%2faryaman.space%2fblog%2fmedical-text-extraction%2f&title=From%20Scribbles%20to%20Structured%20Data%3a%20Processing%20Handwritten%20Prescriptions%20with%20Spark%20NLP">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP on facebook"
+            href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2faryaman.space%2fblog%2fmedical-text-extraction%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP on whatsapp"
+            href="https://api.whatsapp.com/send?text=From%20Scribbles%20to%20Structured%20Data%3a%20Processing%20Handwritten%20Prescriptions%20with%20Spark%20NLP%20-%20https%3a%2f%2faryaman.space%2fblog%2fmedical-text-extraction%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP on telegram"
+            href="https://telegram.me/share/url?text=From%20Scribbles%20to%20Structured%20Data%3a%20Processing%20Handwritten%20Prescriptions%20with%20Spark%20NLP&amp;url=https%3a%2f%2faryaman.space%2fblog%2fmedical-text-extraction%2f">
+            <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+            </svg>
+        </a>
+    </li>
+</ul>
+
+  </footer>
+</article>
+    </main>
     
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://aryaman.space/">aryaman.space</a></span> · 
 
-  </body>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
 </html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Python on aryaman.space</title>
+    <link>https://aryaman.space/tags/python/</link>
+    <description>Recent content in Python on aryaman.space</description>
+    <image>
+      <title>aryaman.space</title>
+      <url>https://aryaman.space/images/about.jpg</url>
+      <link>https://aryaman.space/images/about.jpg</link>
+    </image>
+    <generator>Hugo -- 0.125.7</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 17 Dec 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://aryaman.space/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Breaking Boundaries</title>
+      <link>https://aryaman.space/blog/breaking-boundaries/</link>
+      <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/blog/breaking-boundaries/</guid>
+      <description>An in-depth look at Python&amp;#39;s GIL, its impact on performance, and efforts to overcome its limitations including Free-Threading, Gilectomy, and nogil implementations.</description>
+    </item>
+    <item>
+      <title>Asynchronous Programming in Python</title>
+      <link>https://aryaman.space/blog/asynchronous-programming-in-python/</link>
+      <pubDate>Thu, 21 Sep 2023 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/blog/asynchronous-programming-in-python/</guid>
+      <description>Sync vs Async What is synchronous programming?
+Synchronous programming is a programming paradigm in which operations are executed sequentially, one after the other. In this model, each operation waits for the previous one to complete before moving on to the next step. This sequential execution can lead to &amp;lsquo;blocking&amp;rsquo; operations, where certain tasks may take a significant amount of time to finish. These blocking operations can pause the entire program&amp;rsquo;s execution, forcing it to wait until the time-consuming task is done before it can proceed.</description>
+    </item>
+    <item>
+      <title>Decorators in Python</title>
+      <link>https://aryaman.space/blog/decorators-in-python/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/blog/decorators-in-python/</guid>
+      <description>What on earth are decorators??? Decorators are essentially single reusable functions that take a &amp;ldquo;function&amp;rdquo; as input and return a modified version of it. Decorators are just a bit different from regular functions because they wrap the &amp;ldquo;input function&amp;rdquo; to extend its functionality without modifying it.
+What does wrapping mean?
+1 2 3 4 5 6 import time start_time = time.time() **call your function** #calling your function end_time = time.time() print(&amp;#34;Time Taken = &amp;#34;, end_time-start_time) Here you can see that your function call is being &amp;ldquo;wrapped&amp;rdquo; between lines of code.</description>
+    </item>
+  </channel>
+</rss>

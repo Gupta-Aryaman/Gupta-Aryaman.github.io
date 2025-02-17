@@ -1,2 +1,3 @@
-User-Agent: *
+User-agent: *
+Disallow:
 Sitemap: https://aryaman.space/sitemap.xml

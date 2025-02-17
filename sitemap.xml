@@ -2,111 +2,122 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://aryaman.space/blog/bert/</loc>
-    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
-  </url><url>
-    <loc>https://aryaman.space/blog/bert-embeddings/</loc>
-    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
-  </url><url>
     <loc>https://aryaman.space/blog/</loc>
-    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
-  </url><url>
-    <loc>https://aryaman.space/blog/char-cnn/</loc>
-    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
-  </url><url>
-    <loc>https://aryaman.space/blog/conll/</loc>
-    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
-  </url><url>
-    <loc>https://aryaman.space/blog/document/</loc>
-    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
-  </url><url>
-    <loc>https://aryaman.space/from-scribbles-to-structured-data-processing-handwritten-prescriptions-with-spark-nlp/</loc>
-    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
-  </url><url>
-    <loc>https://aryaman.space/blog/handwritten-prescription-processing/</loc>
-    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
+    <lastmod>2024-12-18T19:44:38+05:30</lastmod>
   </url><url>
     <loc>https://aryaman.space/</loc>
+    <lastmod>2024-12-18T19:44:38+05:30</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/bert/</loc>
     <lastmod>2024-11-05T21:10:01+05:30</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/lstm/</loc>
+    <loc>https://aryaman.space/tags/bert-embeddings/</loc>
+    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/char-cnn/</loc>
+    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/conll/</loc>
+    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/document/</loc>
     <lastmod>2024-11-05T21:10:01+05:30</lastmod>
   </url><url>
     <loc>https://aryaman.space/blog/medical-text-extraction/</loc>
     <lastmod>2024-11-05T21:10:01+05:30</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/ner/</loc>
+    <loc>https://aryaman.space/tags/handwritten-prescription-processing/</loc>
     <lastmod>2024-11-05T21:10:01+05:30</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/spark-nlp/</loc>
+    <loc>https://aryaman.space/tags/lstm/</loc>
     <lastmod>2024-11-05T21:10:01+05:30</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/aryaman-batcave/</loc>
+    <loc>https://aryaman.space/tags/medical-text-extraction/</loc>
+    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/ner/</loc>
+    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/spark-nlp/</loc>
+    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/</loc>
+    <lastmod>2024-11-05T21:10:01+05:30</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/aryaman-batcave/</loc>
     <lastmod>2024-04-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/demystifying-replication-and-sharding-in-mongodb/</loc>
+    <loc>https://aryaman.space/blog/replication-and-sharding-in-mongo/</loc>
     <lastmod>2024-04-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/distributed-systems/</loc>
+    <loc>https://aryaman.space/tags/distributed-systems/</loc>
     <lastmod>2024-04-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/mongodb/</loc>
+    <loc>https://aryaman.space/tags/mongodb/</loc>
     <lastmod>2024-04-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/replication/</loc>
+    <loc>https://aryaman.space/tags/replication/</loc>
     <lastmod>2024-04-14T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/sharding/</loc>
+    <loc>https://aryaman.space/tags/sharding/</loc>
     <lastmod>2024-04-14T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://aryaman.space/breaking-boundaries/</loc>
-    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://aryaman.space/blog/breaking-boundaries/</loc>
     <lastmod>2023-12-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/gil/</loc>
+    <loc>https://aryaman.space/tags/breaking-boundaries/</loc>
     <lastmod>2023-12-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/multithreading/</loc>
+    <loc>https://aryaman.space/tags/gil/</loc>
     <lastmod>2023-12-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/no-gil/</loc>
+    <loc>https://aryaman.space/tags/multithreading/</loc>
     <lastmod>2023-12-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/python/</loc>
+    <loc>https://aryaman.space/tags/no-gil/</loc>
     <lastmod>2023-12-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/async/</loc>
+    <loc>https://aryaman.space/tags/python/</loc>
+    <lastmod>2023-12-17T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/tags/async/</loc>
     <lastmod>2023-09-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/asynchronous/</loc>
+    <loc>https://aryaman.space/tags/asynchronous/</loc>
     <lastmod>2023-09-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/asynchronous-programming-in-python/</loc>
+    <loc>https://aryaman.space/blog/asynchronous-programming-in-python/</loc>
     <lastmod>2023-09-21T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/corporate/</loc>
+    <loc>https://aryaman.space/tags/corporate/</loc>
     <lastmod>2023-07-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/finding-success-in-dynamic-environment/</loc>
+    <loc>https://aryaman.space/blog/finding-success-in-a-dynamic-environment/</loc>
     <lastmod>2023-07-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/government-job/</loc>
+    <loc>https://aryaman.space/tags/government-job/</loc>
     <lastmod>2023-07-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/success/</loc>
+    <loc>https://aryaman.space/tags/success/</loc>
     <lastmod>2023-07-25T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://aryaman.space/blog/decorators/</loc>
-    <lastmod>2023-05-31T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://aryaman.space/decorators-in-python/</loc>
+    <loc>https://aryaman.space/tags/decorators/</loc>
     <lastmod>2023-05-31T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://aryaman.space/blog/decorators-in-python/</loc>
     <lastmod>2023-05-31T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>https://aryaman.space/tags/decorators-in-python/</loc>
+    <lastmod>2023-05-31T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://aryaman.space/about/</loc>
+  </url><url>
+    <loc>https://aryaman.space/archives/</loc>
+  </url><url>
+    <loc>https://aryaman.space/categories/</loc>
+  </url><url>
     <loc>https://aryaman.space/papershelf/</loc>
+  </url><url>
+    <loc>https://aryaman.space/search/</loc>
   </url>
 </urlset>

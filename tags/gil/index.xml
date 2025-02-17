@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Gil on aryaman.space</title>
+    <link>https://aryaman.space/tags/gil/</link>
+    <description>Recent content in Gil on aryaman.space</description>
+    <image>
+      <title>aryaman.space</title>
+      <url>https://aryaman.space/images/about.jpg</url>
+      <link>https://aryaman.space/images/about.jpg</link>
+    </image>
+    <generator>Hugo -- 0.125.7</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 17 Dec 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://aryaman.space/tags/gil/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Breaking Boundaries</title>
+      <link>https://aryaman.space/blog/breaking-boundaries/</link>
+      <pubDate>Sun, 17 Dec 2023 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/blog/breaking-boundaries/</guid>
+      <description>An in-depth look at Python&amp;#39;s GIL, its impact on performance, and efforts to overcome its limitations including Free-Threading, Gilectomy, and nogil implementations.</description>
+    </item>
+  </channel>
+</rss>

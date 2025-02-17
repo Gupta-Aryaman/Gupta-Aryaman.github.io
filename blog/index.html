@@ -1,488 +1,309 @@
 <!DOCTYPE html>
-<html lang="en-US">
-<link rel="stylesheet" href="/css/base.css">
+<html lang="en" dir="auto">
 
-<head>
-  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="shortcut icon" href="https://aryaman.space/images/favicon.png" />
-<title>blog | aryaman.space</title>
-<meta name="title" content="blog" />
-<meta name="description" content="a corner where ideas, projects, and favorite reads come together" />
-<meta name="keywords" content="aryaman-batcave,async,asynchronous,bert,bert-embeddings,breaking-boundaries,char-cnn,conll,corporate,decorators,decorators-in-python,distributed-systems,document,gil,government-job,handwritten-prescription-processing,lstm,medical-text-extraction,mongodb,multithreading,ner,no-gil,python,replication,sharding,spark-nlp,success," />
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Blog | aryaman.space</title>
+<meta name="keywords" content="">
+<meta name="description" content="Blog - aryaman.space">
+<meta name="author" content="Aryaman Gupta">
+<link rel="canonical" href="https://aryaman.space/blog/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://aryaman.space/images/favicon.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://aryaman.space/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://aryaman.space/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://aryaman.space/apple-touch-icon.png">
+<link rel="mask-icon" href="https://aryaman.space/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="https://aryaman.space/blog/index.xml">
+<link rel="alternate" hreflang="en" href="https://aryaman.space/blog/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
 
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
 
-<meta property="og:title" content="blog" />
-<meta property="og:description" content="a corner where ideas, projects, and favorite reads come together" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://aryaman.space/blog/" /><meta property="og:image" content="https://aryaman.space/images/about.jpg"/><meta property="og:site_name" content="aryaman&#39;s space" />
+            .list {
+                background: var(--theme);
+            }
 
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
 
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
 
-
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://aryaman.space/images/about.jpg"/>
-
-<meta name="twitter:title" content="blog"/>
-<meta name="twitter:description" content="a corner where ideas, projects, and favorite reads come together"/>
-
-
-
-<meta itemprop="name" content="blog">
-<meta itemprop="description" content="a corner where ideas, projects, and favorite reads come together">
-<meta name="referrer" content="no-referrer-when-downgrade" />
-
-  <link rel="alternate" type="application/rss+xml" href="https://aryaman.space/blog/index.xml" title="aryaman.space" />
-  <style>
-  body {
-    font-family: Verdana, sans-serif;
-    margin: auto;
-    padding: 20px;
-    max-width: 720px;
-    text-align: left;
-    background-color: #f1f1f1;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.5;
-    color: #444;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  strong,
-  b {
-    color: #222;
-  }
-
-  a, a:visited  {
-    color: #126fad;
-    text-decoration: none;
-  }
-  a:hover {
-    color: hotpink;
-  }
-
-  .title {
-    text-decoration: none;
-    border: 0;
-  }
-
-  .title span {
-    font-weight: 400;
-  }
-
-  nav a {
-    margin-right: 10px;
-  }
-
-  textarea {
-    width: 100%;
-    font-size: 16px;
-  }
-
-  input {
-    font-size: 16px;
-  }
-
-  content {
-    line-height: 1.6;
-  }
-
-  table {
-    width: 100%;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  code {
-    padding: 2px 5px;
-    background-color: #E0E0E0;
-  }
-
-  pre code {
-    color: #222;
-    display: block;
-    padding: 20px;
-    white-space: pre-wrap;
-    font-size: 14px;
-    overflow-x: auto;
-  }
-
-  div.highlight pre {
-    background-color: initial;
-    color: initial;
-  }
-
-  div.highlight code {
-    background-color: unset;
-    color: unset;
-  }
-
-  blockquote {
-    border-left: 1px solid #999;
-    color: #222;
-    padding-left: 20px;
-    font-style: italic;
-  }
-
-  footer {
-    padding: 25px;
-    text-align: center;
-  }
-
-  .helptext {
-    color: #777;
-    font-size: small;
-  }
-
-  .errorlist {
-    color: #eba613;
-    font-size: small;
-  }
-
-   
-  ul.blog-posts {
-    list-style-type: none;
-    padding: unset;
-  }
-
-  ul.blog-posts li {
-    display: flex;
-  }
-
-  ul.blog-posts li span {
-    flex: 0 0 130px;
-  }
-
-  ul.blog-posts li a:visited {
-    color: #8b6fcb;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    body {
-      background-color: #1A1A1A;
-      color: #E0E0E0;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    strong,
-    b {
-      color: #eee;
-    }
-
-    strong,
-    b {
-      color: gray;
-      background-color: white;
-      padding: 2px 2px
-    }
-
-    a, a:visited {
-      color: #3A9AD9;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: hotpink;
-    }
-    
-    code {
-      background-color: #777;
-    }
-
-    pre code {
-      color: #ddd;
-    }
-
-    blockquote {
-      color: #ccc;
-    }
-
-    textarea,
-    input {
-      background-color: #252525;
-      color: #ddd;
-    }
-
-    .helptext {
-      color: #aaa;
-    }
-  }
-
-</style>
-</head>
-
-<body>
+    </style>
+</noscript>
   
 
-  <header><a href="/" class="title">
-  <h2>aryaman.space</h2>
-</a>
-<nav><a href="/">HOME</a>
+<meta property="og:url" content="https://aryaman.space/blog/">
+  <meta property="og:site_name" content="aryaman.space">
+  <meta property="og:title" content="Blog">
+  <meta property="og:description" content="a corner where ideas, projects, and favorite reads come together">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="website">
+      <meta property="og:image" content="https://aryaman.space/images/about.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://aryaman.space/images/about.jpg">
+<meta name="twitter:title" content="Blog">
+<meta name="twitter:description" content="a corner where ideas, projects, and favorite reads come together">
 
 
-<a href="/blog">BLOG</a>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Blog",
+      "item": "https://aryaman.space/blog/"
+    }
+  ]
+}
+</script>
+</head>
 
+<body class="list" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
 
-<a href="/papershelf">PAPERSHELF</a></nav>
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://aryaman.space/" accesskey="h" title="aryaman.space (Alt + H)">aryaman.space</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://aryaman.space/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://aryaman.space/papershelf/" title="Papershelf">
+                    <span>Papershelf</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </header>
-  
-  <main>
-<content>
-  
-  <ul class="blog-posts">
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2024-11-05' pubdate>
-            05 Nov, 2024
-          </time>
-        </i>
-      </span>
-      <a href="https://aryaman.space/from-scribbles-to-structured-data-processing-handwritten-prescriptions-with-spark-nlp/">FROM SCRIBBLES TO STRUCTURED DATA: PROCESSING HANDWRITTEN PRESCRIPTIONS WITH SPARK NLP</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2024-04-14' pubdate>
-            14 Apr, 2024
-          </time>
-        </i>
-      </span>
-      <a href="https://aryaman.space/demystifying-replication-and-sharding-in-mongodb/">DEMYSTIFYING REPLICATION AND SHARDING IN MONGODB</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2023-12-17' pubdate>
-            17 Dec, 2023
-          </time>
-        </i>
-      </span>
-      <a href="https://aryaman.space/breaking-boundaries/">BREAKING BOUNDARIES</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2023-09-21' pubdate>
-            21 Sep, 2023
-          </time>
-        </i>
-      </span>
-      <a href="https://aryaman.space/asynchronous-programming-in-python/">ASYNCHRONOUS PROGRAMMING IN PYTHON</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2023-07-25' pubdate>
-            25 Jul, 2023
-          </time>
-        </i>
-      </span>
-      <a href="https://aryaman.space/finding-success-in-dynamic-environment/">FINDING SUCCESS IN DYNAMIC ENVIRONMENT</a>
-    </li>
-    
-    <li>
-      <span>
-        <i>
-          <time datetime='2023-05-31' pubdate>
-            31 May, 2023
-          </time>
-        </i>
-      </span>
-      <a href="https://aryaman.space/decorators-in-python/">DECORATORS IN PYTHON</a>
-    </li>
-    
-  </ul>
-  
-    <small>
-      <div>
-        
-        <a href="https://aryaman.space/blog/aryaman-batcave/">#aryaman-batcave</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/async/">#async</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/asynchronous/">#asynchronous</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/bert/">#BERT</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/bert-embeddings/">#BERT-Embeddings</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/breaking-boundaries/">#breaking-boundaries</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/char-cnn/">#Char-CNN</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/conll/">#CoNLL</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/corporate/">#corporate</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/decorators/">#decorators</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/decorators-in-python/">#decorators-in-python</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/distributed-systems/">#distributed-systems</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/document/">#Document</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/gil/">#gil</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/government-job/">#government-job</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/handwritten-prescription-processing/">#Handwritten-Prescription-Processing</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/lstm/">#LSTM</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/medical-text-extraction/">#Medical-Text-Extraction</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/mongodb/">#mongoDB</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/multithreading/">#multithreading</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/ner/">#NER</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/no-gil/">#no-gil</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/python/">#python</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/replication/">#replication</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/sharding/">#sharding</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/spark-nlp/">#Spark-NLP</a>&nbsp;
-        
-        <a href="https://aryaman.space/blog/success/">#success</a>&nbsp;
-        
-      </div>
-    </small>
-    
-</content>
+<main class="main"> 
+<header class="page-header">
+  <h1>
+    Blog
+  </h1>
+</header>
 
-  </main>
-  
-  <footer>
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Introduction Medical prescriptions, often scribbled in hurried handwriting, pose a significant challenge when attempting to extract valuable information.
+Automating this process requires a robust combination of Optical Character Recognition (OCR) and Natural Language Processing (NLP) tools to accurately identify entities like medication names, dosages, and medical conditions.
+In this article, we delve into a Spark NLP-based pipeline to convert handwritten prescriptions into structured, machine-readable text. Leveraging BERT embeddings for contextual understanding and a custom Named Entity Recognition(NER) model, this approach promises to streamline information extraction in medical workflows....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-11-05 21:10:01 +0530 IST'>November 5, 2024</span>&nbsp;·&nbsp;13 min&nbsp;·&nbsp;2676 words&nbsp;·&nbsp;Aryaman Gupta</footer>
+  <a class="entry-link" aria-label="post link to From Scribbles to Structured Data: Processing Handwritten Prescriptions with Spark NLP" href="https://aryaman.space/blog/medical-text-extraction/"></a>
+</article>
 
-<style>
-    .newsletter-container {
-        width: 100%;
-        max-width: 60%;
-        margin: 0 auto;
-        padding: 20px;
-        text-align: center;
-    }
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Demystifying Replication and Sharding in MongoDB
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Making a MongoDB cluster “Production Ready” by performing database Replication and Sharding (horizontal fragmentation)
+What is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.
+By doing this, will get redundancy and increases data availability with multiple copies of data on different database servers....</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-04-14 00:00:00 +0000 UTC'>April 14, 2024</span>&nbsp;·&nbsp;5 min&nbsp;·&nbsp;999 words&nbsp;·&nbsp;Aryaman Gupta</footer>
+  <a class="entry-link" aria-label="post link to Demystifying Replication and Sharding in MongoDB" href="https://aryaman.space/blog/replication-and-sharding-in-mongo/"></a>
+</article>
 
-    .newsletter-container p {
-        font-size: 16px;
-        margin-bottom: -15px;
-    }
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Breaking Boundaries
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Python faces challenges in fully exploiting the growing capabilities of modern hardware. As hardware continues to advance with more CPU cores, faster processors, and abundant memory, Python’s inherent design and execution model can often fall short in taking full advantage of these resources. Its single-threaded nature and certain architectural choices can result in suboptimal performance in scenarios where parallelism and hardware acceleration are vital. This limitation prompts developers to seek alternative solutions, such as integrating Python with external libraries, languages, or technologies, to overcome these hardware-related constraints....</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-12-17 00:00:00 +0000 UTC'>December 17, 2023</span>&nbsp;·&nbsp;18 min&nbsp;·&nbsp;3771 words&nbsp;·&nbsp;Aryaman Gupta</footer>
+  <a class="entry-link" aria-label="post link to Breaking Boundaries" href="https://aryaman.space/blog/breaking-boundaries/"></a>
+</article>
 
-    .newsletter-container p:hover {
-        color: hotpink;
-    }
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Asynchronous Programming in Python
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Sync vs Async What is synchronous programming?
+Synchronous programming is a programming paradigm in which operations are executed sequentially, one after the other. In this model, each operation waits for the previous one to complete before moving on to the next step. This sequential execution can lead to ‘blocking’ operations, where certain tasks may take a significant amount of time to finish. These blocking operations can pause the entire program’s execution, forcing it to wait until the time-consuming task is done before it can proceed....</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-09-21 00:00:00 +0000 UTC'>September 21, 2023</span>&nbsp;·&nbsp;8 min&nbsp;·&nbsp;1603 words&nbsp;·&nbsp;Aryaman Gupta</footer>
+  <a class="entry-link" aria-label="post link to Asynchronous Programming in Python" href="https://aryaman.space/blog/asynchronous-programming-in-python/"></a>
+</article>
 
-    .newsletter-form {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        width: 100%;
-    }
-
-    .newsletter-input {
-        padding: 10px;
-        font-size: 16px;
-        border: 0px solid #ccc;
-        border-radius: 5px 0 0 5px;
-        flex: 1;
-        width: 70%;  
-    }
-
-    .newsletter-button {
-        padding: 10px 20px;
-        font-size: 14px;
-        border: none;
-        background-color: #555;
-        color: white;
-        cursor: pointer;
-        border-radius: 0 5px 5px 0;
-        width: 30%;  
-        box-sizing: border-box;  
-        text-transform: lowercase;  
-
-    }
-
-    .newsletter-button:hover {
-        background-color: rgb(187, 35, 111);
-    }
-
-    .p-group{
-        margin-bottom: 5px;
-    }
-
-     
-    @media (max-width: 711px) {
-        .newsletter-input {
-            width: 60%;
-            font-size: 12px;
-        }
-
-        .newsletter-container {
-            max-width: 85%;
-        }
-
-        .newsletter-button {
-            width: 40%;
-            font-size: 12px;  
-            text-transform: lowercase;  
-        }
-    }
-</style>
-</style>
-</head>
-<body>
-
-<div class="newsletter-container">
-    <div class="p-group">
-        <p>this sounds fun</p>
-        <p>this sounds fun</p>
-        <p>this sounds fun</p>
-        <p>this sounds fun</p>
-    </div>
-    
-    <form class="newsletter-form" action="https://space.us14.list-manage.com/subscribe/post?u=9826b167b24adbcba9091190f&amp;amp;id=f90f480251&amp;amp;f_id=00eb8fe1f0" method="post">
-        <input class="newsletter-input" type="email" name="EMAIL" placeholder="subscribe@newsletter.com" required>
-        <button class="newsletter-button" type="submit">SUBSCRIBE</button>
-    </form>
-</div>
-
-
-
-MADE WITH <a href="https://github.com/janraasch/hugo-bearblog/">HUGO ʕ•ᴥ•ʔ BEAR</a>
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Finding Success in a Dynamic Environment
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Lessons learned from my internship at a government firm Introduction Embarking on an internship journey within a corporate government firm can be exciting and challenging. I was amazed by the valuable lessons and experiences that awaited me as I delved into this professional realm. In this article, I will share the key insights I gained during my internship, from the importance of collaboration to the significance of clean code practices. Join me as we uncover the secrets to thriving in this dynamic and rewarding environment....</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-07-25 00:00:00 +0000 UTC'>July 25, 2023</span>&nbsp;·&nbsp;3 min&nbsp;·&nbsp;618 words&nbsp;·&nbsp;Aryaman Gupta</footer>
+  <a class="entry-link" aria-label="post link to Finding Success in a Dynamic Environment" href="https://aryaman.space/blog/finding-success-in-a-dynamic-environment/"></a>
+</article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="next" href="https://aryaman.space/blog/page/2/">Next&nbsp;&nbsp;»
+    </a>
+  </nav>
 </footer>
-
-  <div id="noise-bg"></div>
-  
-  <video autoplay muted loop playsinline class="background-video" disablePictureInPicture>
-    <source src="https://aryaman.space/videos/applevideo.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-
+    </main>
     
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://aryaman.space/">aryaman.space</a></span> · 
 
-  </body>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
 </html>

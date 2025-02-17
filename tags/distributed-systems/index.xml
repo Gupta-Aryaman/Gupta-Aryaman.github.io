@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Distributed-Systems on aryaman.space</title>
+    <link>https://aryaman.space/tags/distributed-systems/</link>
+    <description>Recent content in Distributed-Systems on aryaman.space</description>
+    <image>
+      <title>aryaman.space</title>
+      <url>https://aryaman.space/images/about.jpg</url>
+      <link>https://aryaman.space/images/about.jpg</link>
+    </image>
+    <generator>Hugo -- 0.125.7</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 14 Apr 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://aryaman.space/tags/distributed-systems/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Demystifying Replication and Sharding in MongoDB</title>
+      <link>https://aryaman.space/blog/replication-and-sharding-in-mongo/</link>
+      <pubDate>Sun, 14 Apr 2024 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/blog/replication-and-sharding-in-mongo/</guid>
+      <description>Making a MongoDB cluster &amp;ldquo;Production Ready&amp;rdquo; by performing database Replication and Sharding (horizontal fragmentation)
+What is Replication? Replication is the method of duplication of data across multiple servers. For example, we have an application and it reads and writes data to a database and says this server A has a name and balance which will be copied/replicate to two other servers in two different locations.
+By doing this, will get redundancy and increases data availability with multiple copies of data on different database servers.</description>
+    </item>
+  </channel>
+</rss>

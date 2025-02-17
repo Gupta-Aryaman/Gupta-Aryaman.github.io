@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Decorators on aryaman.space</title>
+    <link>https://aryaman.space/tags/decorators/</link>
+    <description>Recent content in Decorators on aryaman.space</description>
+    <image>
+      <title>aryaman.space</title>
+      <url>https://aryaman.space/images/about.jpg</url>
+      <link>https://aryaman.space/images/about.jpg</link>
+    </image>
+    <generator>Hugo -- 0.125.7</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 31 May 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://aryaman.space/tags/decorators/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Decorators in Python</title>
+      <link>https://aryaman.space/blog/decorators-in-python/</link>
+      <pubDate>Wed, 31 May 2023 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/blog/decorators-in-python/</guid>
+      <description>What on earth are decorators??? Decorators are essentially single reusable functions that take a &amp;ldquo;function&amp;rdquo; as input and return a modified version of it. Decorators are just a bit different from regular functions because they wrap the &amp;ldquo;input function&amp;rdquo; to extend its functionality without modifying it.
+What does wrapping mean?
+1 2 3 4 5 6 import time start_time = time.time() **call your function** #calling your function end_time = time.time() print(&amp;#34;Time Taken = &amp;#34;, end_time-start_time) Here you can see that your function call is being &amp;ldquo;wrapped&amp;rdquo; between lines of code.</description>
+    </item>
+  </channel>
+</rss>

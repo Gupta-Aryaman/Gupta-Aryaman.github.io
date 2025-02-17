@@ -1,29 +1,206 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Tags on aryaman&#39;s batcave</title>
-    <link>/tags/</link>
-    <description>Recent content in Tags on aryaman&#39;s batcave</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Fri, 03 Jan 2020 00:00:00 +0000</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <title>Tags on aryaman.space</title>
+    <link>https://aryaman.space/tags/</link>
+    <description>Recent content in Tags on aryaman.space</description>
+    <image>
+      <title>aryaman.space</title>
+      <url>https://aryaman.space/images/about.jpg</url>
+      <link>https://aryaman.space/images/about.jpg</link>
+    </image>
+    <generator>Hugo -- 0.125.7</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 05 Nov 2024 21:10:01 +0530</lastBuildDate>
+    <atom:link href="https://aryaman.space/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>markdown</title>
-      <link>/tags/markdown/</link>
-      <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/markdown/</guid>
+      <title>Bert</title>
+      <link>https://aryaman.space/tags/bert/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/bert/</guid>
       <description></description>
     </item>
-    
     <item>
-      <title>syntax</title>
-      <link>/tags/syntax/</link>
-      <pubDate>Fri, 03 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/tags/syntax/</guid>
+      <title>Bert-Embeddings</title>
+      <link>https://aryaman.space/tags/bert-embeddings/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/bert-embeddings/</guid>
       <description></description>
     </item>
-    
+    <item>
+      <title>Char-Cnn</title>
+      <link>https://aryaman.space/tags/char-cnn/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/char-cnn/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Conll</title>
+      <link>https://aryaman.space/tags/conll/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/conll/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Document</title>
+      <link>https://aryaman.space/tags/document/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/document/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Handwritten-Prescription-Processing</title>
+      <link>https://aryaman.space/tags/handwritten-prescription-processing/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/handwritten-prescription-processing/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Lstm</title>
+      <link>https://aryaman.space/tags/lstm/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/lstm/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Medical-Text-Extraction</title>
+      <link>https://aryaman.space/tags/medical-text-extraction/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/medical-text-extraction/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Ner</title>
+      <link>https://aryaman.space/tags/ner/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/ner/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Spark-Nlp</title>
+      <link>https://aryaman.space/tags/spark-nlp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/spark-nlp/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Aryaman-Batcave</title>
+      <link>https://aryaman.space/tags/aryaman-batcave/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/aryaman-batcave/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Distributed-Systems</title>
+      <link>https://aryaman.space/tags/distributed-systems/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/distributed-systems/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Mongodb</title>
+      <link>https://aryaman.space/tags/mongodb/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/mongodb/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Replication</title>
+      <link>https://aryaman.space/tags/replication/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/replication/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Sharding</title>
+      <link>https://aryaman.space/tags/sharding/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/sharding/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Breaking-Boundaries</title>
+      <link>https://aryaman.space/tags/breaking-boundaries/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/breaking-boundaries/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Gil</title>
+      <link>https://aryaman.space/tags/gil/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/gil/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Multithreading</title>
+      <link>https://aryaman.space/tags/multithreading/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/multithreading/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>No-Gil</title>
+      <link>https://aryaman.space/tags/no-gil/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/no-gil/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Python</title>
+      <link>https://aryaman.space/tags/python/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/python/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Async</title>
+      <link>https://aryaman.space/tags/async/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/async/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Asynchronous</title>
+      <link>https://aryaman.space/tags/asynchronous/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/asynchronous/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Corporate</title>
+      <link>https://aryaman.space/tags/corporate/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/corporate/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Government-Job</title>
+      <link>https://aryaman.space/tags/government-job/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/government-job/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Success</title>
+      <link>https://aryaman.space/tags/success/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/success/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Decorators</title>
+      <link>https://aryaman.space/tags/decorators/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/decorators/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Decorators-in-Python</title>
+      <link>https://aryaman.space/tags/decorators-in-python/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://aryaman.space/tags/decorators-in-python/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>
